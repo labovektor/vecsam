@@ -128,3 +128,6 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+export const protectedProcedure = t.procedure
+  .use(authMiddleware)
+  .use(timingMiddleware);
