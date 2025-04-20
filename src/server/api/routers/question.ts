@@ -23,12 +23,7 @@ export const questionRouter = createTRPCRouter({
     }),
 
   updateSection: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        data: updateSectionSchema,
-      }),
-    )
+    .input(updateSectionSchema)
     .mutation(({ ctx, input }) => {
       const { db, user } = ctx;
 
@@ -37,9 +32,9 @@ export const questionRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          title: input.data.title,
-          type: input.data.type as SectionType,
-          points: input.data.points,
+          title: input.title,
+          type: input.type as SectionType,
+          points: input.points,
         },
       });
     }),

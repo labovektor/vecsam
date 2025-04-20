@@ -14,6 +14,7 @@ export const addSectionSchema = z.object({
 });
 
 export const updateSectionSchema = z.object({
+  id: z.string(),
   title: z.string(),
   type: z.enum(sectionTypes),
   points: z.number(),
