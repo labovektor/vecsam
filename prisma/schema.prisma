@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+model Exam {
+    id          String        @id @default(uuid())
+    userId      String
+    title       String
+    description String
+    Participant Participant[]
+    sections    Section[]
+    passcode    String
+    isActive    Boolean       @default(false)
+    startTime   DateTime
+    endTime     DateTime
+    duration    Int
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+}
+
+model Participant {
+    id                String              @id @default(uuid())
+    name              String
+    username          String
+    password          String
+    examId            String
+    exam              Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
+    createdAt         DateTime            @default(now())
+    lockedAt          DateTime?
+    ParticipantAnswer ParticipantAnswer[]
+}
+
+model ParticipantSession {
+    id        String   @id @default(uuid())
+    userId    String
+    expiredAt DateTime
+    createdAt DateTime @default(now())
+}
+
+model Section {
+    id        String      @id @default(uuid())
+    title     String
+    type      SectionType
+    examId    String
+    exam      Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
+    points    Int
+    questions Question[]
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+}
+
+model Question {
+    id                   String                 @id @default(uuid())
+    text                 String?
+    image                String?
+    sectionId            String
+    section              Section                @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+    createdAt            DateTime               @default(now())
+    updatedAt            DateTime               @updatedAt
+    ParticipantAnswer    ParticipantAnswer[]
+    MultipleChoiceOption MultipleChoiceOption[]
+}
+
+model MultipleChoiceOption {
+    id                String              @id @default(uuid())
+    questionId        String
+    question          Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    text              String?
+    image             String?
+    ParticipantAnswer ParticipantAnswer[]
+}
+
+model ParticipantAnswer {
+    id            String               @id @default(uuid())
+    questionId    String
+    question      Question             @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    participantId String
+    Participant   Participant          @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    answerText    String? // Untuk short answer
+    answerFile    String? // URL file jika tipe file answer
+    optionId      String // Untuk multiple choice
+    isTrue        Boolean
+    option        MultipleChoiceOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
+}
+
+enum SectionType {
+    MULTIPLE_CHOICE
+    SHORT_ANSWER
+    FILE_ANSWER
+}
