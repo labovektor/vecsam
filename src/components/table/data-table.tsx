@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -54,9 +54,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center justify-between py-4 gap-2">
-        <div className=" flex gap-2 items-center">
-          <Search className=" text-muted-foreground" />
+      <div className="flex items-center justify-between gap-2 py-4">
+        <div className="flex items-center gap-2">
+          <Search className="text-muted-foreground" />
           <Input
             placeholder="Cari data..."
             onChange={(e) => table.setGlobalFilter(e.target.value)}
@@ -78,7 +78,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -97,7 +97,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -109,14 +109,14 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {loading ? "Loading..." : message ?? "No Data."}
+                  {loading ? "Loading..." : (message ?? "No Data.")}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className=" mt-3">
+      <div className="mt-3">
         <DataTablePagination table={table} />
       </div>
     </>

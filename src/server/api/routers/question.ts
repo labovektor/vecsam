@@ -7,6 +7,24 @@ import type { SectionType } from "@prisma/client";
 import { z } from "zod";
 
 export const questionRouter = createTRPCRouter({
+  getSections: protectedProcedure
+    .input(
+      z.object({
+        examId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      const { db, user } = ctx;
+
+      return db.section.findMany({
+        where: {
+          examId: input.examId,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+    }),
   addSection: protectedProcedure
     .input(addSectionSchema)
     .mutation(({ ctx, input }) => {

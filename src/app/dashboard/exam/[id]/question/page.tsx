@@ -1,8 +1,9 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import SectionTab from "@/features/question/components/SectionTab";
 import { api } from "@/trpc/react";
-import { AlertCircle } from "lucide-react";
 import React, { use } from "react";
 
 const QuestionManagementPage = ({
@@ -11,18 +12,25 @@ const QuestionManagementPage = ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = use(params);
-  const { data: exam, error } = api.exam.getById.useQuery({ id });
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
-  }
 
-  return <div>QuestionManagementPage</div>;
+  const { data: exam, error } = api.exam.getById.useQuery({
+    id: id,
+  });
+
+  return (
+    <div>
+      <CardTitle className="text-xl">
+        Question Management - {exam?.title}
+      </CardTitle>
+      <div className="flex">
+        <div className="flex-1">
+          <SectionTab examId={id} />
+        </div>
+        <Separator orientation="vertical" />
+        <div className="flex-[3]"></div>
+      </div>
+    </div>
+  );
 };
 
 export default QuestionManagementPage;
