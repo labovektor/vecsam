@@ -7,6 +7,7 @@ import type { SectionType } from "@prisma/client";
 import { z } from "zod";
 
 export const questionRouter = createTRPCRouter({
+  // Sections
   getSections: protectedProcedure
     .input(
       z.object({
@@ -69,6 +70,30 @@ export const questionRouter = createTRPCRouter({
       return db.section.delete({
         where: {
           id: input.id,
+        },
+      });
+    }),
+
+  // Questions
+  getQuestions: protectedProcedure
+    .input(
+      z.object({
+        sectionId: z.string().nullable(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      const { db, user } = ctx;
+
+      if (!input.sectionId) {
+        return [];
+      }
+
+      return db.question.findMany({
+        where: {
+          sectionId: input.sectionId,
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       });
     }),

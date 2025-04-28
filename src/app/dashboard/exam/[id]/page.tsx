@@ -51,7 +51,7 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <ExamStatCard
                 className="bg-green-50 text-green-600"
                 title="Total Question"
-                href={`/dashboard/exam/${id}/question`}
+                href={`/dashboard/exam/${id}/question?exam_name=${exam.title}`}
                 value={exam.sections.reduce(
                   (acc, section) => acc + section.questions.length,
                   0,
