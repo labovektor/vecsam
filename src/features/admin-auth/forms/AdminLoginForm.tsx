@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const DashboardLoginForm = () => {
   const router = useRouter();
@@ -31,17 +32,27 @@ const DashboardLoginForm = () => {
     },
   });
 
-  const login = api.adminAuth.login.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      router.replace("/dashboard");
-    },
-  });
+  // const login = api.adminAuth.login.useMutation({
+  //   onError: (err) => {
+  //     toast.error(err.message);
+  //   },
+  //   onSuccess: () => {
+  //     router.replace("/dashboard");
+  //   },
+  // });
 
   async function onSubmit(values: LoginSchemaType) {
-    login.mutate(values);
+    const supabase = createClient();
+    const res = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (res.error) {
+      toast.error(res.error.message);
+    }
+
+    router.replace("/dashboard");
   }
   return (
     <Form {...form}>
@@ -72,8 +83,12 @@ const DashboardLoginForm = () => {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit" disabled={login.isPending}>
-          {login.isPending ? "Logging in..." : "Login"}
+        <Button
+          className="w-full"
+          type="submit"
+          disabled={form.formState.isLoading}
+        >
+          {form.formState.isLoading ? "Logging in..." : "Login"}
         </Button>
       </form>
     </Form>

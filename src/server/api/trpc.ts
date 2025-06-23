@@ -11,7 +11,6 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db";
-import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { AuthenticationError } from "@/use-cases/errors";
 
@@ -27,26 +26,17 @@ import { AuthenticationError } from "@/use-cases/errors";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createInnerTRPCContext = async (opts: {
-  headers: Headers;
-  user: User | null;
-}) => {
-  return {
-    db,
-    ...opts,
-  };
-};
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  // Dapetin user yang lagi login
   const supabaseServerClient = await createClient();
 
   const { data } = await supabaseServerClient.auth.getUser();
 
-  return createInnerTRPCContext({
+  return {
+    db,
     ...opts,
     user: data.user,
-  });
+  };
 };
 
 /**
