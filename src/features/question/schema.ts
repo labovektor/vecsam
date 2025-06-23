@@ -1,3 +1,4 @@
+import { fileToBase64Zod } from "@/lib/zod-utils";
 import { z } from "zod";
 
 export const sectionTypes = [
@@ -33,5 +34,25 @@ export const updateSectionSchema = z.object({
   points: z.number({ coerce: true }),
 });
 
+export const addQuestionSchema = z.object({
+  text: z.string().optional(),
+  image: fileToBase64Zod({ type: "image" }).optional(),
+  questionAttr: z
+    .object({
+      file: fileToBase64Zod({ type: "pdf" }),
+      templateFile: fileToBase64Zod({ type: "pdf" }),
+    })
+    .optional(),
+  multipleChoiceOptions: z
+    .array(
+      z.object({
+        text: z.string().optional(),
+        image: fileToBase64Zod({ type: "image" }).optional(),
+      }),
+    )
+    .optional(),
+});
+
 export type AddSectionSchemaType = z.infer<typeof addSectionSchema>;
 export type UpdateSectionSchemaType = z.infer<typeof updateSectionSchema>;
+export type AddQuestionSchemaType = z.infer<typeof addQuestionSchema>;

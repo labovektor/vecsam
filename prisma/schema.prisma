@@ -78,7 +78,7 @@ model QuestionAttr {
     id           String   @id @default(uuid())
     questionId   String   @unique
     question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    file         String
+    file         String //if the question is a file
     templateFile String
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt

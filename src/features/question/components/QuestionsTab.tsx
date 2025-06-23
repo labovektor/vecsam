@@ -1,18 +1,20 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { AlertCircle, LoaderCircle } from "lucide-react";
+import type { Section } from "@prisma/client";
+import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
 import React from "react";
 
 const QuestionsTab = ({
-  sectionId,
+  section,
   className,
 }: {
-  sectionId: string | null;
+  section: Section | null;
   className?: string;
 }) => {
   const {
@@ -21,7 +23,7 @@ const QuestionsTab = ({
     refetch,
     isLoading,
   } = api.question.getQuestions.useQuery({
-    sectionId,
+    sectionId: section?.id ?? null,
   });
 
   if (error) {
@@ -37,7 +39,7 @@ const QuestionsTab = ({
   return (
     <div className={cn("flex h-full flex-col gap-2", className)}>
       <ScrollArea className="h-[calc(100svh-14rem)] scroll-m-2">
-        {!sectionId && (
+        {!section && (
           <CardDescription>
             Please select a section to view questions
           </CardDescription>
@@ -47,9 +49,19 @@ const QuestionsTab = ({
             <LoaderCircle className="animate-spin" />
           </div>
         )}
-        {questions?.map((question) => (
-          <div key={question.id}>{question.text}</div>
-        ))}
+        {section && !isLoading && (
+          <div>
+            {questions?.map((question) => (
+              <div key={question.id}>{question.text}</div>
+            ))}
+            <Button
+            // className={` ${visibleAddSection ? "hidden" : "flex"} mt-2 w-full`}
+            // onClick={() => setVisibleAddSection(true)}
+            >
+              <Plus />
+            </Button>
+          </div>
+        )}
       </ScrollArea>
     </div>
   );
