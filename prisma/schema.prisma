@@ -63,6 +63,7 @@ model Section {
 
 model Question {
     id                   String                 @id @default(uuid())
+    number               Int
     text                 String?
     image                String?
     sectionId            String

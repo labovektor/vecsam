@@ -4,6 +4,7 @@ import { CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import QuestionsTab from "@/features/question/components/QuestionsTab";
 import SectionTab from "@/features/question/components/SectionTab";
+import type { Section } from "@prisma/client";
 import React, { use } from "react";
 
 const QuestionManagementPage = ({
@@ -16,7 +17,7 @@ const QuestionManagementPage = ({
   const { id } = use(params);
   const { exam_name } = use(searchParams);
 
-  const [selectedSection, setSelectedSection] = React.useState<string | null>(
+  const [selectedSection, setSelectedSection] = React.useState<Section | null>(
     null,
   );
 
@@ -36,7 +37,7 @@ const QuestionManagementPage = ({
         </div>
 
         <div className="flex-[3]">
-          <QuestionsTab sectionId={selectedSection} />
+          <QuestionsTab section={selectedSection} />
         </div>
       </div>
     </div>

@@ -4,10 +4,13 @@ import {
   updateSectionSchema,
 } from "@/features/question/schema";
 import { Bucket } from "@/lib/supabase/bucket";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, supabaseAdminClient } from "@/lib/supabase/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import type { SectionType } from "@prisma/client";
 import { z } from "zod";
+
+export const MAX_FILE_SIZE_IMAGE = 5 * 1024 * 1024;
+export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
 export const questionRouter = createTRPCRouter({
   // Sections
@@ -96,7 +99,7 @@ export const questionRouter = createTRPCRouter({
           sectionId: input.sectionId,
         },
         orderBy: {
-          createdAt: "asc",
+          number: "asc",
         },
       });
     }),
@@ -110,111 +113,154 @@ export const questionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { db, user } = ctx;
-      const supabase = await createClient();
 
       const tmp = new Date().getTime().toString();
 
-      // Upload question image if provided
-      let questionImageUrl: string | undefined = undefined;
-      if (input.question.image) {
-        const fileName = `img-${crypto.randomUUID()}.jpeg`;
-        const buffer = Buffer.from(input.question.image, "base64");
-        const { data, error } = await supabase.storage
-          .from(Bucket.QUESTION)
-          .upload(fileName, buffer, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-        if (error) throw new Error(error.message);
-        questionImageUrl = supabase.storage
-          .from(Bucket.QUESTION)
-          .getPublicUrl(data.path).data.publicUrl;
-      }
+      const questionId = crypto.randomUUID();
 
-      // Create question first
-      const question = await db.question.create({
-        data: {
-          text: input.question.text,
-          image: questionImageUrl + "?t=" + tmp,
-          sectionId: input.sectionId,
-        },
-      });
+      return db.$transaction(async (tx) => {
+        // Upload question image if provided
+        let questionImageUrl: string | undefined = undefined;
+        if (input.question.image) {
+          const fileName = `img-${questionId}.jpeg`;
+          const buffer = Buffer.from(input.question.image, "base64");
 
-      // Upload QuestionAttr files and create if provided
-      if (input.question.questionAttr) {
-        const filesBuffer = Buffer.from(
-          input.question.questionAttr.file,
-          "base64",
-        );
-        const templateBuffer = Buffer.from(
-          input.question.questionAttr.templateFile,
-          "base64",
-        );
-        const [fileUpload, templateUpload] = await Promise.all([
-          supabase.storage
-            .from(Bucket.QUESTION_ATTRIBUTE)
-            .upload(`files/${question.id}.pdf`, filesBuffer, {
-              contentType: "application/pdf",
-            }),
-          supabase.storage
-            .from(Bucket.QUESTION_ATTRIBUTE)
-            .upload(`templates/${question.id}.pdf`, templateBuffer, {
-              contentType: "application/pdf",
-            }),
-        ]);
+          if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
+            throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
+          }
 
-        if (fileUpload.error) throw new Error(fileUpload.error.message);
-        if (templateUpload.error) throw new Error(templateUpload.error.message);
+          const { data, error } = await supabaseAdminClient.storage
+            .from(Bucket.QUESTION)
+            .upload(fileName, buffer, {
+              contentType: "image/jpeg",
+              cacheControl: "3600",
+              upsert: true,
+            });
+          if (error) throw new Error(error.message);
+          questionImageUrl = supabaseAdminClient.storage
+            .from(Bucket.QUESTION)
+            .getPublicUrl(data.path).data.publicUrl;
+        }
 
-        const fileUrl = supabase.storage
-          .from(Bucket.QUESTION_ATTRIBUTE)
-          .getPublicUrl(fileUpload.data.path).data.publicUrl;
-        const templateUrl = supabase.storage
-          .from(Bucket.QUESTION_ATTRIBUTE)
-          .getPublicUrl(templateUpload.data.path).data.publicUrl;
-
-        await db.questionAttr.create({
+        // Create question first
+        const question = await tx.question.create({
           data: {
-            questionId: question.id,
-            file: fileUrl + "?t=" + tmp,
-            templateFile: templateUrl + "?t=" + tmp,
+            id: questionId,
+            number: input.question.number,
+            text: input.question.text,
+            image: questionImageUrl ? +"?t=" + tmp : undefined,
+            sectionId: input.sectionId,
           },
         });
-      }
 
-      // Create MultipleChoiceOptions if provided
-      if (input.question.multipleChoiceOptions?.length) {
-        const optionData = await Promise.all(
-          input.question.multipleChoiceOptions.map(async (option) => {
-            let optionImageUrl: string | undefined;
-            if (option.image) {
-              const fileName = `img-${crypto.randomUUID()}.jpeg`;
-              const buffer = Buffer.from(option.image, "base64");
-              const { data, error } = await supabase.storage
-                .from(Bucket.QUESTION)
-                .upload(`options/${fileName}`, buffer);
-              if (error) throw new Error(error.message);
-              optionImageUrl = supabase.storage
-                .from(Bucket.QUESTION)
-                .getPublicUrl(data.path).data.publicUrl;
-            }
+        // Upload QuestionAttr files and create if provided
+        if (input.question.questionAttr) {
+          const filesBuffer = Buffer.from(
+            input.question.questionAttr.file,
+            "base64",
+          );
 
-            return {
+          if (filesBuffer.byteLength > MAX_FILE_SIZE_FILE) {
+            throw new Error("Ukuran file tidak boleh lebih dari 10MB");
+          }
+
+          const templateBuffer = Buffer.from(
+            input.question.questionAttr.templateFile,
+            "base64",
+          );
+
+          if (templateBuffer.byteLength > MAX_FILE_SIZE_FILE) {
+            throw new Error("Ukuran file tidak boleh lebih dari 10MB");
+          }
+
+          const [fileUpload, templateUpload] = await Promise.all([
+            supabaseAdminClient.storage
+              .from(Bucket.QUESTION_ATTRIBUTE)
+              .upload(`files/${question.id}.pdf`, filesBuffer, {
+                contentType: "application/pdf",
+                cacheControl: "3600",
+                upsert: true,
+              }),
+            supabaseAdminClient.storage
+              .from(Bucket.QUESTION_ATTRIBUTE)
+              .upload(`templates/${question.id}.pdf`, templateBuffer, {
+                contentType: "application/pdf",
+                cacheControl: "3600",
+                upsert: true,
+              }),
+          ]);
+
+          if (fileUpload.error) throw new Error(fileUpload.error.message);
+          if (templateUpload.error)
+            throw new Error(templateUpload.error.message);
+
+          const fileUrl = supabaseAdminClient.storage
+            .from(Bucket.QUESTION_ATTRIBUTE)
+            .getPublicUrl(fileUpload.data.path).data.publicUrl;
+          const templateUrl = supabaseAdminClient.storage
+            .from(Bucket.QUESTION_ATTRIBUTE)
+            .getPublicUrl(templateUpload.data.path).data.publicUrl;
+
+          await tx.questionAttr.create({
+            data: {
               questionId: question.id,
-              text: option.text,
-              image: optionImageUrl + "?t=" + tmp,
-            };
-          }),
-        );
+              file: fileUrl + "?t=" + tmp,
+              templateFile: templateUrl + "?t=" + tmp,
+            },
+          });
+        }
 
-        await db.multipleChoiceOption.createMany({
-          data: optionData,
-        });
-      }
+        // Create MultipleChoiceOptions if provided
+        if (input.question.multipleChoiceOptions?.length) {
+          const optionData = await Promise.all(
+            input.question.multipleChoiceOptions.map(async (option, index) => {
+              let optionImageUrl: string | undefined;
+              if (option.image) {
+                const fileName = `opt-${question.id}-${index}.jpeg`;
+                const buffer = Buffer.from(option.image, "base64");
+                if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
+                  throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
+                }
+                const { data, error } = await supabaseAdminClient.storage
+                  .from(Bucket.QUESTION)
+                  .upload(`options/${fileName}`, buffer, {
+                    contentType: "image/jpeg",
+                    cacheControl: "3600",
+                    upsert: true,
+                  });
+                if (error) throw new Error(error.message);
+                optionImageUrl = supabaseAdminClient.storage
+                  .from(Bucket.QUESTION)
+                  .getPublicUrl(data.path).data.publicUrl;
+              }
 
-      return {
-        success: true,
-        id: question.id,
-      };
+              return {
+                questionId: question.id,
+                text: option.text,
+                image: optionImageUrl ? +"?t=" + tmp : undefined,
+              };
+            }),
+          );
+
+          await tx.multipleChoiceOption.createMany({
+            data: optionData,
+          });
+        }
+      });
+    }),
+
+  deleteQuestion: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const { db, user } = ctx;
+      return db.question.delete({
+        where: {
+          id: input.id,
+        },
+      });
     }),
 });

@@ -1,5 +1,7 @@
-import { fileToBase64Zod } from "@/lib/zod-utils";
 import { z } from "zod";
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export const sectionTypes = [
   "MULTIPLE_CHOICE",
@@ -35,19 +37,20 @@ export const updateSectionSchema = z.object({
 });
 
 export const addQuestionSchema = z.object({
-  text: z.string().optional(),
-  image: fileToBase64Zod({ type: "image" }).optional(),
+  number: z.number({ coerce: true }).min(1),
+  text: z.string().min(2, "Harus diisi!"),
+  image: z.string().optional(),
   questionAttr: z
     .object({
-      file: fileToBase64Zod({ type: "pdf" }),
-      templateFile: fileToBase64Zod({ type: "pdf" }),
+      file: z.string(),
+      templateFile: z.string(),
     })
     .optional(),
   multipleChoiceOptions: z
     .array(
       z.object({
         text: z.string().optional(),
-        image: fileToBase64Zod({ type: "image" }).optional(),
+        image: z.string().optional(),
       }),
     )
     .optional(),

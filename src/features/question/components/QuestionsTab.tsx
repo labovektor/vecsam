@@ -9,6 +9,7 @@ import { api } from "@/trpc/react";
 import type { Section } from "@prisma/client";
 import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
 import React from "react";
+import AddQuestionForm from "../form/AddQuestionForm";
 
 const QuestionsTab = ({
   section,
@@ -54,12 +55,10 @@ const QuestionsTab = ({
             {questions?.map((question) => (
               <div key={question.id}>{question.text}</div>
             ))}
-            <Button
-            // className={` ${visibleAddSection ? "hidden" : "flex"} mt-2 w-full`}
-            // onClick={() => setVisibleAddSection(true)}
-            >
-              <Plus />
-            </Button>
+            <AddQuestionForm
+              sectionId={section.id}
+              sectionType={section.type}
+            />
           </div>
         )}
       </ScrollArea>

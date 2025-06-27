@@ -25,6 +25,7 @@ import AddSectionForm from "../form/AddSectionForm";
 import EditSectionForm from "../form/EditSectionForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import type { Section } from "@prisma/client";
 
 const SectionTab = ({
   examId,
@@ -33,7 +34,7 @@ const SectionTab = ({
 }: {
   examId: string;
   className?: string;
-  onSelected: (id: string) => void;
+  onSelected: (section: Section) => void;
 }) => {
   const [visibleAddSection, setVisibleAddSection] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
@@ -87,7 +88,7 @@ const SectionTab = ({
               ) : (
                 <Card
                   className="group h-fit cursor-pointer hover:bg-blue-50"
-                  onClick={() => onSelected(section.id)}
+                  onClick={() => onSelected(section)}
                 >
                   <CardHeader>
                     <CardTitle>{section.title}</CardTitle>
