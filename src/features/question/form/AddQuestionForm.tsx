@@ -24,10 +24,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Trash } from "lucide-react";
+import { CircleDot, Trash } from "lucide-react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import TiptapInput from "@/components/ui/tiptap";
 
 const AddQuestionForm = ({
   sectionId,
@@ -149,7 +150,10 @@ const AddQuestionForm = ({
                   <FormItem className="flex-[2]">
                     <FormLabel>Pertanyaan</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Question" {...field} />
+                      <TiptapInput
+                        placeholder="Tulis pertanyaan disini"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,15 +227,18 @@ const AddQuestionForm = ({
             {sectionType === "MULTIPLE_CHOICE" && (
               <>
                 {multipleChoiceFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2">
+                  <div
+                    key={field.id}
+                    className="flex gap-2 rounded-md bg-blue-50 p-2"
+                  >
                     <FormField
                       control={form.control}
                       name={`multipleChoiceOptions.${index}.text`}
                       render={({ field }) => (
                         <FormItem className="flex-[2]">
                           <FormControl>
-                            <Textarea
-                              placeholder="Masukkan Opsi Jawaban"
+                            <TiptapInput
+                              placeholder="Ketikkan opsi jawaban atau masukkan gambar di samping"
                               {...field}
                             />
                           </FormControl>
