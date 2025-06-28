@@ -1,86 +1,13 @@
-import {
-  addQuestionSchema,
-  addSectionSchema,
-  updateSectionSchema,
-} from "@/features/question/schema";
+import { addQuestionSchema } from "@/features/question/schema";
 import { Bucket } from "@/lib/supabase/bucket";
-import { createClient, supabaseAdminClient } from "@/lib/supabase/server";
+import { supabaseAdminClient } from "@/lib/supabase/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import type { SectionType } from "@prisma/client";
 import { z } from "zod";
 
 export const MAX_FILE_SIZE_IMAGE = 5 * 1024 * 1024;
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
 export const questionRouter = createTRPCRouter({
-  // Sections
-  getSections: protectedProcedure
-    .input(
-      z.object({
-        examId: z.string(),
-      }),
-    )
-    .query(({ ctx, input }) => {
-      const { db, user } = ctx;
-
-      return db.section.findMany({
-        where: {
-          examId: input.examId,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      });
-    }),
-  addSection: protectedProcedure
-    .input(addSectionSchema)
-    .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
-
-      return db.section.create({
-        data: {
-          title: input.title,
-          type: input.type as SectionType,
-          points: input.points,
-          examId: input.examId,
-        },
-      });
-    }),
-
-  updateSection: protectedProcedure
-    .input(updateSectionSchema)
-    .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
-
-      return db.section.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          title: input.title,
-          type: input.type as SectionType,
-          points: input.points,
-        },
-      });
-    }),
-
-  deleteSection: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
-
-      return db.section.delete({
-        where: {
-          id: input.id,
-        },
-      });
-    }),
-
-  // Questions
   getQuestions: protectedProcedure
     .input(
       z.object({
@@ -100,6 +27,10 @@ export const questionRouter = createTRPCRouter({
         },
         orderBy: {
           number: "asc",
+        },
+        include: {
+          MultipleChoiceOption: true,
+          QuestionAttr: true,
         },
       });
     }),
@@ -148,7 +79,9 @@ export const questionRouter = createTRPCRouter({
             id: questionId,
             number: input.question.number,
             text: input.question.text,
-            image: questionImageUrl ? +"?t=" + tmp : undefined,
+            image: questionImageUrl
+              ? `${questionImageUrl}?t=${tmp}`
+              : undefined,
             sectionId: input.sectionId,
           },
         });
@@ -237,7 +170,9 @@ export const questionRouter = createTRPCRouter({
               return {
                 questionId: question.id,
                 text: option.text,
-                image: optionImageUrl ? +"?t=" + tmp : undefined,
+                image: optionImageUrl
+                  ? `${optionImageUrl}?t=${tmp}`
+                  : undefined,
               };
             }),
           );

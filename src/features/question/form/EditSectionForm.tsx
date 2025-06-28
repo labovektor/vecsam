@@ -3,15 +3,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
-  addSectionSchema,
   formatSectionType,
   updateSectionSchema,
-  type AddSectionSchemaType,
   type UpdateSectionSchemaType,
 } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/trpc/react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -51,7 +49,7 @@ const EditSectionForm = ({
     },
   });
 
-  const updateSection = api.question.updateSection.useMutation({
+  const updateSection = api.section.updateSection.useMutation({
     onSuccess: onSuccess,
   });
 

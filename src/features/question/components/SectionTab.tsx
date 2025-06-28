@@ -31,10 +31,12 @@ const SectionTab = ({
   examId,
   className,
   onSelected,
+  selectedSectionId,
 }: {
   examId: string;
   className?: string;
   onSelected: (section: Section) => void;
+  selectedSectionId: string | null;
 }) => {
   const [visibleAddSection, setVisibleAddSection] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
@@ -44,7 +46,7 @@ const SectionTab = ({
     error,
     refetch,
     isLoading,
-  } = api.question.getSections.useQuery({
+  } = api.section.getSections.useQuery({
     examId,
   });
   if (error) {
@@ -57,7 +59,7 @@ const SectionTab = ({
     );
   }
 
-  const removeSection = api.question.deleteSection.useMutation({
+  const removeSection = api.section.deleteSection.useMutation({
     onSuccess: () => {
       refetch();
     },
@@ -87,7 +89,11 @@ const SectionTab = ({
                 />
               ) : (
                 <Card
-                  className="group h-fit cursor-pointer hover:bg-blue-50"
+                  className={cn(
+                    "group h-fit cursor-pointer hover:bg-blue-50",
+                    selectedSectionId === section.id &&
+                      "border-blue-500 bg-blue-50",
+                  )}
                   onClick={() => onSelected(section)}
                 >
                   <CardHeader>
@@ -99,7 +105,12 @@ const SectionTab = ({
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="flex h-0 justify-end gap-1 overflow-hidden transition-all group-hover:h-9">
+                  <CardContent
+                    className={cn(
+                      selectedSectionId === section.id ? "h-9" : "h-0",
+                      "flex justify-end gap-1 overflow-hidden transition-all group-hover:h-9",
+                    )}
+                  >
                     <Button
                       size="icon"
                       onClick={() => setEditingId(section.id)}

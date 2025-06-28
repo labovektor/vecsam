@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CircleDot, Trash } from "lucide-react";
+import { CircleDot, Plus, Trash } from "lucide-react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
@@ -119,7 +119,9 @@ const AddQuestionForm = ({
       }}
     >
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>Tambah Pertanyaan</Button>
+        <Button onClick={() => setOpen(true)}>
+          Tambah Pertanyaan <Plus />
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-3xl">
         <DialogHeader>

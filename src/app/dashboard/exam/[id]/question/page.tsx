@@ -1,6 +1,6 @@
 "use client";
 
-import { CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import QuestionsTab from "@/features/question/components/QuestionsTab";
 import SectionTab from "@/features/question/components/SectionTab";
@@ -22,24 +22,26 @@ const QuestionManagementPage = ({
   );
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col gap-2">
       <CardTitle className="text-xl">
-        Question Management - {exam_name}
+        Manajemen Pertanyaan - {exam_name}
       </CardTitle>
-      <Separator className="my-3" />
-      <div className="flex h-full gap-4">
-        <div className="h-full flex-1">
-          <SectionTab
-            examId={id}
-            className="h-full"
-            onSelected={setSelectedSection}
-          />
-        </div>
+      <Card className="h-full bg-white">
+        <CardContent className="flex gap-3">
+          <div className="h-full flex-1">
+            <SectionTab
+              examId={id}
+              className="h-full"
+              onSelected={setSelectedSection}
+              selectedSectionId={selectedSection?.id ?? null}
+            />
+          </div>
 
-        <div className="flex-[3]">
-          <QuestionsTab section={selectedSection} />
-        </div>
-      </div>
+          <div className="flex-[3]">
+            <QuestionsTab section={selectedSection} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

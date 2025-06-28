@@ -10,6 +10,7 @@ import type { Section } from "@prisma/client";
 import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
 import React from "react";
 import AddQuestionForm from "../form/AddQuestionForm";
+import QuestionCard from "./QuestionCard";
 
 const QuestionsTab = ({
   section,
@@ -21,7 +22,6 @@ const QuestionsTab = ({
   const {
     data: questions,
     error,
-    refetch,
     isLoading,
   } = api.question.getQuestions.useQuery({
     sectionId: section?.id ?? null,
@@ -39,29 +39,41 @@ const QuestionsTab = ({
 
   return (
     <div className={cn("flex h-full flex-col gap-2", className)}>
-      <ScrollArea className="h-[calc(100svh-14rem)] scroll-m-2">
-        {!section && (
-          <CardDescription>
-            Please select a section to view questions
-          </CardDescription>
-        )}
-        {isLoading && (
-          <div className="flex w-full items-center justify-center">
-            <LoaderCircle className="animate-spin" />
-          </div>
-        )}
-        {section && !isLoading && (
-          <div>
-            {questions?.map((question) => (
-              <div key={question.id}>{question.text}</div>
-            ))}
+      {!section && (
+        <CardDescription className="text-center">
+          Please select a section to view questions
+        </CardDescription>
+      )}
+
+      {section && (
+        <>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="line-clamp-1">{section.title}</CardTitle>
             <AddQuestionForm
               sectionId={section.id}
               sectionType={section.type}
             />
           </div>
-        )}
-      </ScrollArea>
+          <ScrollArea className="h-[calc(100svh-14rem)] scroll-m-2">
+            {isLoading && (
+              <div className="flex w-full items-center justify-center">
+                <LoaderCircle className="animate-spin" />
+              </div>
+            )}
+            {!isLoading && (
+              <div className="flex flex-col gap-2">
+                {questions?.map((question) => (
+                  <QuestionCard
+                    key={question.id}
+                    sectionType={section.type}
+                    question={question}
+                  />
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </>
+      )}
     </div>
   );
 };
