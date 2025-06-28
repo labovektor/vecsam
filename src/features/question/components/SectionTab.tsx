@@ -26,6 +26,8 @@ import EditSectionForm from "../form/EditSectionForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import type { Section } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 const SectionTab = ({
   examId,
@@ -38,6 +40,8 @@ const SectionTab = ({
   onSelected: (section: Section) => void;
   selectedSectionId: string | null;
 }) => {
+  const queryClient = useQueryClient();
+
   const [visibleAddSection, setVisibleAddSection] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
@@ -85,6 +89,9 @@ const SectionTab = ({
                   onSuccess={() => {
                     setEditingId(null);
                     refetch();
+                    queryClient.refetchQueries({
+                      queryKey: getQueryKey(api.question.getQuestions),
+                    });
                   }}
                 />
               ) : (

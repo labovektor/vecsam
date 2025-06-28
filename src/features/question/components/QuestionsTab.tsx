@@ -38,7 +38,9 @@ const QuestionsTab = ({
   }
 
   return (
-    <div className={cn("flex h-full flex-col gap-2", className)}>
+    <div
+      className={cn("flex h-full flex-col gap-2 overflow-y-hidden", className)}
+    >
       {!section && (
         <CardDescription className="text-center">
           Please select a section to view questions
@@ -54,7 +56,10 @@ const QuestionsTab = ({
               sectionType={section.type}
             />
           </div>
-          <ScrollArea className="h-[calc(100svh-14rem)] scroll-m-2">
+          <ScrollArea
+            type="always"
+            className="h-[calc(100svh-14rem)] scroll-m-2"
+          >
             {isLoading && (
               <div className="flex w-full items-center justify-center">
                 <LoaderCircle className="animate-spin" />

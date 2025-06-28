@@ -24,11 +24,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CircleDot, Plus, Trash } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import TiptapInput from "@/components/ui/tiptap";
+import { getQueryKey } from "@trpc/react-query";
 
 const AddQuestionForm = ({
   sectionId,
@@ -96,7 +96,9 @@ const AddQuestionForm = ({
       toast.error(err.message);
     },
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["question", sectionId] });
+      queryClient.refetchQueries({
+        queryKey: getQueryKey(api.question.getQuestions),
+      });
       setOpen(false);
       toast.success("Pertanyaan berhasil ditambahkan");
     },

@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
 export const sectionTypes = [
   "MULTIPLE_CHOICE",
   "SHORT_ANSWER",
@@ -56,6 +53,34 @@ export const addQuestionSchema = z.object({
     .optional(),
 });
 
+export const editQuestionSchema = z.object({
+  number: z.number({ coerce: true }).min(1),
+  text: z.string().min(2, "Harus diisi!"),
+  image: z.string().optional(),
+});
+
+export const addMultipleChoiceOptionSchema = z.object({
+  text: z.string().min(2, "Harus diisi!"),
+  image: z.string().optional(),
+});
+
+export const editMultipleChoiceOptionSchema = z.object({
+  text: z.string().optional(),
+  image: z.string().optional(),
+});
+
+export const editQuestionAttrSchema = z.object({
+  file: z.string(),
+});
+
 export type AddSectionSchemaType = z.infer<typeof addSectionSchema>;
 export type UpdateSectionSchemaType = z.infer<typeof updateSectionSchema>;
 export type AddQuestionSchemaType = z.infer<typeof addQuestionSchema>;
+export type EditQuestionSchemaType = z.infer<typeof editQuestionSchema>;
+export type AddMultipleChoiceOptionSchemaType = z.infer<
+  typeof addMultipleChoiceOptionSchema
+>;
+export type EditMultipleChoiceOptionSchemaType = z.infer<
+  typeof editMultipleChoiceOptionSchema
+>;
+export type EditQuestionAttrSchemaType = z.infer<typeof editQuestionAttrSchema>;

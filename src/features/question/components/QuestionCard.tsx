@@ -5,24 +5,19 @@ import type {
   SectionType,
 } from "@prisma/client";
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
-import {
-  CircleDot,
-  CircleDotDashed,
-  Download,
-  Edit,
-  Pencil,
-  Plus,
-  Trash,
-} from "lucide-react";
+import { CircleDotDashed, Edit, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { api } from "@/trpc/react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+import { Separator } from "@/components/ui/separator";
+import EditQuestionForm from "../form/EditQuestionForm";
+import AddMutipleChoiceOptionForm from "../form/AddMultipleChoiceOptionForm";
+import EditMutipleChoiceOptionForm from "../form/EditMultipleChoiceOptionForm";
+import EditQuestionAttrForm from "../form/EditQuestionAttrForm";
 
 const QuestionCard = ({
   sectionType,
@@ -34,6 +29,31 @@ const QuestionCard = ({
     QuestionAttr: QuestionAttr | null;
   };
 }) => {
+  const queryClient = useQueryClient();
+  const deleteQuestion = api.question.deleteQuestion.useMutation({
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: getQueryKey(api.question.getQuestions),
+      });
+      toast.success("Pertanyaan berhasil dihapus");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  const deleteMultipleChoiceOption =
+    api.question.deleteMultipleChoiceOption.useMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: getQueryKey(api.question.getQuestions),
+        });
+        toast.success("Opsi jawaban berhasil dihapus");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
   return (
     <Card>
       <CardHeader className="flex gap-2">
@@ -53,22 +73,29 @@ const QuestionCard = ({
           )}
         </div>
         <div className="flex-1" />
-        <Button size="icon">
-          <Edit />
-        </Button>
+
         {sectionType === "MULTIPLE_CHOICE" && (
-          <Button size="icon" variant="secondary">
-            <Plus />
-          </Button>
+          <>
+            <AddMutipleChoiceOptionForm questionId={question.id} />
+            <div className="border-muted h-9 border"></div>
+          </>
         )}
-        <Button size="icon" variant="destructive">
+        <EditQuestionForm question={question} />
+        <Button
+          size="icon"
+          variant="destructive"
+          onClick={() => deleteQuestion.mutate({ id: question.id })}
+        >
           <Trash />
         </Button>
       </CardHeader>
       <CardContent>
         {sectionType === "MULTIPLE_CHOICE" &&
           question.MultipleChoiceOption.map((option) => (
-            <div key={option.id} className="my-2 flex items-start gap-2">
+            <div
+              key={option.id}
+              className="group my-1 flex min-h-7 items-start gap-2"
+            >
               <CircleDotDashed className="text-muted-foreground" />
               <div>
                 <span
@@ -83,6 +110,19 @@ const QuestionCard = ({
                     className="max-h-36"
                   />
                 )}
+              </div>
+              <div className="hidden gap-2 group-hover:flex">
+                <EditMutipleChoiceOptionForm multipleChoiceOption={option} />
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="size-7"
+                  onClick={() =>
+                    deleteMultipleChoiceOption.mutate({ id: option.id })
+                  }
+                >
+                  <Trash />
+                </Button>
               </div>
             </div>
           ))}
@@ -110,9 +150,10 @@ const QuestionCard = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3>File template jawaban:</h3>
-                <Button size="icon">
-                  <Edit />
-                </Button>
+                <EditQuestionAttrForm
+                  type="templateFile"
+                  questionId={question.id}
+                />
               </div>
               {question.QuestionAttr && question.QuestionAttr.templateFile && (
                 <a
