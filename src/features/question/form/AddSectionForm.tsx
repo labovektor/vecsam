@@ -49,7 +49,7 @@ const AddSectionForm = ({
     },
   });
 
-  const addSection = api.question.addSection.useMutation({
+  const addSection = api.section.addSection.useMutation({
     onSuccess: onSuccess,
   });
 
