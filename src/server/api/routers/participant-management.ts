@@ -65,7 +65,7 @@ export const participantManagementRouter = createTRPCRouter({
         const row = records[i];
 
         const name = row.name?.toString().trim();
-        const passcode = row.password?.toString();
+        const passcode = row.passcode?.toString();
 
         if (!name || !passcode) {
           invalidRows.push(i + 1);

@@ -9,3 +9,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
     reader.readAsDataURL(file); // otomatis output dalam format base64
   });
 };
+
+export const csvToText = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (file.type !== "text/csv") {
+      reject(new Error("File bukan CSV"));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsText(file); // ini penting untuk CSV
+  });
+};

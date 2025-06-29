@@ -11,6 +11,7 @@ import {
   participantColumnns,
 } from "./participantColumn";
 import { exportAsExcelFile } from "@/lib/xlsx";
+import { BulkAddParticipantsForm } from "../forms/BulkAddParticipantForm";
 
 const ParticipantTable = ({ examId }: { examId: string }) => {
   const { data: participants } =
@@ -22,9 +23,7 @@ const ParticipantTable = ({ examId }: { examId: string }) => {
       actions={(data) => (
         <>
           <AddParticipantForm examId={examId} />
-          <Button>
-            Import Dari CSV <Download />
-          </Button>
+          <BulkAddParticipantsForm examId={examId} />
           <Button
             variant="secondary"
             onClick={() =>

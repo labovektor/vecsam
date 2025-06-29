@@ -6,17 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DatetimePicker } from "@/components/ui/date-time-picker";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { addParticipantSchema, type AddParticipantSchemaType } from "../schema";
 import { useQueryClient } from "@tanstack/react-query";
