@@ -3,6 +3,7 @@ import { adminAuthRouter } from "./routers/admin-auth";
 import { examRouter } from "./routers/exam";
 import { questionRouter } from "./routers/question";
 import { sectionRouter } from "./routers/section";
+import { participantManagementRouter } from "./routers/participant-management";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   exam: examRouter,
   section: sectionRouter,
   question: questionRouter,
+  participantManagement: participantManagementRouter,
 });
 
 // export type definition of API

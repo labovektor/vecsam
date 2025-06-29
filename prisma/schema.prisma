@@ -33,8 +33,7 @@ model Exam {
 model Participant {
     id                String              @id @default(uuid())
     name              String
-    username          String
-    password          String
+    passcode          String              @unique
     examId            String
     exam              Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
     createdAt         DateTime            @default(now())

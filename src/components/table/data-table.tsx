@@ -28,7 +28,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   loading?: boolean;
   message?: string;
-  actions?: React.ReactNode;
+  actions?: (data: TData[]) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -64,7 +64,11 @@ export function DataTable<TData, TValue>({
           />
         </div>
 
-        {actions}
+        {actions && (
+          <div className="space-x-2">
+            {actions(table.getSortedRowModel().rows.map((row) => row.original))}
+          </div>
+        )}
       </div>
       <div className="rounded-md border">
         <Table>

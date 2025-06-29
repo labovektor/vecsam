@@ -4,6 +4,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ExamStatCard from "@/features/exam/components/stat-card";
 import ToggleExamStatus from "@/features/exam/forms/ToggleExamStatus";
+import ParticipantTable from "@/features/participant-management/components/ParticipantTable";
 import { api } from "@/trpc/react";
 import { AlarmClock, AlertCircle } from "lucide-react";
 import React, { use } from "react";
@@ -22,7 +23,7 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         </Alert>
       )}
       {exam && (
-        <>
+        <div className="space-y-5">
           <Card>
             <CardHeader>
               {/* Header Section */}
@@ -59,7 +60,8 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               />
             </CardContent>
           </Card>
-        </>
+          <ParticipantTable examId={id} />
+        </div>
       )}
     </div>
   );
