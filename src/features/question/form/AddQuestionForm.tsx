@@ -125,7 +125,7 @@ const AddQuestionForm = ({
           Tambah Pertanyaan <Plus />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-3xl">
+      <DialogContent className="max-h-svh w-3xl overflow-auto">
         <DialogHeader>
           <DialogTitle>Tambahkan Pertanyaan</DialogTitle>
         </DialogHeader>
