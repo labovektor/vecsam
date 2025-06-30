@@ -25,7 +25,7 @@ const ListExamPage = () => {
         data={exams ?? []}
         loading={isLoading}
         message={error?.message}
-        actions={
+        actions={() => (
           <Dialog>
             <DialogTrigger className={buttonVariants({ variant: "default" })}>
               <Plus /> New Exam
@@ -37,7 +37,7 @@ const ListExamPage = () => {
               <NewExamForm />
             </DialogContent>
           </Dialog>
-        }
+        )}
       />
     </div>
   );
