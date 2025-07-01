@@ -31,21 +31,24 @@ model Exam {
 }
 
 model Participant {
-    id                String              @id @default(uuid())
-    name              String
-    passcode          String              @unique
-    examId            String
-    exam              Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
-    createdAt         DateTime            @default(now())
-    lockedAt          DateTime?
-    ParticipantAnswer ParticipantAnswer[]
+    id                 String              @id @default(uuid())
+    name               String
+    passcode           String              @unique
+    examId             String
+    exam               Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
+    participantSession ParticipantSession?
+    createdAt          DateTime            @default(now())
+    lockedAt           DateTime?
+    ParticipantAnswer  ParticipantAnswer[]
 }
 
 model ParticipantSession {
-    id        String   @id @default(uuid())
-    userId    String
-    expiredAt DateTime
-    createdAt DateTime @default(now())
+    id            String      @id @default(uuid())
+    participantId String      @unique
+    participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    token         String
+    expiredAt     DateTime
+    createdAt     DateTime    @default(now())
 }
 
 model Section {

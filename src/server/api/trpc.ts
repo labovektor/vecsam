@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 import { db } from "@/server/db";
 import { createClient } from "@/lib/supabase/server";
 import { AuthenticationError } from "@/use-cases/errors";
+import { cookies } from "next/headers";
 
 /**
  * 1. CONTEXT

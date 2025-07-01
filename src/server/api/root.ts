@@ -4,6 +4,7 @@ import { examRouter } from "./routers/exam";
 import { questionRouter } from "./routers/question";
 import { sectionRouter } from "./routers/section";
 import { participantManagementRouter } from "./routers/participant-management";
+import { participantAuthRouter } from "./routers/participant-auth";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ import { participantManagementRouter } from "./routers/participant-management";
  */
 export const appRouter = createTRPCRouter({
   adminAuth: adminAuthRouter,
+  participantAuth: participantAuthRouter,
   exam: examRouter,
   section: sectionRouter,
   question: questionRouter,
