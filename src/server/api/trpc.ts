@@ -14,6 +14,7 @@ import { db } from "@/server/db";
 import { createClient } from "@/lib/supabase/server";
 import { AuthenticationError } from "@/use-cases/errors";
 import { cookies } from "next/headers";
+import { verifyJwt } from "@/lib/jwt";
 
 /**
  * 1. CONTEXT
@@ -29,14 +30,11 @@ import { cookies } from "next/headers";
  */
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const supabaseServerClient = await createClient();
-
-  const { data } = await supabaseServerClient.auth.getUser();
-
+  const c = await cookies();
   return {
     db,
+    cookies: c,
     ...opts,
-    user: data.user,
   };
 };
 
@@ -106,9 +104,58 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.user) throw new AuthenticationError();
+  const supabaseServerClient = await createClient();
 
-  return await next();
+  const { data } = await supabaseServerClient.auth.getUser();
+
+  if (!data.user) throw new AuthenticationError();
+
+  return await next({
+    ctx: {
+      ...ctx,
+      user: data.user,
+    },
+  });
+});
+
+const examMiddleware = t.middleware(async ({ ctx, next }) => {
+  const token = ctx.cookies.get("xt_val")?.value;
+
+  if (!token) throw new AuthenticationError();
+  let payload: { sub: string; examId: string };
+  try {
+    payload = verifyJwt(token);
+  } catch (error) {
+    throw new AuthenticationError();
+  }
+
+  // Ambil session dari DB
+  const session = await ctx.db.participantSession.findUnique({
+    where: { participantId: payload.sub },
+    include: {
+      participant: true,
+    },
+  });
+
+  if (!session) {
+    throw new AuthenticationError();
+  }
+
+  if (session.token !== token) {
+    throw new AuthenticationError();
+  }
+
+  const now = new Date();
+  if (session.expiredAt < now) {
+    throw new AuthenticationError();
+  }
+
+  return await next({
+    ctx: {
+      ...ctx,
+      participant: session.participant,
+    },
+  });
 });
 
 /**
@@ -119,6 +166,6 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
-export const protectedProcedure = t.procedure
-  .use(authMiddleware)
-  .use(timingMiddleware);
+export const protectedProcedure = t.procedure.use(authMiddleware);
+
+export const examProcedure = t.procedure.use(examMiddleware);
