@@ -88,27 +88,27 @@ model QuestionAttr {
 }
 
 model MultipleChoiceOption {
-    id                String              @id @default(uuid())
-    questionId        String
-    question          Question            @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    text              String?
-    image             String?
-    ParticipantAnswer ParticipantAnswer[]
+    id         String   @id @default(uuid())
+    questionId String
+    question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    text       String?
+    image      String?
 }
 
 model ParticipantAnswer {
-    id            String               @id @default(uuid())
+    id            String      @id @default(uuid())
     questionId    String
-    question      Question             @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
     participantId String
-    Participant   Participant          @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    Participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
     answerText    String? // Untuk short answer
     answerFile    String? // URL file jika tipe file answer
-    optionId      String // Untuk multiple choice
-    isTrue        Boolean
-    option        MultipleChoiceOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
-    createdAt     DateTime             @default(now())
-    updatedAt     DateTime             @updatedAt
+    optionId      String? // Untuk multiple choice
+    isTrue        Boolean?
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    @@unique([participantId, questionId])
 }
 
 enum SectionType {

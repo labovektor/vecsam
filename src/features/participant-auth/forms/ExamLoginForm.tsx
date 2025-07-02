@@ -61,10 +61,12 @@ const ExamLoginForm = () => {
           name="participantCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Kode Peserta</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
+              <div className="flex gap-2">
+                <FormLabel className="text-nowrap">Kode Peserta</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -74,10 +76,12 @@ const ExamLoginForm = () => {
           name="examCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Kode Ujian</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
+              <div className="flex gap-2">
+                <FormLabel className="text-nowrap">Kode Ujian</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}

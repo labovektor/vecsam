@@ -1,97 +1,80 @@
-import { examSchema } from "@/features/exam-management/schema";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { NotFoundError } from "@/use-cases/errors";
-import { z } from "zod";
+import z from "zod";
+import { createTRPCRouter, examProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
-export const examManagementRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
-    const { db, user } = ctx;
+export const examRouter = createTRPCRouter({
+  getSession: examProcedure.query(({ ctx }) => {
+    return ctx.session;
+  }),
 
-    return db.exam.findMany({
+  getExam: examProcedure.query(({ ctx }) => {
+    const examId = ctx.session.participant.examId;
+
+    return ctx.db.exam.findFirst({
       where: {
-        userId: user?.id,
+        id: examId,
+      },
+      include: {
+        sections: {
+          include: { questions: true },
+        },
       },
     });
   }),
 
-  getById: protectedProcedure
+  saveAnswer: examProcedure
     .input(
       z.object({
-        id: z.string(),
-      }),
-    )
-    .query(({ ctx, input }) => {
-      const { db, user } = ctx;
-      return db.exam.findFirst({
-        where: {
-          id: input.id,
-          userId: user?.id,
-        },
-        include: {
-          Participant: true,
-          sections: {
-            include: { questions: true },
-          },
-        },
-      });
-    }),
-
-  create: protectedProcedure.input(examSchema).mutation(({ ctx, input }) => {
-    const { db, user } = ctx;
-    return db.exam.create({
-      data: {
-        userId: user!.id,
-        ...input,
-      },
-    });
-  }),
-
-  toggleStatus: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
-
-      const currentExam = await db.exam.findFirst({
-        where: {
-          id: input.id,
-          userId: user?.id,
-        },
-        select: {
-          isActive: true,
-        },
-      });
-
-      if (!currentExam) {
-        throw new NotFoundError();
-      }
-
-      return db.exam.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          isActive: !currentExam.isActive,
-        },
-      });
-    }),
-
-  delete: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
+        questionId: z.string(),
+        answer: z.object({
+          answerText: z.string().optional(),
+          answerFile: z.string().optional(),
+          optionId: z.string().optional(),
+        }),
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
-      return db.exam.delete({
+      const { db, session } = ctx;
+
+      //   Check if participant is locked
+      if (session.participant.lockedAt) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Participant is locked",
+        });
+      }
+
+      return db.participantAnswer.upsert({
         where: {
-          id: input.id,
-          userId: user?.id,
+          participantId_questionId: {
+            participantId: session.participantId,
+            questionId: input.questionId,
+          },
+        },
+        update: {
+          answerText: input.answer.answerText,
+          answerFile: input.answer.answerFile,
+          optionId: input.answer.optionId,
+        },
+        create: {
+          participantId: session.participantId,
+          questionId: input.questionId,
+          answerText: input.answer.answerText,
+          answerFile: input.answer.answerFile,
+          optionId: input.answer.optionId,
         },
       });
     }),
+
+  lockAnswer: examProcedure.mutation(({ ctx }) => {
+    const { db, session } = ctx;
+    return db.participant.update({
+      where: {
+        id: session.participantId,
+      },
+      data: {
+        lockedAt: new Date(),
+      },
+    });
+  }),
 });

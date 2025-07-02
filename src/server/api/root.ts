@@ -1,6 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { adminAuthRouter } from "./routers/admin-auth";
-import { examManagementRouter } from "./routers/exam";
+import { examManagementRouter } from "./routers/exam-management";
 import { questionRouter } from "./routers/question";
 import { sectionRouter } from "./routers/section";
 import { participantManagementRouter } from "./routers/participant-management";
