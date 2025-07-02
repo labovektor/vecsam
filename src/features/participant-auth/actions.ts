@@ -32,14 +32,14 @@ export async function loginAction(input: { participantId: string }) {
       error: "Ujian tidak tersedia",
     };
   }
-  // if (
-  //   isBefore(now, participant.exam.startTime) ||
-  //   isBefore(participant.exam.endTime, now)
-  // ) {
-  //   return {
-  //     error: "Ujian belum dimulai atau sudah selesai",
-  //   };
-  // }
+  if (
+    isBefore(now, participant.exam.startTime) ||
+    isBefore(participant.exam.endTime, now)
+  ) {
+    return {
+      error: "Ujian belum dimulai atau sudah selesai",
+    };
+  }
 
   const defaultExpire = addMinutes(now, participant.exam.duration);
   const endTime = new Date(participant.exam.endTime);

@@ -30,12 +30,12 @@ export const participantAuthRouter = createTRPCRouter({
         error: "Ujian tidak tersedia",
       };
     }
-    // if (
-    //   isBefore(now, participant.exam.startTime) ||
-    //   isBefore(participant.exam.endTime, now)
-    // ) {
-    //   throw new Error("Ujian belum dimulai atau sudah selesai");
-    // }
+    if (
+      isBefore(now, participant.exam.startTime) ||
+      isBefore(participant.exam.endTime, now)
+    ) {
+      throw new Error("Ujian belum dimulai atau sudah selesai");
+    }
 
     return {
       id: participant.id,

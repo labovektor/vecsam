@@ -14,12 +14,13 @@ import { beautifyDate } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { AlarmClock } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import React from "react";
 import { toast } from "sonner";
 
 const ExamLoginConfirmPage = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("xt_id");
 
@@ -32,7 +33,10 @@ const ExamLoginConfirmPage = () => {
 
     if (res.error) {
       toast.error(res.error);
+      return;
     }
+
+    router.replace("/exam");
   };
 
   return (

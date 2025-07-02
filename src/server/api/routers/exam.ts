@@ -3,6 +3,7 @@ import { createTRPCRouter, examProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { supabaseAdminClient } from "@/lib/supabase/server";
 import { Bucket } from "@/lib/supabase/bucket";
+import { saveAnswerSchema } from "@/features/exam/schema";
 
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
@@ -30,11 +31,7 @@ export const examRouter = createTRPCRouter({
     .input(
       z.object({
         questionId: z.string(),
-        answer: z.object({
-          answerText: z.string().optional(),
-          answerFile: z.string().optional(),
-          optionId: z.string().uuid().optional(),
-        }),
+        answer: saveAnswerSchema,
       }),
     )
     .mutation(async ({ ctx, input }) => {
