@@ -25,6 +25,41 @@ interface IExamContext {
 
 export const ExamContext = createContext<IExamContext>({} as IExamContext);
 
+/**
+ * The ExamProvider is a React Context Provider that provides access to the
+ * current exam, participant, and answers. It also provides functions to save
+ * answers and lock the participant's answers.
+ *
+ * The ExamProvider is used to wrap the exam page, and should be used
+ * to access the exam state from any component inside exam page.
+ *
+ * @example
+ * import { ExamProvider } from "@/features/exam/provider/ExamProvider";
+ *
+ * function App() {
+ *   return (
+ *     <ExamProvider>
+ *       <YourApp />
+ *     </ExamProvider>
+ *   );
+ * }
+ *
+ * @example
+ * import { useContext } from "react";
+ * import { ExamContext } from "@/features/exam/provider/ExamProvider";
+ *
+ * function YourComponent() {
+ *   const { exam, participant, answers } = useContext(ExamContext);
+ *
+ *   return (
+ *     <div>
+ *       <h1>{exam.title}</h1>
+ *       <p>Participant: {participant.name}</p>
+ *       <p>Answers: {answers.length}</p>
+ *     </div>
+ *   );
+ * }
+ */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
   const [focusedQuestion, setFocusedQuestion] = useState<string | null>(null);
 
