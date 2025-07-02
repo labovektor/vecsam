@@ -92,6 +92,15 @@ export const examRouter = createTRPCRouter({
       });
     }),
 
+  getAnswers: examProcedure.query(({ ctx }) => {
+    const { db, session } = ctx;
+    return db.participantAnswer.findMany({
+      where: {
+        participantId: session.participantId,
+      },
+    });
+  }),
+
   lockAnswer: examProcedure.mutation(({ ctx }) => {
     const { db, session } = ctx;
     return db.participant.update({
