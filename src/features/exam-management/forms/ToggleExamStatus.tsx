@@ -20,7 +20,7 @@ const ToggleExamStatus = ({
     (_, newStatus: boolean) => newStatus,
   );
 
-  const toggleExamStatus = api.exam.toggleStatus.useMutation({
+  const toggleExamStatus = api.examManagement.toggleStatus.useMutation({
     onSuccess: () => {
       toast.success("Status Updated");
       setS(!isActive);

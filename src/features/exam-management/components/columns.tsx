@@ -68,7 +68,7 @@ export const examColumns: ColumnDef<ExamRes>[] = [
 ];
 
 export function EventActionColumn({ exam }: { exam: ExamRes }) {
-  const deleteExam = api.exam.delete.useMutation({
+  const deleteExam = api.examManagement.delete.useMutation({
     onError: (error) => {
       toast.error(error.message);
     },

@@ -1,6 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { adminAuthRouter } from "./routers/admin-auth";
-import { examRouter } from "./routers/exam";
+import { examManagementRouter } from "./routers/exam";
 import { questionRouter } from "./routers/question";
 import { sectionRouter } from "./routers/section";
 import { participantManagementRouter } from "./routers/participant-management";
@@ -14,7 +14,7 @@ import { participantAuthRouter } from "./routers/participant-auth";
 export const appRouter = createTRPCRouter({
   adminAuth: adminAuthRouter,
   participantAuth: participantAuthRouter,
-  exam: examRouter,
+  examManagement: examManagementRouter,
   section: sectionRouter,
   question: questionRouter,
   participantManagement: participantManagementRouter,

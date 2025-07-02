@@ -2,8 +2,8 @@
 
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import ExamStatCard from "@/features/exam/components/stat-card";
-import ToggleExamStatus from "@/features/exam/forms/ToggleExamStatus";
+import ExamStatCard from "@/features/exam-management/components/stat-card";
+import ToggleExamStatus from "@/features/exam-management/forms/ToggleExamStatus";
 import ParticipantTable from "@/features/participant-management/components/ParticipantTable";
 import { api } from "@/trpc/react";
 import { AlarmClock, AlertCircle } from "lucide-react";
@@ -11,7 +11,7 @@ import React, { use } from "react";
 
 const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
-  const { data: exam, error } = api.exam.getById.useQuery({ id });
+  const { data: exam, error } = api.examManagement.getById.useQuery({ id });
 
   return (
     <div>

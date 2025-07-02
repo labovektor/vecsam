@@ -33,7 +33,7 @@ const NewExamForm = () => {
     },
   });
 
-  const createNewExam = api.exam.create.useMutation({
+  const createNewExam = api.examManagement.create.useMutation({
     onError: (err) => {
       toast.error(err.message);
     },

@@ -1,9 +1,9 @@
-import { examSchema } from "@/features/exam/schema";
+import { examSchema } from "@/features/exam-management/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { NotFoundError } from "@/use-cases/errors";
 import { z } from "zod";
 
-export const examRouter = createTRPCRouter({
+export const examManagementRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     const { db, user } = ctx;
 

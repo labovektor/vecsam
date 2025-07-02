@@ -9,14 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { examColumns } from "@/features/exam/components/columns";
-import NewExamForm from "@/features/exam/forms/NewExamForm";
+import { examColumns } from "@/features/exam-management/components/columns";
+import NewExamForm from "@/features/exam-management/forms/NewExamForm";
 import { api } from "@/trpc/react";
 import { Plus } from "lucide-react";
 import React from "react";
 
 const ListExamPage = () => {
-  const { data: exams, error, isLoading } = api.exam.getAll.useQuery();
+  const {
+    data: exams,
+    error,
+    isLoading,
+  } = api.examManagement.getAll.useQuery();
 
   return (
     <div>

@@ -153,7 +153,7 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
   return await next({
     ctx: {
       ...ctx,
-      participant: session.participant,
+      session,
     },
   });
 });
