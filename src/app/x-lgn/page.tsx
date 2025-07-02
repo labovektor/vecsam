@@ -11,7 +11,7 @@ import Image from "next/image";
 
 import React from "react";
 
-const AdminLoginPage = () => {
+const ExamLoginPage = () => {
   return (
     <div className="flex h-svh w-full items-center justify-center p-3">
       <Card className="w-full max-w-md">
@@ -33,7 +33,7 @@ const AdminLoginPage = () => {
         </CardContent>
         <CardFooter>
           <CardDescription>
-            Belum mendapatkan username dan kode ujian? harap hubungi panitia.
+            Belum mendapatkan kode peserta dan ujian? harap hubungi panitia.
           </CardDescription>
         </CardFooter>
       </Card>
@@ -41,4 +41,4 @@ const AdminLoginPage = () => {
   );
 };
 
-export default AdminLoginPage;
+export default ExamLoginPage;

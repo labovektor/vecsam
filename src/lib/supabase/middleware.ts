@@ -39,12 +39,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const excludedPaths = [
+    "/api/trpc",
+    "/login",
+    "/dash-lgn-pg",
+    "/auth",
+    "/x-lgn",
+    "/exam",
+  ];
+
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith("/api/trpc") &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/dash-lgn-pg") &&
-    !request.nextUrl.pathname.startsWith("/auth") &&
+    !excludedPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
     request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page

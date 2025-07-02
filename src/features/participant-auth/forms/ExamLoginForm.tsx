@@ -34,24 +34,17 @@ const ExamLoginForm = () => {
     },
   });
 
-  // const login = api.participantAuth.login.useMutation({
-  //   onError: (err) => {
-  //     toast.error(err.message);
-  //   },
-  //   onSuccess: (data) => {
-  //     // router.replace("/dashboard");
-  //     console.log("Login data: ", data);
-  //     setCookie("xt_val", data.token, {
-  //       httpOnly: true,
-  //     });
-  //   },
-  // });
+  const login = api.participantAuth.login.useMutation({
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: (data) => {
+      router.replace(`/x-lgn/confirm?xt_id=${data.id}`);
+    },
+  });
 
   async function onSubmit(values: LoginSchemaType) {
-    const res = await loginAction(values);
-    if (res.error) {
-      toast.error(res.error);
-    }
+    login.mutate(values);
   }
   return (
     <Form {...form}>
@@ -86,12 +79,8 @@ const ExamLoginForm = () => {
             </FormItem>
           )}
         />
-        <Button
-          className="w-full"
-          type="submit"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Sedang Masuk..." : "Masuk"}
+        <Button className="w-full" type="submit" disabled={login.isPending}>
+          {login.isPending ? "Sedang Masuk..." : "Masuk"}
         </Button>
       </form>
     </Form>

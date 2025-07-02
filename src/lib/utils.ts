@@ -6,7 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 type DateFormat = "DDMMYY" | "DATE" | "TIME" | "FULL";
-export function beautifyDate(val: string | number, format: DateFormat): string {
+export function beautifyDate(
+  val: string | number | Date,
+  format: DateFormat,
+): string {
   const date = new Date(val);
 
   switch (format) {

@@ -6,11 +6,11 @@ import { addMinutes, isBefore } from "date-fns";
 import { createJwt } from "@/lib/jwt";
 import { cookies } from "next/headers";
 
-export async function loginAction(input: LoginSchemaType) {
+export async function loginAction(input: { participantId: string }) {
   const c = await cookies();
   const participant = await db.participant.findFirst({
     where: {
-      passcode: input.participantCode,
+      id: input.participantId,
     },
     include: {
       exam: true,
@@ -18,9 +18,9 @@ export async function loginAction(input: LoginSchemaType) {
     },
   });
 
-  if (!participant || participant.exam.passcode !== input.examCode) {
+  if (!participant) {
     return {
-      error: "Kode tidak valid",
+      error: "Terdapat kesalahan",
     };
   }
 
@@ -32,12 +32,14 @@ export async function loginAction(input: LoginSchemaType) {
       error: "Ujian tidak tersedia",
     };
   }
-  if (
-    isBefore(now, participant.exam.startTime) ||
-    isBefore(participant.exam.endTime, now)
-  ) {
-    throw new Error("Ujian belum dimulai atau sudah selesai");
-  }
+  // if (
+  //   isBefore(now, participant.exam.startTime) ||
+  //   isBefore(participant.exam.endTime, now)
+  // ) {
+  //   return {
+  //     error: "Ujian belum dimulai atau sudah selesai",
+  //   };
+  // }
 
   const defaultExpire = addMinutes(now, participant.exam.duration);
   const endTime = new Date(participant.exam.endTime);
