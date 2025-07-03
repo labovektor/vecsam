@@ -1,10 +1,10 @@
 "use server";
 
 import { db } from "@/server/db";
-import type { LoginSchemaType } from "./schema";
 import { addMinutes, isBefore } from "date-fns";
 import { createJwt } from "@/lib/jwt";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginAction(input: { participantId: string }) {
   const c = await cookies();
@@ -25,6 +25,13 @@ export async function loginAction(input: { participantId: string }) {
   }
 
   const now = new Date();
+
+  // Validate if participant is locked
+  if (participant.lockedAt) {
+    return {
+      error: "Anda sudah mengerjakan ujian ini",
+    };
+  }
 
   // Validate if exam is still axtive and not yet ended
   if (!participant.exam.isActive) {
@@ -88,4 +95,9 @@ export async function loginAction(input: { participantId: string }) {
 
     return { data: { expiredAt: participant.participantSession.expiredAt } };
   }
+}
+
+export async function logoutAction() {
+  const c = await cookies();
+  c.delete("xt_val");
 }

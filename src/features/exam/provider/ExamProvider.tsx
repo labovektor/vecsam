@@ -13,6 +13,8 @@ import type {
 import { Loader } from "lucide-react";
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
+import { useRouter } from "next/navigation";
+import { logoutAction } from "@/features/participant-auth/actions";
 
 type ExamContextProviderProps = {
   children: React.ReactNode;
@@ -86,6 +88,7 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
+  const router = useRouter();
   const [focusedSection, setFocusedSection] =
     useState<SectionWithQuestionAttr | null>(null);
   const [focusedQuestion, setFocusedQuestion] =
@@ -140,6 +143,14 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     onError: (err) => {
       toast.error(err.message);
     },
+    onSuccess: () =>
+      logoutAction()
+        .then(() => {
+          router.replace("/bye-bye");
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        }),
   });
 
   const setFocusedBefore = () => {
@@ -194,7 +205,8 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       lockAnswer: () => {
         lockAnswer.mutate();
       },
-      isSaving: saveAnswer.isPending || undoAnswer.isPending,
+      isSaving:
+        saveAnswer.isPending || undoAnswer.isPending || lockAnswer.isPending,
     }),
     [
       session,
@@ -204,6 +216,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       focusedQuestion,
       saveAnswer.isPending,
       undoAnswer.isPending,
+      lockAnswer.isPending,
       answers,
     ],
   );

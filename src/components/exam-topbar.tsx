@@ -6,9 +6,10 @@ import { Button } from "./ui/button";
 import { Flag } from "lucide-react";
 import { useExam } from "@/hooks/use-exam";
 import ExamTimer from "@/features/exam/components/ExamTimer";
+import FinishExamButton from "@/features/exam/components/FinishExamButton";
 
 const ExamTopBar = () => {
-  const { exam, expiredAt } = useExam();
+  const { exam, expiredAt, lockAnswer } = useExam();
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-slate-50 px-4">
       <div className="flex items-center gap-2">
@@ -18,11 +19,8 @@ const ExamTopBar = () => {
         </h1>
       </div>
       <div className="flex gap-2">
-        <ExamTimer expiredAt={expiredAt} />
-        <Button className="bg-yellow-500 hover:bg-yellow-400">
-          <Flag />
-          Selesaikan Ujian
-        </Button>
+        <ExamTimer expiredAt={expiredAt} callback={lockAnswer} />
+        <FinishExamButton />
       </div>
     </header>
   );

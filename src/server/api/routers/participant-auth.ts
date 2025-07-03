@@ -17,18 +17,19 @@ export const participantAuthRouter = createTRPCRouter({
     });
 
     if (!participant || participant.exam.passcode !== input.examCode) {
-      return {
-        error: "Kode tidak valid",
-      };
+      throw new Error("Kode tidak valid");
+    }
+
+    // Validate if participant is locked
+    if (participant.lockedAt) {
+      throw new Error("Anda sudah mengerjakan ujian ini");
     }
 
     const now = new Date();
 
     // Validate if exam is still axtive and not yet ended
     if (!participant.exam.isActive) {
-      return {
-        error: "Ujian tidak tersedia",
-      };
+      throw new Error("Ujian belum dimulai");
     }
     if (
       isBefore(now, participant.exam.startTime) ||

@@ -2,6 +2,7 @@
 
 import { AlarmClock } from "lucide-react";
 import React from "react";
+import { toast } from "sonner";
 
 /**
  * ExamTimer is a React component that displays a countdown timer
@@ -14,7 +15,13 @@ import React from "react";
  *                                         If null, the timer does not render.
  */
 
-const ExamTimer = ({ expiredAt }: { expiredAt: Date | null }) => {
+const ExamTimer = ({
+  expiredAt,
+  callback,
+}: {
+  expiredAt: Date | null;
+  callback: VoidFunction;
+}) => {
   if (!expiredAt) {
     return null;
   }
@@ -29,6 +36,8 @@ const ExamTimer = ({ expiredAt }: { expiredAt: Date | null }) => {
       if (timeLeft <= 0) {
         setRemaining(0);
         clearInterval(intervalRef.current!);
+        toast.error("Waktu pengerjaan telah habis");
+        callback();
       } else {
         setRemaining(timeLeft);
       }

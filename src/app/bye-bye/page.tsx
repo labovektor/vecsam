@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ExamLoginForm from "@/features/participant-auth/forms/ExamLoginForm";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,13 +19,13 @@ const ByByePage = () => {
   return (
     <div className="flex h-svh w-full items-center justify-center p-3">
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="text-center">
           <Image
             src="/vecsys.svg"
             alt="logo"
             width={160}
             height={100}
-            className="mx-auto"
+            className="mx-auto mb-5"
           />
           <CardTitle>Terima Kasih!</CardTitle>
           <CardDescription>
@@ -33,7 +34,10 @@ const ByByePage = () => {
         </CardHeader>
 
         <CardFooter>
-          <Link className={buttonVariants({ variant: "default" })} href="/">
+          <Link
+            className={cn(buttonVariants({ variant: "default" }), "mx-auto")}
+            href="/"
+          >
             Kembali ke Beranda <ArrowRight />
           </Link>
         </CardFooter>
