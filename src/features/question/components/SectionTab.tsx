@@ -105,10 +105,18 @@ const SectionTab = ({
                 >
                   <CardHeader>
                     <CardTitle>{section.title}</CardTitle>
-                    <div className="flex gap-1">
-                      <Badge variant="secondary">{section.points} Poin</Badge>
-                      <Badge variant="secondary">
+                    <div className="flex flex-wrap gap-1">
+                      <Badge variant="default">
                         {formatSectionType(section.type)}
+                      </Badge>
+                      <Badge variant="secondary">
+                        poin benar: {section.correctPoint}
+                      </Badge>
+                      <Badge variant="secondary">
+                        poin salah: {section.wrongPoint}
+                      </Badge>
+                      <Badge variant="secondary">
+                        poin dikosongi: {section.passPoint}
                       </Badge>
                     </div>
                   </CardHeader>

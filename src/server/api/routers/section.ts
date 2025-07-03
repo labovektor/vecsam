@@ -34,7 +34,9 @@ export const sectionRouter = createTRPCRouter({
         data: {
           title: input.title,
           type: input.type as SectionType,
-          points: input.points,
+          correctPoint: input.correctPoint,
+          wrongPoint: input.wrongPoint,
+          passPoint: input.passPoint,
           examId: input.examId,
         },
       });
@@ -52,7 +54,9 @@ export const sectionRouter = createTRPCRouter({
         data: {
           title: input.title,
           type: input.type as SectionType,
-          points: input.points,
+          correctPoint: input.correctPoint,
+          wrongPoint: input.wrongPoint,
+          passPoint: input.passPoint,
         },
       });
     }),

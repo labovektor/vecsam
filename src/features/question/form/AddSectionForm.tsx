@@ -45,7 +45,9 @@ const AddSectionForm = ({
       examId,
       title: "",
       type: "MULTIPLE_CHOICE",
-      points: 1,
+      correctPoint: 1,
+      wrongPoint: 0,
+      passPoint: 0,
     },
   });
 
@@ -85,10 +87,10 @@ const AddSectionForm = ({
             <div className="flex gap-1">
               <FormField
                 control={form.control}
-                name="points"
+                name="correctPoint"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Point per question</FormLabel>
+                    <FormLabel>Poin Benar</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -98,32 +100,58 @@ const AddSectionForm = ({
               />
               <FormField
                 control={form.control}
-                name="type"
+                name="wrongPoint"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(SectionType).map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {formatSectionType(type)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Poin Salah</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="passPoint"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Poin Dikosongi</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(SectionType).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {formatSectionType(type)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button
               type="submit"
               className="w-full"

@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
@@ -22,6 +23,19 @@ const ExamPage = () => {
         <CardTitle className="line-clamp-1">{focusedSection?.title}</CardTitle>
         <SavingIndicator isSaving={isSaving} />
       </div>
+      {focusedSection && (
+        <div className="flex gap-2">
+          <Badge variant="default">
+            Poin Benar: {focusedSection.correctPoint}
+          </Badge>
+          <Badge variant="destructive">
+            Poin Salah: {focusedSection.wrongPoint}
+          </Badge>
+          <Badge variant="secondary">
+            Poin Dikosongi: {focusedSection.passPoint}
+          </Badge>
+        </div>
+      )}
       <Card>
         <CardContent className="flex gap-3">
           <span>{focusedQuestion?.number}.</span>

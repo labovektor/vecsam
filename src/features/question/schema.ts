@@ -23,14 +23,18 @@ export const addSectionSchema = z.object({
   title: z.string().min(2, "Harus diisi!"),
   type: z.enum(sectionTypes),
   examId: z.string().uuid(),
-  points: z.number({ coerce: true }),
+  correctPoint: z.number({ coerce: true }),
+  wrongPoint: z.number({ coerce: true }),
+  passPoint: z.number({ coerce: true }),
 });
 
 export const updateSectionSchema = z.object({
   id: z.string(),
   title: z.string().min(2, "Harus diisi!"),
   type: z.enum(sectionTypes),
-  points: z.number({ coerce: true }),
+  correctPoint: z.number({ coerce: true }),
+  wrongPoint: z.number({ coerce: true }),
+  passPoint: z.number({ coerce: true }),
 });
 
 export const addQuestionSchema = z.object({
