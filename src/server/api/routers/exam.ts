@@ -3,7 +3,17 @@ import { createTRPCRouter, examProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { supabaseAdminClient } from "@/lib/supabase/server";
 import { Bucket } from "@/lib/supabase/bucket";
-import { saveAnswerSchema } from "@/features/exam/schema";
+import {
+  saveAnswerSchema,
+  type AnswerRecordSchemaType,
+} from "@/features/exam/schema";
+import { Redis } from "ioredis";
+
+const redis = new Redis({
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+  db: Number(process.env.REDIS_DB),
+});
 
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
@@ -12,10 +22,15 @@ export const examRouter = createTRPCRouter({
     return ctx.session;
   }),
 
-  getExam: examProcedure.query(({ ctx }) => {
+  getExam: examProcedure.query(async ({ ctx }) => {
     const examId = ctx.session.participant.examId;
 
-    return ctx.db.exam.findFirst({
+    const examRedis = await redis.get(examId);
+    if (examRedis) {
+      return JSON.parse(examRedis);
+    }
+
+    const exam = await ctx.db.exam.findFirst({
       where: {
         id: examId,
       },
@@ -26,6 +41,10 @@ export const examRouter = createTRPCRouter({
           },
           include: {
             questions: {
+              include: {
+                QuestionAttr: true,
+                MultipleChoiceOption: true,
+              },
               orderBy: {
                 number: "asc",
               },
@@ -34,6 +53,10 @@ export const examRouter = createTRPCRouter({
         },
       },
     });
+
+    await redis.setex(examId, 60 * 60, JSON.stringify(exam));
+
+    return exam;
   }),
 
   saveAnswer: examProcedure
@@ -101,13 +124,26 @@ export const examRouter = createTRPCRouter({
       });
     }),
 
-  getAnswers: examProcedure.query(({ ctx }) => {
+  getAnswers: examProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
-    return db.participantAnswer.findMany({
+
+    const answers = await db.participantAnswer.findMany({
       where: {
         participantId: session.participantId,
       },
     });
+
+    // Create records for each question
+    const records: AnswerRecordSchemaType = {};
+    answers.forEach((answer) => {
+      records[answer.questionId] = {
+        answerText: answer.answerText ?? undefined,
+        answerFile: answer.answerFile ?? undefined,
+        optionId: answer.optionId ?? undefined,
+      };
+    });
+
+    return records;
   }),
 
   lockAnswer: examProcedure.mutation(({ ctx }) => {

@@ -14,6 +14,7 @@ import {
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useExam } from "@/hooks/use-exam";
+import { cn } from "@/lib/utils";
 
 export function ExamSidebar() {
   const {
@@ -22,6 +23,7 @@ export function ExamSidebar() {
     setFocusedQuestion,
     focusedSection,
     setFocusedSection,
+    answers,
   } = useExam();
   return (
     <Sidebar collapsible="offcanvas">
@@ -44,9 +46,11 @@ export function ExamSidebar() {
                       key={question.id}
                       size="icon"
                       variant="outline"
-                      className={
-                        question.id === focusedQuestion?.id ? "bg-primary" : ""
-                      }
+                      className={cn(
+                        answers[question.id] && "border-green-600 bg-green-100",
+                        question.id === focusedQuestion?.id &&
+                          "bg-primary text-white",
+                      )}
                       onClick={() => {
                         setFocusedQuestion(question);
                         if (focusedSection?.id !== section.id) {

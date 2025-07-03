@@ -1,16 +1,18 @@
 "use client";
 
-import type {
-  Exam,
-  Participant,
-  ParticipantAnswer,
-  Question,
-  Section,
-} from "@prisma/client";
-import type { SaveAnswerSchemaType } from "../schema";
-import { createContext, useEffect, useMemo, useState } from "react";
+import type { Participant } from "@prisma/client";
+import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema";
+import { createContext, useMemo, useState } from "react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
+import type {
+  ExamWithSectionQuestionAttr,
+  QuestionWithAttr,
+  SectionWithQuestionAttr,
+} from "../types";
+import { Loader } from "lucide-react";
+import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 type ExamContextProviderProps = {
   children: React.ReactNode;
@@ -19,15 +21,17 @@ type ExamContextProviderProps = {
 interface IExamContext {
   error: string | null;
   participant: Participant | null;
-  exam: (Exam & { sections: (Section & { questions: Question[] })[] }) | null;
-  answers: ParticipantAnswer[];
+  exam: ExamWithSectionQuestionAttr | null;
+  answers: AnswerRecordSchemaType;
   expiredAt: Date | null;
-  focusedSection: Section | null;
+  focusedSection: SectionWithQuestionAttr | null;
   setFocusedSection: React.Dispatch<
-    React.SetStateAction<(Section & { questions: Question[] }) | null>
+    React.SetStateAction<SectionWithQuestionAttr | null>
   >;
-  focusedQuestion: Question | null;
-  setFocusedQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
+  focusedQuestion: QuestionWithAttr | null;
+  setFocusedQuestion: React.Dispatch<
+    React.SetStateAction<QuestionWithAttr | null>
+  >;
   setFocusedBefore: VoidFunction;
   setFocusedAfter: VoidFunction;
   saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void;
@@ -35,6 +39,14 @@ interface IExamContext {
   isSaving: boolean;
 }
 
+/**
+ * The ExamContext is a React Context that provides access to the current exam,
+ * participant, and answers. It also provides functions to save answers and lock
+ * the participant's answers.
+ *
+ * The ExamContext is used to access the exam state from any component inside
+ * the exam page.
+ */
 export const ExamContext = createContext<IExamContext>({} as IExamContext);
 
 /**
@@ -73,13 +85,21 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
-  const [focusedSection, setFocusedSection] = useState<
-    (Section & { questions: Question[] }) | null
-  >(null);
-  const [focusedQuestion, setFocusedQuestion] = useState<Question | null>(null);
+  const [focusedSection, setFocusedSection] =
+    useState<SectionWithQuestionAttr | null>(null);
+  const [focusedQuestion, setFocusedQuestion] =
+    useState<QuestionWithAttr | null>(null);
 
-  const { data: session, error: sessionError } = api.exam.getSession.useQuery();
-  const { data: exam, error: examError } = api.exam.getExam.useQuery();
+  const {
+    data: session,
+    error: sessionError,
+    isFetching: isFetchingSession,
+  } = api.exam.getSession.useQuery();
+  const {
+    data: exam,
+    error: examError,
+    isFetching: isFetchingExam,
+  } = api.exam.getExam.useQuery();
   const {
     data: answers,
     error: answersError,
@@ -147,7 +167,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
         null,
       participant: session?.participant || null,
       exam: exam || null,
-      answers: answers || [],
+      answers: answers || {},
       expiredAt: session?.expiredAt || null,
       focusedSection,
       setFocusedSection,
@@ -163,9 +183,29 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       },
       isSaving: saveAnswer.isPending,
     }),
-    [session, exam, sessionError, examError, focusedQuestion],
+    [
+      session,
+      exam,
+      sessionError,
+      examError,
+      focusedQuestion,
+      saveAnswer.isPending,
+      answers,
+    ],
   );
   return (
-    <ExamContext.Provider value={memoedValue}>{children}</ExamContext.Provider>
+    <ExamContext.Provider value={memoedValue}>
+      {children}
+      {(isFetchingSession || isFetchingExam) && (
+        <AlertDialog open>
+          <AlertDialogContent>
+            <Loader className="mx-auto animate-spin" />
+            <AlertDialogTitle className="text-center">
+              Memuat...
+            </AlertDialogTitle>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+    </ExamContext.Provider>
   );
 }

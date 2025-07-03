@@ -9,7 +9,6 @@ import { Bucket } from "@/lib/supabase/bucket";
 import { supabaseAdminClient } from "@/lib/supabase/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { id } from "zod/v4/locales";
 
 export const MAX_FILE_SIZE_IMAGE = 5 * 1024 * 1024;
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;

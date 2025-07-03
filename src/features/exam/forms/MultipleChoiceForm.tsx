@@ -1,0 +1,48 @@
+"use client";
+
+import React from "react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useExam } from "@/hooks/use-exam";
+import { renderKatexFromHtml } from "@/lib/katex-utils";
+import debounce from "lodash.debounce";
+
+const MultipleChoiceForm = () => {
+  const { focusedQuestion, saveAnswer, answers } = useExam();
+
+  const handleValueChange = debounce((value) => {
+    if (!focusedQuestion) return;
+    saveAnswer(focusedQuestion.id, { optionId: value });
+  }, 1000);
+  return (
+    <RadioGroup
+      key={focusedQuestion?.id}
+      defaultValue={
+        focusedQuestion ? answers[focusedQuestion?.id]?.optionId : undefined
+      }
+      onValueChange={handleValueChange}
+    >
+      {focusedQuestion?.MultipleChoiceOption.map((option) => (
+        <div key={option.id} className="flex items-center gap-3">
+          <RadioGroupItem value={option.id} id={option.id} />
+          <Label htmlFor={option.id} className="flex flex-col">
+            <span
+              dangerouslySetInnerHTML={{
+                __html: renderKatexFromHtml(option.text || ""),
+              }}
+            />
+            {option.image && (
+              <img
+                src={option.image}
+                alt="question image"
+                className="max-h-36"
+              />
+            )}
+          </Label>
+        </div>
+      ))}
+    </RadioGroup>
+  );
+};
+
+export default MultipleChoiceForm;
