@@ -21,6 +21,7 @@ import React from "react";
 import { toast } from "sonner";
 
 const ExamLoginConfirmPage = () => {
+  const [starting, setStarting] = React.useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("xt_id");
@@ -30,7 +31,9 @@ const ExamLoginConfirmPage = () => {
   });
 
   const confirmStart = async () => {
+    setStarting(true);
     const res = await loginAction({ participantId: id! });
+    setStarting(false);
 
     if (res.error) {
       toast.error(res.error);
@@ -77,7 +80,11 @@ const ExamLoginConfirmPage = () => {
                 </AlertDescription>
               </Alert>
 
-              <Button className="w-full" onClick={confirmStart}>
+              <Button
+                className="w-full"
+                onClick={confirmStart}
+                disabled={starting}
+              >
                 Mulai Ujian Sekarang
               </Button>
             </div>

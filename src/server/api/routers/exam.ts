@@ -71,14 +71,6 @@ export const examRouter = createTRPCRouter({
 
       const tmp = new Date().getTime().toString();
 
-      //   Check if participant is locked
-      if (session.participant.lockedAt) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Participant is locked",
-        });
-      }
-
       // Upload answer file  if provided
       let answerFileUrl: string | undefined = undefined;
       if (input.answer.answerFile) {

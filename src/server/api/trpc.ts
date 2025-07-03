@@ -137,16 +137,14 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
     },
   });
 
-  if (!session) {
-    throw new AuthenticationError();
-  }
-
-  if (session.token !== token) {
-    throw new AuthenticationError();
-  }
-
   const now = new Date();
-  if (session.expiredAt < now) {
+
+  if (
+    !session ||
+    session.token !== token ||
+    session.expiredAt < now ||
+    session.participant.lockedAt
+  ) {
     throw new AuthenticationError();
   }
 
