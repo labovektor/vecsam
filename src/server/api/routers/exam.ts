@@ -21,7 +21,16 @@ export const examRouter = createTRPCRouter({
       },
       include: {
         sections: {
-          include: { questions: true },
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            questions: {
+              orderBy: {
+                number: "asc",
+              },
+            },
+          },
         },
       },
     });

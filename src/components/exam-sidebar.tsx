@@ -9,15 +9,20 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import Image from "next/image";
+import { useExam } from "@/hooks/use-exam";
 
 export function ExamSidebar() {
+  const {
+    exam,
+    focusedQuestion,
+    setFocusedQuestion,
+    focusedSection,
+    setFocusedSection,
+  } = useExam();
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader>
@@ -28,18 +33,35 @@ export function ExamSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>A. Pilihan Ganda</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="grid grid-cols-5 gap-3">
-              {Array.from({ length: 25 }).map((_, index) => (
-                <Button key={index} size="icon" variant="outline">
-                  {index + 1}
-                </Button>
-              ))}
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {exam?.sections.map((section) => {
+          return (
+            <SidebarGroup key={section.id}>
+              <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <div className="grid grid-cols-5 gap-3">
+                  {section.questions.map((question) => (
+                    <Button
+                      key={question.id}
+                      size="icon"
+                      variant="outline"
+                      className={
+                        question.id === focusedQuestion?.id ? "bg-primary" : ""
+                      }
+                      onClick={() => {
+                        setFocusedQuestion(question);
+                        if (focusedSection?.id !== section.id) {
+                          setFocusedSection(section);
+                        }
+                      }}
+                    >
+                      {question.number}
+                    </Button>
+                  ))}
+                </div>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

@@ -1,8 +1,14 @@
 "use client";
 
-import type { Exam, Participant, ParticipantAnswer } from "@prisma/client";
+import type {
+  Exam,
+  Participant,
+  ParticipantAnswer,
+  Question,
+  Section,
+} from "@prisma/client";
 import type { SaveAnswerSchemaType } from "../schema";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 
@@ -13,11 +19,17 @@ type ExamContextProviderProps = {
 interface IExamContext {
   error: string | null;
   participant: Participant | null;
-  exam: Exam | null;
+  exam: (Exam & { sections: (Section & { questions: Question[] })[] }) | null;
   answers: ParticipantAnswer[];
   expiredAt: Date | null;
-  focusedQuestion: string | null;
-  setFocusedQuestion: React.Dispatch<React.SetStateAction<string | null>>;
+  focusedSection: Section | null;
+  setFocusedSection: React.Dispatch<
+    React.SetStateAction<(Section & { questions: Question[] }) | null>
+  >;
+  focusedQuestion: Question | null;
+  setFocusedQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
+  setFocusedBefore: VoidFunction;
+  setFocusedAfter: VoidFunction;
   saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void;
   lockAnswer: VoidFunction;
   isSaving: boolean;
@@ -61,7 +73,10 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
-  const [focusedQuestion, setFocusedQuestion] = useState<string | null>(null);
+  const [focusedSection, setFocusedSection] = useState<
+    (Section & { questions: Question[] }) | null
+  >(null);
+  const [focusedQuestion, setFocusedQuestion] = useState<Question | null>(null);
 
   const { data: session, error: sessionError } = api.exam.getSession.useQuery();
   const { data: exam, error: examError } = api.exam.getExam.useQuery();
@@ -72,9 +87,13 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
   } = api.exam.getAnswers.useQuery();
 
   if (exam && !focusedQuestion) {
-    const firstNumber = exam.sections[0]?.questions[0];
-    if (firstNumber) {
-      setFocusedQuestion(firstNumber.id);
+    const firstSection = exam.sections[0];
+    if (firstSection) {
+      setFocusedSection(firstSection);
+      const firstNumber = firstSection.questions[0];
+      if (firstNumber) {
+        setFocusedQuestion(firstNumber);
+      }
     }
   }
 
@@ -93,6 +112,32 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     },
   });
 
+  const setFocusedBefore = () => {
+    if (!exam || !focusedQuestion || !focusedSection) return;
+
+    const questionIndex = focusedSection.questions.findIndex(
+      (q) => q.id === focusedQuestion.id,
+    );
+    if (questionIndex <= 0) return;
+
+    const prevQuestion = focusedSection.questions[questionIndex - 1];
+    if (!prevQuestion) return;
+    setFocusedQuestion(prevQuestion);
+  };
+
+  const setFocusedAfter = () => {
+    if (!exam || !focusedQuestion || !focusedSection) return;
+
+    const questionIndex = focusedSection.questions.findIndex(
+      (q) => q.id === focusedQuestion.id,
+    );
+    if (questionIndex >= focusedSection.questions.length - 1) return;
+
+    const nextQuestion = focusedSection.questions[questionIndex + 1];
+    if (!nextQuestion) return;
+    setFocusedQuestion(nextQuestion);
+  };
+
   const memoedValue: IExamContext = useMemo(
     () => ({
       error:
@@ -104,8 +149,12 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       exam: exam || null,
       answers: answers || [],
       expiredAt: session?.expiredAt || null,
+      focusedSection,
+      setFocusedSection,
       focusedQuestion: focusedQuestion,
-      setFocusedQuestion: setFocusedQuestion,
+      setFocusedQuestion,
+      setFocusedBefore,
+      setFocusedAfter,
       saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => {
         saveAnswer.mutate({ questionId, answer });
       },
@@ -114,7 +163,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       },
       isSaving: saveAnswer.isPending,
     }),
-    [session, exam, sessionError, examError],
+    [session, exam, sessionError, examError, focusedQuestion],
   );
   return (
     <ExamContext.Provider value={memoedValue}>{children}</ExamContext.Provider>
