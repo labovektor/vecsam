@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 import SavingIndicator from "@/features/exam/components/SavingIndicator";
@@ -9,11 +9,13 @@ import MultipleChoiceForm from "@/features/exam/forms/MultipleChoiceForm";
 import ShortAnswerForm from "@/features/exam/forms/ShortAnswerForm";
 import { useExam } from "@/hooks/use-exam";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
+import { Undo } from "lucide-react";
 
 import React from "react";
 
 const ExamPage = () => {
-  const { focusedQuestion, focusedSection, isSaving } = useExam();
+  const { focusedQuestion, focusedSection, isSaving, answers, undoAnswer } =
+    useExam();
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
@@ -63,7 +65,20 @@ const ExamPage = () => {
           )}
         </CardContent>
       </Card>
-      <h3 className="font-semibold">Jawaban:</h3>
+      <div className="flex items-center gap-3">
+        <h3 className="font-semibold">Jawaban:</h3>
+        {focusedQuestion && answers[focusedQuestion?.id] && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs"
+            onClick={() => undoAnswer(focusedQuestion.id)}
+            disabled={isSaving}
+          >
+            <Undo /> Urungkan Jawaban
+          </Button>
+        )}
+      </div>
       {focusedSection?.type === "MULTIPLE_CHOICE" && <MultipleChoiceForm />}
       {focusedSection?.type === "SHORT_ANSWER" && (
         <ShortAnswerForm key={focusedQuestion?.id} />

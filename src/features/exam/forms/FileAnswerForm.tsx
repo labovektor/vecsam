@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExam } from "@/hooks/use-exam";
 import { fileToBase64 } from "@/lib/form-utils";
+import { Check } from "lucide-react";
 import React from "react";
 
 const FileAnswerForm = () => {
@@ -20,8 +21,14 @@ const FileAnswerForm = () => {
   return (
     <>
       <div className="flex gap-2">
-        <Input onChange={handleChange} type="file" disabled={isSaving} />
+        <Input
+          onChange={handleChange}
+          type="file"
+          disabled={isSaving}
+          className="max-w-md"
+        />
         <Button
+          size="icon"
           disabled={isSaving || !value}
           onClick={() => {
             if (!focusedQuestion) return;
@@ -29,7 +36,7 @@ const FileAnswerForm = () => {
             setValue(undefined);
           }}
         >
-          Simpan
+          <Check />
         </Button>
       </div>
       <span>Jawaban Saat Ini: </span>

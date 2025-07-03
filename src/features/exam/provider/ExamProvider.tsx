@@ -35,6 +35,7 @@ interface IExamContext {
   setFocusedBefore: VoidFunction;
   setFocusedAfter: VoidFunction;
   saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void;
+  undoAnswer: (questionId: string) => void;
   lockAnswer: VoidFunction;
   isSaving: boolean;
 }
@@ -126,6 +127,15 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     },
   });
 
+  const undoAnswer = api.exam.removeAnswer.useMutation({
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: () => {
+      refetchAnswers();
+    },
+  });
+
   const lockAnswer = api.exam.lockAnswer.useMutation({
     onError: (err) => {
       toast.error(err.message);
@@ -178,10 +188,13 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => {
         saveAnswer.mutate({ questionId, answer });
       },
+      undoAnswer: (questionId: string) => {
+        undoAnswer.mutate({ questionId });
+      },
       lockAnswer: () => {
         lockAnswer.mutate();
       },
-      isSaving: saveAnswer.isPending,
+      isSaving: saveAnswer.isPending || undoAnswer.isPending,
     }),
     [
       session,
@@ -190,6 +203,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       examError,
       focusedQuestion,
       saveAnswer.isPending,
+      undoAnswer.isPending,
       answers,
     ],
   );

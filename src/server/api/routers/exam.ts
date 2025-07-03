@@ -146,6 +146,20 @@ export const examRouter = createTRPCRouter({
     return records;
   }),
 
+  removeAnswer: examProcedure
+    .input(z.object({ questionId: z.string() }))
+    .mutation(({ ctx, input }) => {
+      const { db, session } = ctx;
+      return db.participantAnswer.delete({
+        where: {
+          participantId_questionId: {
+            participantId: session.participantId,
+            questionId: input.questionId,
+          },
+        },
+      });
+    }),
+
   lockAnswer: examProcedure.mutation(({ ctx }) => {
     const { db, session } = ctx;
     return db.participant.update({

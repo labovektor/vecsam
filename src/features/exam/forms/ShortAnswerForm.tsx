@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useExam } from "@/hooks/use-exam";
+import { Check } from "lucide-react";
 import React from "react";
 
 const ShortAnswerForm = () => {
@@ -12,17 +13,26 @@ const ShortAnswerForm = () => {
     : "";
   const [value, setValue] = React.useState(cAnswer);
 
+  React.useEffect(() => {
+    setValue(cAnswer);
+  }, [cAnswer]);
+
   return (
     <div className="flex gap-2">
-      <Input value={value} onChange={(e) => setValue(e.target.value)} />
+      <Input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="max-w-md"
+      />
       <Button
         disabled={isSaving || value === cAnswer}
+        size="icon"
         onClick={() => {
           if (!focusedQuestion) return;
           saveAnswer(focusedQuestion.id, { answerText: value });
         }}
       >
-        Simpan
+        <Check />
       </Button>
     </div>
   );

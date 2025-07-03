@@ -8,19 +8,29 @@ import { renderKatexFromHtml } from "@/lib/katex-utils";
 import debounce from "lodash.debounce";
 
 const MultipleChoiceForm = () => {
-  const { focusedQuestion, saveAnswer, answers } = useExam();
+  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam();
+  const cValue = focusedQuestion
+    ? (answers[focusedQuestion.id]?.optionId ?? null)
+    : null;
+
+  const [value, setValue] = React.useState(cValue);
 
   const handleValueChange = debounce((value) => {
     if (!focusedQuestion) return;
     saveAnswer(focusedQuestion.id, { optionId: value });
   }, 1000);
+
+  React.useEffect(() => {
+    setValue(cValue);
+  }, [cValue]);
   return (
     <RadioGroup
-      key={focusedQuestion?.id}
-      defaultValue={
-        focusedQuestion ? answers[focusedQuestion?.id]?.optionId : undefined
-      }
-      onValueChange={handleValueChange}
+      disabled={isSaving}
+      value={value}
+      onValueChange={(value) => {
+        setValue(value);
+        handleValueChange(value);
+      }}
     >
       {focusedQuestion?.MultipleChoiceOption.map((option) => (
         <div key={option.id} className="flex items-center gap-3">
