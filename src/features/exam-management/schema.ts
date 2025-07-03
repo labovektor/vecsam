@@ -17,7 +17,7 @@ export const examSchema = z
     {
       message: "End time must be at least 10 minutes after start time",
       path: ["endTime"],
-    }
+    },
   )
   .refine(
     (data) =>
@@ -27,12 +27,7 @@ export const examSchema = z
       message:
         "Duration must fit within the time range between start and end time",
       path: ["duration"],
-    }
+    },
   );
 
 export type ExamSchemaType = z.infer<typeof examSchema>;
-
-export type ExamRes = ExamSchemaType & {
-  id: string;
-  isActive: boolean;
-};

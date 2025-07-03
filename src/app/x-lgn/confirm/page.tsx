@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,7 @@ import {
 import { loginAction } from "@/features/participant-auth/actions";
 import { beautifyDate } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { AlarmClock } from "lucide-react";
+import { AlarmClock, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -67,6 +68,14 @@ const ExamLoginConfirmPage = () => {
                 <AlarmClock />
                 {exam.duration} Menit
               </Badge>
+
+              <Alert>
+                <AlertCircle />
+                <AlertTitle>Catatan!</AlertTitle>
+                <AlertDescription className="whitespace-pre-wrap">
+                  {exam.description}
+                </AlertDescription>
+              </Alert>
 
               <Button className="w-full" onClick={confirmStart}>
                 Mulai Ujian Sekarang

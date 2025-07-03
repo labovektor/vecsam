@@ -1,7 +1,6 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { ExamRes, ExamSchemaType } from "../schema";
 import { beautifyDate } from "@/lib/utils";
 import {
   AlertDialog,
@@ -26,8 +25,9 @@ import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { api } from "@/trpc/react";
+import type { Exam } from "@prisma/client";
 
-export const examColumns: ColumnDef<ExamRes>[] = [
+export const examColumns: ColumnDef<Exam>[] = [
   { accessorKey: "id", header: "ID" },
   { accessorKey: "title", header: "Title" },
   {
@@ -67,7 +67,7 @@ export const examColumns: ColumnDef<ExamRes>[] = [
   },
 ];
 
-export function EventActionColumn({ exam }: { exam: ExamRes }) {
+export function EventActionColumn({ exam }: { exam: Exam }) {
   const deleteExam = api.examManagement.delete.useMutation({
     onError: (error) => {
       toast.error(error.message);
