@@ -2,7 +2,7 @@
 
 import type { Participant } from "@prisma/client";
 import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema";
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import type {
@@ -15,6 +15,7 @@ import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "@/features/participant-auth/actions";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ExamContextProviderProps = {
   children: React.ReactNode;
@@ -88,6 +89,7 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [focusedSection, setFocusedSection] =
     useState<SectionWithQuestionAttr | null>(null);
@@ -104,29 +106,41 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     error: examError,
     isFetching: isFetchingExam,
   } = api.exam.getExam.useQuery();
-  const {
-    data: answers,
-    error: answersError,
-    refetch: refetchAnswers,
-  } = api.exam.getAnswers.useQuery();
 
-  if (exam && !focusedQuestion) {
-    const firstSection = exam.sections[0];
-    if (firstSection) {
-      setFocusedSection(firstSection);
-      const firstNumber = firstSection.questions[0];
-      if (firstNumber) {
-        setFocusedQuestion(firstNumber);
+  const { data: answers, error: answersError } = api.exam.getAnswers.useQuery(
+    undefined,
+    {
+      staleTime: 10 * 60 * 1000, // 10 minutes
+    },
+  );
+
+  useEffect(() => {
+    if (exam && !focusedQuestion) {
+      const firstSection = exam.sections[0];
+      if (firstSection) {
+        setFocusedSection(firstSection);
+        const firstNumber = firstSection.questions[0];
+        if (firstNumber) {
+          setFocusedQuestion(firstNumber);
+        }
       }
     }
-  }
+  }, [exam, focusedQuestion]);
+
+  const util = api.useUtils();
 
   const saveAnswer = api.exam.saveAnswer.useMutation({
     onError: (err) => {
       toast.error(err.message);
     },
-    onSuccess: () => {
-      refetchAnswers();
+    onSuccess: (_, variables) => {
+      util.exam.getAnswers.setData(
+        undefined,
+        (prev: AnswerRecordSchemaType | undefined) => ({
+          ...(prev ?? {}),
+          [variables.questionId]: variables.answer,
+        }),
+      );
     },
   });
 
@@ -134,8 +148,15 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     onError: (err) => {
       toast.error(err.message);
     },
-    onSuccess: () => {
-      refetchAnswers();
+    onSuccess: (_, variables) => {
+      util.exam.getAnswers.setData(
+        undefined,
+        (prev: AnswerRecordSchemaType | undefined) => {
+          const copy = { ...(prev ?? {}) };
+          delete copy[variables.questionId];
+          return copy;
+        },
+      );
     },
   });
 

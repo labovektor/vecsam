@@ -15,6 +15,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AuthenticationError } from "@/use-cases/errors";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
+import { rateLimiter } from "@/lib/rate-limiter";
 
 /**
  * 1. CONTEXT
@@ -31,9 +32,13 @@ import { verifyJwt } from "@/lib/jwt";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const c = await cookies();
+
+  // 🔍 Coba ambil dari header yang umum dipakai reverse proxy
+  const ip = opts.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
   return {
     db,
     cookies: c,
+    ip,
     ...opts,
   };
 };
@@ -110,6 +115,17 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
 
   if (!data.user) throw new AuthenticationError();
 
+  try {
+    await rateLimiter({
+      points: 10,
+      duration: 1,
+      keyPrefix: "rl:auth",
+      consumeKey: data.user.id,
+    });
+  } catch (error) {
+    throw new Error("Terlalu Banyak Request");
+  }
+
   return await next({
     ctx: {
       ...ctx,
@@ -127,6 +143,17 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
     payload = verifyJwt(token);
   } catch (error) {
     throw new AuthenticationError();
+  }
+
+  try {
+    await rateLimiter({
+      points: 5,
+      duration: 1,
+      keyPrefix: "rl:exam",
+      consumeKey: payload.sub,
+    });
+  } catch (error) {
+    throw new Error("Terlalu Banyak Request");
   }
 
   // Ambil session dari DB
@@ -156,6 +183,20 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const defaultRateLimiter = t.middleware(async ({ ctx, next }) => {
+  try {
+    await rateLimiter({
+      points: 10,
+      duration: 1,
+      keyPrefix: "rl:default",
+      consumeKey: ctx.ip,
+    });
+  } catch (error) {
+    throw new Error("Terlalu Banyak Request");
+  }
+  return await next();
+});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -163,7 +204,7 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const publicProcedure = t.procedure.use(defaultRateLimiter);
 export const protectedProcedure = t.procedure.use(authMiddleware);
 
 export const examProcedure = t.procedure.use(examMiddleware);

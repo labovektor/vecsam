@@ -9,7 +9,7 @@ export const createQueryClient = () =>
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        retry: 3,
+        retry: 1,
         staleTime: 2 * 60 * 1000,
       },
 

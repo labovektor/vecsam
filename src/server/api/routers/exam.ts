@@ -7,13 +7,7 @@ import {
   saveAnswerSchema,
   type AnswerRecordSchemaType,
 } from "@/features/exam/schema";
-import { Redis } from "ioredis";
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  port: Number(process.env.REDIS_PORT),
-  db: Number(process.env.REDIS_DB),
-});
+import { getRedisClient } from "@/lib/redis";
 
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
@@ -24,6 +18,7 @@ export const examRouter = createTRPCRouter({
 
   getExam: examProcedure.query(async ({ ctx }) => {
     const examId = ctx.session.participant.examId;
+    const redis = getRedisClient();
 
     const examRedis = await redis.get(examId);
     if (examRedis) {
@@ -54,7 +49,14 @@ export const examRouter = createTRPCRouter({
       },
     });
 
-    await redis.setex(examId, 60 * 60, JSON.stringify(exam));
+    if (!exam) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Ujian tidak ditemukan",
+      });
+    }
+
+    await redis.setex(examId, exam.duration * 60, JSON.stringify(exam));
 
     return exam;
   }),
