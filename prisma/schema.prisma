@@ -37,7 +37,7 @@ model Participant {
     examId             String
     exam               Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
     participantSession ParticipantSession?
-    score              Int
+    score              Int                 @default(0)
     createdAt          DateTime            @default(now())
     lockedAt           DateTime?
     ParticipantAnswer  ParticipantAnswer[]

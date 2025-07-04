@@ -24,7 +24,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
 import type { IColumn } from "json-as-xlsx";
-import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -130,14 +130,14 @@ export function ParticipantActionColumn({
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem>
             <Link
-              href={`/dashboard/exam/${participant.examId}/participant/${participant.id}`}
+              href={`/dashboard/exam/${participant.examId}/participant/${participant.id}?name=${participant.name}`}
               className={buttonVariants({
                 variant: "ghost",
                 size: "simple",
               })}
             >
-              <Eye />
-              View Participant details
+              <Pencil />
+              Beri Penilaian
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

@@ -9,7 +9,7 @@ import type {
   ExamWithSectionQuestionAttr,
   QuestionWithAttr,
   SectionWithQuestionAttr,
-} from "../types";
+} from "../../types";
 import { Loader } from "lucide-react";
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
@@ -144,12 +144,16 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     onError: (err) => {
       toast.error(err.message);
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (data) => {
       util.exam.getAnswers.setData(
         undefined,
         (prev: AnswerRecordSchemaType | undefined) => ({
           ...(prev ?? {}),
-          [variables.questionId]: variables.answer,
+          [data.questionId]: {
+            answerText: data.answerText ?? undefined,
+            answerFile: data.answerFile ?? undefined,
+            optionId: data.optionId ?? undefined,
+          },
         }),
       );
     },

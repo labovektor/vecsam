@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { parse } from "csv-parse/sync";
 import bcrypt from "bcryptjs";
 import { addParticipantSchema } from "@/features/participant-management/schema";
+import type { AnswerRecordSchemaType } from "@/features/exam/schema";
 
 export const participantManagementRouter = createTRPCRouter({
   getAllByExamId: protectedProcedure
@@ -106,6 +107,52 @@ export const participantManagementRouter = createTRPCRouter({
       return db.participant.delete({
         where: {
           id: input.id,
+        },
+      });
+    }),
+
+  getAnswers: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const answers = await db.participantAnswer.findMany({
+        where: {
+          participantId: input.id,
+        },
+      });
+
+      // Create records for each question
+      const records: AnswerRecordSchemaType = {};
+      answers.forEach((answer) => {
+        records[answer.questionId] = {
+          answerText: answer.answerText ?? undefined,
+          answerFile: answer.answerFile ?? undefined,
+          optionId: answer.optionId ?? undefined,
+        };
+      });
+
+      return records;
+    }),
+
+  setScore: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        score: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+      return db.participant.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          score: input.score,
         },
       });
     }),
