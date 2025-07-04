@@ -18,12 +18,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
 
 const DashboardLoginForm = () => {
   const router = useRouter();
+  const { signIn, loading } = useAdminAuthAction();
+
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -32,21 +33,8 @@ const DashboardLoginForm = () => {
     },
   });
 
-  // const login = api.adminAuth.login.useMutation({
-  //   onError: (err) => {
-  //     toast.error(err.message);
-  //   },
-  //   onSuccess: () => {
-  //     router.replace("/dashboard");
-  //   },
-  // });
-
   async function onSubmit(values: LoginSchemaType) {
-    const supabase = createClient();
-    const res = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    });
+    const res = await signIn(values);
 
     if (res.error) {
       toast.error(res.error.message);
@@ -83,12 +71,8 @@ const DashboardLoginForm = () => {
             </FormItem>
           )}
         />
-        <Button
-          className="w-full"
-          type="submit"
-          disabled={form.formState.isLoading}
-        >
-          {form.formState.isLoading ? "Logging in..." : "Login"}
+        <Button className="w-full" type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </Button>
       </form>
     </Form>

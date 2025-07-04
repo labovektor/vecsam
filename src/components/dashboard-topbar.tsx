@@ -1,10 +1,12 @@
 import React from "react";
 import { SidebarTrigger } from "./ui/sidebar";
+import LogoutButton from "@/features/admin-auth/components/LogoutButton";
 
 const DashboardTopBar = async () => {
   return (
-    <header className="flex justify-between sticky top-0 bg-slate-50 h-16 shrink-0 items-center gap-2 border-b px-4 z-30">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-slate-50 px-4">
       <SidebarTrigger />
+      <LogoutButton />
     </header>
   );
 };
