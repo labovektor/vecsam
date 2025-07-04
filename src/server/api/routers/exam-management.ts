@@ -46,6 +46,21 @@ export const examManagementRouter = createTRPCRouter({
     });
   }),
 
+  update: protectedProcedure
+    .input(z.object({ id: z.string(), value: examSchema }))
+    .mutation(({ ctx, input }) => {
+      const { db, user } = ctx;
+      return db.exam.update({
+        where: {
+          id: input.id,
+          userId: user?.id,
+        },
+        data: {
+          ...input.value,
+        },
+      });
+    }),
+
   toggleStatus: protectedProcedure
     .input(
       z.object({

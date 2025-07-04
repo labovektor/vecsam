@@ -19,6 +19,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
+import type { Exam } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -26,26 +27,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
+import { Edit } from "lucide-react";
 
-const NewExamForm = () => {
+const EditExamForm = ({
+  id,
+  cValue,
+}: {
+  id: string;
+  cValue: Partial<Exam>;
+}) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
   const form = useForm<ExamSchemaType>({
     resolver: zodResolver(examSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      passcode: "",
-      startTime: new Date(),
-      endTime: new Date(),
-      duration: 0,
+      title: cValue.title || "",
+      description: cValue.description || "",
+      passcode: cValue.passcode || "",
+      startTime: cValue.startTime || new Date(),
+      endTime: cValue.endTime || new Date(),
+      duration: cValue.duration || 0,
     },
   });
 
-  const createNewExam = api.examManagement.create.useMutation({
+  const createNewExam = api.examManagement.update.useMutation({
     onError: (err) => {
       toast.error(err.message);
     },
@@ -53,22 +60,25 @@ const NewExamForm = () => {
       queryClient.refetchQueries({
         queryKey: getQueryKey(api.examManagement.getAll),
       });
-      toast.success("New Exam Created");
+      toast.success("Exam Successfully Updated");
       setOpen(false);
     },
   });
 
-  async function onSubmit(values: ExamSchemaType) {
-    createNewExam.mutate(values);
+  async function onSubmit(value: ExamSchemaType) {
+    createNewExam.mutate({ id, value });
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className={buttonVariants({ variant: "default" })}>
-        <Plus /> New Exam
+      <DialogTrigger asChild>
+        <Button variant="ghost" className="w-full justify-start">
+          {" "}
+          <Edit /> Edit Exam
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Exam</DialogTitle>
+          <DialogTitle>Update Exam</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -185,4 +195,4 @@ const NewExamForm = () => {
   );
 };
 
-export default NewExamForm;
+export default EditExamForm;

@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { api } from "@/trpc/react";
 import type { Exam } from "@prisma/client";
+import EditExamForm from "../forms/EditExamForm";
 
 export const examColumns: ColumnDef<Exam>[] = [
   { accessorKey: "id", header: "ID" },
@@ -98,6 +99,9 @@ export function EventActionColumn({ exam }: { exam: Exam }) {
               <Eye />
               View Exam details
             </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <EditExamForm id={exam.id} cValue={exam} />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 
