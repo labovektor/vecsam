@@ -8,6 +8,7 @@ import {
   type AnswerRecordSchemaType,
 } from "@/features/exam/schema";
 import { getRedisClient } from "@/lib/redis";
+import { activityLogtype, appendActivityLog } from "@/lib/logger";
 
 export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
@@ -56,6 +57,12 @@ export const examRouter = createTRPCRouter({
       });
     }
 
+    await appendActivityLog({
+      examId,
+      participantId: ctx.session.participant.id,
+      type: "access_exam",
+    });
+
     await redis.setex(examId, exam.duration * 60, JSON.stringify(exam));
 
     return exam;
@@ -95,6 +102,13 @@ export const examRouter = createTRPCRouter({
           .from(Bucket.ANSWER)
           .getPublicUrl(data.path).data.publicUrl;
       }
+
+      await appendActivityLog({
+        examId: session.participant.examId,
+        participantId: session.participant.id,
+        type: "add_answer",
+        info: input.questionId,
+      });
 
       return db.participantAnswer.upsert({
         where: {
@@ -142,8 +156,16 @@ export const examRouter = createTRPCRouter({
 
   removeAnswer: examProcedure
     .input(z.object({ questionId: z.string() }))
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
+
+      await appendActivityLog({
+        examId: session.participant.examId,
+        participantId: session.participant.id,
+        type: "undo_answer",
+        info: input.questionId,
+      });
+
       return db.participantAnswer.delete({
         where: {
           participantId_questionId: {
@@ -154,8 +176,14 @@ export const examRouter = createTRPCRouter({
       });
     }),
 
-  lockAnswer: examProcedure.mutation(({ ctx }) => {
+  lockAnswer: examProcedure.mutation(async ({ ctx }) => {
     const { db, session } = ctx;
+
+    await appendActivityLog({
+      examId: session.participant.examId,
+      participantId: session.participant.id,
+      type: "lock_answer",
+    });
     return db.participant.update({
       where: {
         id: session.participantId,
@@ -165,4 +193,20 @@ export const examRouter = createTRPCRouter({
       },
     });
   }),
+
+  appendAdditionalLog: examProcedure
+    .input(
+      z.object({
+        type: activityLogtype,
+        info: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await appendActivityLog({
+        examId: ctx.session.participant.examId,
+        participantId: ctx.session.participant.id,
+        type: input.type,
+        info: input.info,
+      });
+    }),
 });

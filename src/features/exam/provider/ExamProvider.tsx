@@ -15,7 +15,6 @@ import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "@/features/participant-auth/actions";
-import { useQueryClient } from "@tanstack/react-query";
 
 type ExamContextProviderProps = {
   children: React.ReactNode;
@@ -89,7 +88,6 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const [focusedSection, setFocusedSection] =
     useState<SectionWithQuestionAttr | null>(null);
@@ -113,6 +111,22 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       staleTime: 10 * 60 * 1000, // 10 minutes
     },
   );
+
+  const log = api.exam.appendAdditionalLog.useMutation();
+  useEffect(() => {
+    const onBlur = () => {
+      alert("Kamu telah mencoba meninggalkan halaman ujian!");
+      log.mutate({
+        type: "leave_tab",
+      });
+    };
+
+    window.addEventListener("blur", onBlur);
+
+    return () => {
+      window.removeEventListener("blur", onBlur);
+    };
+  }, [log]);
 
   useEffect(() => {
     if (exam && !focusedQuestion) {

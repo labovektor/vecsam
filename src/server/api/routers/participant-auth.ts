@@ -2,6 +2,7 @@ import { loginSchema } from "@/features/participant-auth/schema";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { isBefore } from "date-fns";
 import { z } from "zod";
+import { appendActivityLog } from "@/lib/logger";
 
 export const participantAuthRouter = createTRPCRouter({
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
@@ -38,6 +39,12 @@ export const participantAuthRouter = createTRPCRouter({
       throw new Error("Ujian belum dimulai atau sudah selesai");
     }
 
+    await appendActivityLog({
+      examId: participant.examId,
+      participantId: participant.id,
+      type: "login_exam",
+    });
+
     return {
       id: participant.id,
     };
@@ -59,6 +66,12 @@ export const participantAuthRouter = createTRPCRouter({
       if (!participant) {
         throw new Error("Participant not found");
       }
+
+      await appendActivityLog({
+        examId: participant.examId,
+        participantId: participant.id,
+        type: "access_exam",
+      });
 
       return participant.exam;
     }),

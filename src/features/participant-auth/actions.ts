@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { addMinutes, isBefore } from "date-fns";
 import { createJwt } from "@/lib/jwt";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { appendActivityLog } from "@/lib/logger";
 
 export async function loginAction(input: { participantId: string }) {
   const c = await cookies();
@@ -68,6 +68,12 @@ export async function loginAction(input: { participantId: string }) {
       },
     });
 
+    await appendActivityLog({
+      examId: participant.examId,
+      participantId: participant.id,
+      type: "start_exam",
+    });
+
     c.set("xt_val", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -86,6 +92,12 @@ export async function loginAction(input: { participantId: string }) {
       data: {
         token,
       },
+    });
+
+    await appendActivityLog({
+      examId: participant.examId,
+      participantId: participant.id,
+      type: "rejoin_exam",
     });
 
     c.set("xt_val", token, {
