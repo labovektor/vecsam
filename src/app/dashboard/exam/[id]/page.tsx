@@ -6,7 +6,13 @@ import ExamStatCard from "@/features/exam-management/components/stat-card";
 import ToggleExamStatus from "@/features/exam-management/forms/ToggleExamStatus";
 import ParticipantTable from "@/features/participant-management/components/ParticipantTable";
 import { api } from "@/trpc/react";
-import { AlarmClock, AlertCircle } from "lucide-react";
+import {
+  AlarmClock,
+  AlertCircle,
+  FileQuestion,
+  Logs,
+  Users,
+} from "lucide-react";
 import React, { use } from "react";
 
 const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -40,6 +46,7 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 className="bg-yellow-50 text-yellow-600"
                 title="Total Participant"
                 value={exam.Participant.length}
+                icon={<Users />}
               />
               <ExamStatCard
                 className="bg-purple-50 text-purple-600"
@@ -48,6 +55,14 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   exam.Participant.filter((participant) => participant.lockedAt)
                     .length
                 }
+                icon={<Users />}
+              />
+              <ExamStatCard
+                className="bg-blue-50 text-blue-600"
+                title="Log Aktivitas"
+                href="#"
+                value={"1320"}
+                icon={<Logs />}
               />
               <ExamStatCard
                 className="bg-green-50 text-green-600"
@@ -57,6 +72,7 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   (acc, section) => acc + section.questions.length,
                   0,
                 )}
+                icon={<FileQuestion />}
               />
             </CardContent>
           </Card>

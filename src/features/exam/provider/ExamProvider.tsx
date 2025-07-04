@@ -114,13 +114,10 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
 
   const log = api.exam.appendAdditionalLog.useMutation();
   useEffect(() => {
-    const onBlur = () => {
-      alert("Kamu telah mencoba meninggalkan halaman ujian!");
+    const onBlur = () =>
       log.mutate({
         type: "leave_tab",
       });
-    };
-
     window.addEventListener("blur", onBlur);
 
     return () => {

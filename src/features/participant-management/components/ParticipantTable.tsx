@@ -14,12 +14,13 @@ import { exportAsExcelFile } from "@/lib/xlsx";
 import { BulkAddParticipantsForm } from "../forms/BulkAddParticipantForm";
 
 const ParticipantTable = ({ examId }: { examId: string }) => {
-  const { data: participants } =
+  const { data: participants, isLoading } =
     api.participantManagement.getAllByExamId.useQuery({ id: examId });
   return (
     <DataTable
       columns={participantColumnns}
       data={participants ?? []}
+      loading={isLoading}
       actions={(data) => (
         <>
           <AddParticipantForm examId={examId} />

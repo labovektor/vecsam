@@ -42,8 +42,17 @@ export const excelParticipantColumn: IColumn[] = [
     value: "passcode",
   },
   {
+    label: "Skor",
+    value: "score",
+  },
+  {
     label: "Didaftarkan Pada",
     value: (row) => beautifyDate(row.createdAt as string, "FULL"),
+  },
+  {
+    label: "Dikunci Pada",
+    value: (row) =>
+      row.lockedAt ? beautifyDate(row.lockedAt as Date, "FULL") : "-",
   },
 ];
 
@@ -59,6 +68,27 @@ export const participantColumnns: ColumnDef<Participant>[] = [
   {
     accessorKey: "passcode",
     header: "Passcode",
+    enableGlobalFilter: false,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "lockedAt",
+    header: "Dikunci Pada",
+    enableGlobalFilter: false,
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => {
+      const lockedAt = row.original.lockedAt;
+      return lockedAt ? beautifyDate(lockedAt, "FULL") : "-";
+    },
+  },
+  {
+    accessorKey: "score",
+    header: "Skor",
+    enableGlobalFilter: false,
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     id: "actions",
@@ -100,7 +130,7 @@ export function ParticipantActionColumn({
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem>
             <Link
-              href={`/dashboard/participant/${participant.id}`}
+              href={`/dashboard/exam/${participant.examId}/participant/${participant.id}`}
               className={buttonVariants({
                 variant: "ghost",
                 size: "simple",

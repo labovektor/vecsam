@@ -17,6 +17,9 @@ export const participantManagementRouter = createTRPCRouter({
         where: {
           examId: input.id,
         },
+        orderBy: {
+          name: "asc",
+        },
       });
     }),
 

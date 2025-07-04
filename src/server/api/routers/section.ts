@@ -20,6 +20,9 @@ export const sectionRouter = createTRPCRouter({
         where: {
           examId: input.examId,
         },
+        include: {
+          questions: true,
+        },
         orderBy: {
           createdAt: "asc",
         },
