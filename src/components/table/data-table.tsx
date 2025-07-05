@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   loading?: boolean;
   message?: string;
-  actions?: (data: TData[]) => React.ReactNode;
+  actions?: (data: TData[], table: any) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -72,7 +72,10 @@ export function DataTable<TData, TValue>({
 
         {actions && (
           <div className="space-x-2">
-            {actions(table.getSortedRowModel().rows.map((row) => row.original))}
+            {actions(
+              table.getSortedRowModel().rows.map((row) => row.original),
+              table,
+            )}
           </div>
         )}
       </div>

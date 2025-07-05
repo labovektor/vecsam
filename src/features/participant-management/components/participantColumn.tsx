@@ -46,7 +46,7 @@ export const excelParticipantColumn: IColumn[] = [
     value: "score",
   },
   {
-    label: "Didaftarkan Pada",
+    label: "Memulai Sesi Pada",
     value: (row) => beautifyDate(row.createdAt as string, "FULL"),
   },
   {
@@ -57,7 +57,7 @@ export const excelParticipantColumn: IColumn[] = [
 ];
 
 export const participantColumnns: ColumnDef<
-  Participant & { participantSession?: ParticipantSession }
+  Participant & { participantSession: ParticipantSession | null }
 >[] = [
   {
     accessorKey: "id",
@@ -83,6 +83,10 @@ export const participantColumnns: ColumnDef<
     cell: ({ row }) => {
       const startedAt = row.original.participantSession?.createdAt;
       return startedAt ? beautifyDate(startedAt, "FULL") : "-";
+    },
+    filterFn: (row, id, value) => {
+      if (value === true) return row.original.participantSession !== null;
+      return true;
     },
   },
   {
