@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 type CorrectionType = Record<
   string,
-  { correct: string[]; wrong: string[]; pass: string[] }
+  { correct: Set<string>; wrong: Set<string>; pass: Set<string> }
 >;
 
 const ParticipantDetailPage = ({
@@ -46,15 +46,15 @@ const ParticipantDetailPage = ({
     if (getSectionsSuccess && getParticipantAnswersSuccess) {
       const initialCorrection: CorrectionType = {};
       sections?.forEach((section) => {
-        let passedQuestions: string[] = [];
+        let passedQuestions: Set<string> = new Set();
         section.questions.forEach((question) => {
           if (!participantAnswers[question.id]) {
-            passedQuestions.push(question.id);
+            passedQuestions.add(question.id);
           }
         });
         initialCorrection[section.id] = {
-          correct: [],
-          wrong: [],
+          correct: new Set(),
+          wrong: new Set(),
           pass: passedQuestions,
         };
       });
@@ -67,11 +67,11 @@ const ParticipantDetailPage = ({
     sections?.forEach((section) => {
       if (correction[section.id]) {
         totalScore +=
-          (correction[section.id]?.correct.length ?? 0) * section.correctPoint;
+          (correction[section.id]?.correct.size ?? 0) * section.correctPoint;
         totalScore +=
-          (correction[section.id]?.wrong.length ?? 0) * section.wrongPoint;
+          (correction[section.id]?.wrong.size ?? 0) * section.wrongPoint;
         totalScore +=
-          (correction[section.id]?.pass.length ?? 0) * section.passPoint;
+          (correction[section.id]?.pass.size ?? 0) * section.passPoint;
       }
     });
     setScore(totalScore.toString());
@@ -96,23 +96,23 @@ const ParticipantDetailPage = ({
             <CardHeader className="flex items-center">
               <CardTitle>{section.title}</CardTitle>
               <Badge className="bg-green-500">
-                Benar: {correction[section.id]?.correct.length} *{" "}
+                Benar: {correction[section.id]?.correct.size} *{" "}
                 {section.correctPoint}
               </Badge>
               <Badge className="bg-red-500">
-                Salah: {correction[section.id]?.wrong.length} *{" "}
+                Salah: {correction[section.id]?.wrong.size} *{" "}
                 {section.wrongPoint}
               </Badge>
               <Badge className="bg-yellow-500">
-                Tidak Dikerjakan: {correction[section.id]?.pass.length} *{" "}
+                Tidak Dikerjakan: {correction[section.id]?.pass.size} *{" "}
                 {section.passPoint}
               </Badge>
               <Badge className="bg-gray-500">
                 Belum Dinilai:{" "}
                 {section.questions.length -
-                  ((correction[section.id]?.correct.length ?? 0) +
-                    (correction[section.id]?.wrong.length ?? 0) +
-                    (correction[section.id]?.pass.length ?? 0))}
+                  ((correction[section.id]?.correct.size ?? 0) +
+                    (correction[section.id]?.wrong.size ?? 0) +
+                    (correction[section.id]?.pass.size ?? 0))}
               </Badge>
             </CardHeader>
             <CardContent>
@@ -132,15 +132,13 @@ const ParticipantDetailPage = ({
                         <span
                           className={cn(
                             "flex aspect-square w-7 items-center justify-center rounded-full border-2",
-                            correction[section.id]?.pass.includes(question.id)
+                            correction[section.id]?.pass.has(question.id)
                               ? "border-gray-400 text-gray-400"
                               : "",
-                            correction[section.id]?.correct.includes(
-                              question.id,
-                            )
+                            correction[section.id]?.correct.has(question.id)
                               ? "border-green-500 text-green-500"
                               : "",
-                            correction[section.id]?.wrong.includes(question.id)
+                            correction[section.id]?.wrong.has(question.id)
                               ? "border-red-500 text-red-500"
                               : "",
                           )}
@@ -203,104 +201,96 @@ const ParticipantDetailPage = ({
                         </TableCell>
                       )}
                       <TableCell className="space-x-2 text-right">
+                        {participantAnswers[question.id] && (
+                          <>
+                            <Button
+                              size="icon"
+                              className="bg-green-500 hover:bg-green-400"
+                              onClick={() =>
+                                setCorrection((prev) => {
+                                  if (!prev[section.id]) {
+                                    return prev;
+                                  }
+
+                                  let prevCorrect = prev[section.id]!.correct;
+                                  let prevWrong = prev[section.id]!.wrong;
+
+                                  // Make sure there is no question.id in prevWrong
+                                  prevWrong.delete(question.id);
+                                  prevCorrect.add(question.id);
+
+                                  return {
+                                    ...prev,
+                                    [section.id]: {
+                                      ...prev[section.id]!,
+                                      correct: prevCorrect,
+                                      wrong: prevWrong,
+                                    },
+                                  };
+                                })
+                              }
+                            >
+                              <Check />
+                            </Button>
+                            {/* Button to mark as wrong */}
+                            <Button
+                              size="icon"
+                              variant="destructive"
+                              onClick={() => {
+                                setCorrection((prev) => {
+                                  if (!prev[section.id]) {
+                                    return prev;
+                                  }
+                                  let prevCorrect = prev[section.id]!.correct;
+                                  let prevWrong = prev[section.id]!.wrong;
+
+                                  // Make sure there is no question.id in prevCorrect
+                                  prevCorrect.delete(question.id);
+                                  prevWrong.add(question.id);
+                                  return {
+                                    ...prev,
+                                    [section.id]: {
+                                      ...prev[section.id]!,
+                                      correct: prevCorrect,
+                                      wrong: prevWrong,
+                                    },
+                                  };
+                                });
+                              }}
+                            >
+                              <X />
+                            </Button>
+                            {/* Button to unmark */}
+                            <Button
+                              size="icon"
+                              variant="secondary"
+                              onClick={() => {
+                                setCorrection((prev) => {
+                                  if (!prev[section.id]) {
+                                    return prev;
+                                  }
+                                  let prevCorrect = prev[section.id]!.correct;
+                                  let prevWrong = prev[section.id]!.wrong;
+
+                                  // Make sure there is no question.id in both prevCorrect and prevWrong
+                                  prevCorrect.delete(question.id);
+                                  prevWrong.delete(question.id);
+                                  return {
+                                    ...prev,
+                                    [section.id]: {
+                                      ...prev[section.id]!,
+                                      correct: prevCorrect,
+                                      wrong: prevWrong,
+                                    },
+                                  };
+                                });
+                              }}
+                            >
+                              <Undo />
+                            </Button>
+                          </>
+                        )}
                         {/* Button to mark as correct */}
-                        <Button
-                          size="icon"
-                          className="bg-green-500 hover:bg-green-400"
-                          onClick={() =>
-                            setCorrection((prev) => {
-                              if (!prev[section.id]) {
-                                return prev;
-                              }
-
-                              let prevCorrect = prev[section.id]!.correct;
-                              let prevWrong = prev[section.id]!.wrong;
-
-                              // Make sure there is no question.id in prevWrong
-                              const nextWrong = prevWrong.filter(
-                                (id) => id !== question.id,
-                              );
-
-                              if (prevCorrect.includes(question.id))
-                                return prev;
-                              const nextCorrect = [...prevCorrect, question.id];
-                              return {
-                                ...prev,
-                                [section.id]: {
-                                  ...prev[section.id]!,
-                                  correct: nextCorrect,
-                                  wrong: nextWrong,
-                                },
-                              };
-                            })
-                          }
-                        >
-                          <Check />
-                        </Button>
-                        {/* Button to mark as wrong */}
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => {
-                            setCorrection((prev) => {
-                              if (!prev[section.id]) {
-                                return prev;
-                              }
-                              let prevCorrect = prev[section.id]!.correct;
-                              let prevWrong = prev[section.id]!.wrong;
-
-                              // Make sure there is no question.id in prevCorrect
-                              const nextCorrect = prevCorrect.filter(
-                                (id) => id !== question.id,
-                              );
-
-                              if (prevWrong.includes(question.id)) return prev;
-                              const nextWrong = [...prevWrong, question.id];
-                              return {
-                                ...prev,
-                                [section.id]: {
-                                  ...prev[section.id]!,
-                                  correct: nextCorrect,
-                                  wrong: nextWrong,
-                                },
-                              };
-                            });
-                          }}
-                        >
-                          <X />
-                        </Button>
-                        {/* Button to unmark */}
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          onClick={() => {
-                            setCorrection((prev) => {
-                              if (!prev[section.id]) {
-                                return prev;
-                              }
-                              let prevCorrect = prev[section.id]!.correct;
-                              let prevWrong = prev[section.id]!.wrong;
-
-                              // Make sure there is no question.id in both prevCorrect and prevWrong
-                              const nextCorrect = prevCorrect.filter(
-                                (id) => id !== question.id,
-                              );
-                              const nextWrong = prevWrong.filter(
-                                (id) => id !== question.id,
-                              );
-                              return {
-                                ...prev,
-                                [section.id]: {
-                                  ...prev[section.id]!,
-                                  correct: nextCorrect,
-                                  wrong: nextWrong,
-                                },
-                              };
-                            });
-                          }}
-                        >
-                          <Undo />
-                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

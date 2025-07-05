@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { beautifyDate } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import type { Participant } from "@prisma/client";
+import type { Participant, ParticipantSession } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
 import type { IColumn } from "json-as-xlsx";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -56,7 +56,9 @@ export const excelParticipantColumn: IColumn[] = [
   },
 ];
 
-export const participantColumnns: ColumnDef<Participant>[] = [
+export const participantColumnns: ColumnDef<
+  Participant & { participantSession?: ParticipantSession }
+>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -73,6 +75,17 @@ export const participantColumnns: ColumnDef<Participant>[] = [
     enableHiding: false,
   },
   {
+    id: "startedAt",
+    header: "Memulai Sesi Pada",
+    enableGlobalFilter: false,
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => {
+      const startedAt = row.original.participantSession?.createdAt;
+      return startedAt ? beautifyDate(startedAt, "FULL") : "-";
+    },
+  },
+  {
     accessorKey: "lockedAt",
     header: "Dikunci Pada",
     enableGlobalFilter: false,
@@ -85,9 +98,18 @@ export const participantColumnns: ColumnDef<Participant>[] = [
   },
   {
     accessorKey: "score",
-    header: "Skor",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Skor
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     enableGlobalFilter: false,
-    enableSorting: false,
     enableHiding: false,
   },
   {
