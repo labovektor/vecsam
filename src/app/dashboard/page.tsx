@@ -1,22 +1,13 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { Activity, FormInput, MonitorPlay } from "lucide-react";
 import React from "react";
 
 const DashboardPage = () => {
-  const {
-    data: exams,
-    error,
-    isLoading,
-  } = api.examManagement.getAll.useQuery();
+  const { data: exams } = api.examManagement.getAll.useQuery();
 
   const now = new Date();
   const activeExams = exams?.filter((exam) => exam.isActive);
