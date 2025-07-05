@@ -46,6 +46,8 @@ export async function updateSession(request: NextRequest) {
     "/auth",
     "/x-lgn",
     "/exam",
+    "/forgot-password",
+    "/reset-password",
   ];
 
   if (

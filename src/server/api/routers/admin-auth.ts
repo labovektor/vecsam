@@ -1,4 +1,8 @@
-import { loginSchema, registerSchema } from "@/features/admin-auth/schema";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+} from "@/features/admin-auth/schema";
 import { getBaseUrl } from "@/lib/get-base-url";
 import { createClient, supabaseAdminClient } from "@/lib/supabase/server";
 import {
@@ -56,12 +60,8 @@ export const adminAuthRouter = createTRPCRouter({
       });
     }),
 
-  resetPasswordReq: protectedProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-      }),
-    )
+  resetPasswordReq: publicProcedure
+    .input(forgotPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       return supabaseAdminClient.auth.resetPasswordForEmail(input.email, {
         redirectTo: getBaseUrl() + "/reset-password",
