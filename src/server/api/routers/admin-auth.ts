@@ -30,8 +30,10 @@ export const adminAuthRouter = createTRPCRouter({
       });
     }),
 
-  getUser: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
+
+    console.log(user.identities);
 
     return {
       id: user.id,
@@ -40,7 +42,7 @@ export const adminAuthRouter = createTRPCRouter({
     };
   }),
 
-  updateUser: protectedProcedure
+  update: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -48,7 +50,9 @@ export const adminAuthRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       return supabaseAdminClient.auth.updateUser({
-        data: { name: input.name },
+        data: {
+          name: input.name,
+        },
       });
     }),
 

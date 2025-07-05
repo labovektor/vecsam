@@ -1,28 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import UpdateAdminForm from "@/features/admin-auth/forms/UpdateAdminForm";
 import { api } from "@/trpc/react";
 import React from "react";
-import { toast } from "sonner";
 
 const ProfilePage = () => {
-  const { data: user } = api.adminAuth.getUser.useQuery();
+  const { data: user } = api.adminAuth.get.useQuery();
 
-  const resetPassword = api.adminAuth.resetPasswordReq.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
   return (
     <div>
-      <Button
-        onClick={() => {
-          if (!user || !user.email) return;
-          resetPassword.mutate({ email: user.email });
-        }}
-      >
-        Reset Password
-      </Button>
+      <UpdateAdminForm cValue={{ name: user?.name, email: user?.email }} />
     </div>
   );
 };
