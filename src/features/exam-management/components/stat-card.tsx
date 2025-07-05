@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
@@ -9,6 +9,7 @@ type ExamStatCardProps = {
   title: string;
   value: any;
   href?: string;
+  action?: VoidFunction;
   className?: string;
   icon: React.ReactNode;
 };
@@ -17,6 +18,7 @@ const ExamStatCard = ({
   title,
   value,
   href,
+  action,
   className,
   icon,
 }: ExamStatCardProps) => {
@@ -43,6 +45,13 @@ const ExamStatCard = ({
             >
               <ArrowRight />
             </Link>
+          </div>
+        )}
+        {action && (
+          <div className="ml-auto">
+            <Button onClick={action} size="icon">
+              <ArrowRight />
+            </Button>
           </div>
         )}
       </CardContent>

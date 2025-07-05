@@ -18,6 +18,18 @@ import React, { use } from "react";
 const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const { data: exam, error } = api.examManagement.getById.useQuery({ id });
+  const { data: log } = api.examManagement.getLog.useQuery({ id });
+
+  const downloadLog = () => {
+    if (!log) return;
+
+    const file = new Blob([log.content], { type: log.mimeType });
+    const fileURL = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = fileURL;
+    link.download = log.filename;
+    link.click();
+  };
 
   return (
     <div>
@@ -60,8 +72,8 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <ExamStatCard
                 className="bg-blue-50 text-blue-600"
                 title="Log Aktivitas"
-                href="#"
-                value={"1320"}
+                action={log && downloadLog}
+                value={log ? "Tersedia" : "Belum Tersedia"}
                 icon={<Logs />}
               />
               <ExamStatCard

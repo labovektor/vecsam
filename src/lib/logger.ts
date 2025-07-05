@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { formatISO } from "date-fns";
 import z from "zod";
+import { error } from "console";
 
 export const activityLogtype = z.enum([
   "leave_tab",
@@ -46,4 +47,14 @@ export async function appendActivityLog({
   } catch (err) {
     console.error("Failed to log activity:", err);
   }
+}
+
+export function getLogActivity(examId: string) {
+  const filePath = path.resolve("logs", `${examId}.csv`);
+
+  if (!fs.existsSync(filePath)) {
+    return { error: "File log tidak ditemukan" };
+  }
+  const data = fs.readFileSync(filePath, "utf-8");
+  return { data };
 }

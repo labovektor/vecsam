@@ -1,4 +1,5 @@
 import { examSchema } from "@/features/exam-management/schema";
+import { getLogActivity } from "@/lib/logger";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { NotFoundError } from "@/use-cases/errors";
 import { z } from "zod";
@@ -92,6 +93,24 @@ export const examManagementRouter = createTRPCRouter({
           isActive: !currentExam.isActive,
         },
       });
+    }),
+
+  getLog: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      const { error, data } = getLogActivity(input.id);
+      if (error) {
+        throw new Error(error);
+      }
+      return {
+        filename: `${input.id}-logs.csv`,
+        mimeType: "text/csv",
+        content: data!,
+      };
     }),
 
   delete: protectedProcedure
