@@ -27,7 +27,7 @@ const Headers = () => {
   }, []);
   return (
     <header
-      className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all duration-300 ${isScrolled ? "bg-background/80 shadow-sm" : "bg-transparent"}`}
+      className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all duration-300 ${isScrolled ? "bg-background/80 shadow-sm" : "bg-transparent"} px-4`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-2 font-bold">
@@ -49,7 +49,7 @@ const Headers = () => {
         </nav>
         <div className="hidden items-center gap-4 md:flex">
           <Link href="#" className={buttonVariants({ variant: "ghost" })}>
-            Masuk Sebagai Pengelola <ChevronRight />
+            Sign In as Educator <ChevronRight />
           </Link>
         </div>
         <div className="flex items-center gap-4 md:hidden">
@@ -97,7 +97,7 @@ const Headers = () => {
                 className="py-2 text-sm font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Masuk Sebagai Pengelola
+                Sign In as Educator
               </Link>
             </div>
           </div>

@@ -29,8 +29,8 @@ export function BridgeSection() {
             Designed for Students, Built for Educators
           </h2>
           <p className="text-muted-foreground mx-auto max-w-[800px] md:text-lg">
-            Whether you're taking an exam or creating one, ExamPro provides the
-            tools and security you need for success.
+            Whether you're taking an exam or creating one, VecSys Exam provides
+            the tools and security you need for success.
           </p>
         </motion.div>
 
@@ -123,9 +123,9 @@ export function BridgeSection() {
           className="grid grid-cols-2 gap-8 text-center md:grid-cols-4"
         >
           {[
-            { number: "50K+", label: "Active Students" },
-            { number: "2K+", label: "Educators" },
-            { number: "100K+", label: "Exams Completed" },
+            { number: "200+", label: "Active Students" },
+            { number: "1", label: "Educators" },
+            { number: "0", label: "Exams Completed" },
             { number: "99.9%", label: "Uptime" },
           ].map((stat, i) => (
             <div key={i} className="space-y-2">

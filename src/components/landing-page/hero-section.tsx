@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -16,14 +16,14 @@ const HeroSection = () => {
           </h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg md:text-xl">
             Access your exams securely from any device. Experience seamless
-            online testing with real-time feedback and instant results. Your
+            online testing with real-time feedback and instant progress. Your
             academic success starts here.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="h-12 rounded-full px-8 text-base">
+            <Link href="/x-lgn" className={buttonVariants({ size: "lg" })}>
               Join Exam Now
               <ArrowRight className="ml-2 size-4" />
-            </Button>
+            </Link>
           </div>
           <div className="text-muted-foreground mt-6 flex items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-1">
@@ -32,7 +32,7 @@ const HeroSection = () => {
             </div>
             <div className="flex items-center gap-1">
               <Check className="text-primary size-4" />
-              <span>Instant results</span>
+              <span>Instant progress</span>
             </div>
             <div className="flex items-center gap-1">
               <Check className="text-primary size-4" />

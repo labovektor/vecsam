@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 const CTASection = () => {
   return (
@@ -22,22 +23,20 @@ const CTASection = () => {
             Ready to Transform Your Assessment Process?
           </h2>
           <p className="text-primary-foreground/80 mx-auto max-w-[700px] md:text-xl">
-            Join thousands of educators who have streamlined their testing
-            process and improved student outcomes with our comprehensive exam
-            platform.
+            Join to streamlined your exam process and improved student outcomes
+            with our comprehensive exam platform.
           </p>
           <div className="mt-4 flex flex-col gap-4 sm:flex-row">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="h-12 rounded-full px-8 text-base"
+            <Link
+              href="mailto:labovektor@gmail.com"
+              className={buttonVariants({ variant: "secondary", size: "lg" })}
             >
-              Start Free Trial
+              Kick Start Now
               <ArrowRight className="ml-2 size-4" />
-            </Button>
+            </Link>
           </div>
           <p className="text-primary-foreground/80 mt-4 text-sm">
-            No credit card required. 14-day free trial. Cancel anytime.
+            Talk to us about your requirements.
           </p>
         </motion.div>
       </div>

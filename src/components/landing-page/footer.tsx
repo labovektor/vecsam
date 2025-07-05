@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => {
@@ -6,12 +7,7 @@ const Footer = () => {
       <div className="container mx-auto flex flex-col gap-8 px-4 py-10 md:px-6 lg:py-16">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 font-bold">
-              <div className="from-primary to-primary/70 text-primary-foreground flex size-8 items-center justify-center rounded-lg bg-gradient-to-br">
-                E
-              </div>
-              <span>ExamPro</span>
-            </div>
+            <Image src="/vecsys.svg" alt="logo" width={120} height={120} />
             <p className="text-muted-foreground text-sm">
               Streamline your assessment process with our comprehensive online
               exam platform. Enhance student learning and save valuable time.
@@ -195,7 +191,7 @@ const Footer = () => {
         </div>
         <div className="border-border/40 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row">
           <p className="text-muted-foreground text-xs">
-            &copy; {new Date().getFullYear()} ExamPro. All rights reserved.
+            &copy; {new Date().getFullYear()} VecSys Exam. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link
