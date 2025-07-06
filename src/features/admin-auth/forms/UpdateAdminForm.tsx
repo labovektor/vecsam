@@ -27,7 +27,7 @@ const UpdateAdminForm = ({
   const form = useForm<z.infer<typeof updateAdminSchema>>({
     resolver: zodResolver(updateAdminSchema),
     defaultValues: {
-      name: cValue.name || "",
+      name: cValue.name ?? "",
     },
   });
 
@@ -72,7 +72,7 @@ const UpdateAdminForm = ({
         />
         <div className="space-y-2">
           <FormLabel>Email</FormLabel>
-          <Input value={cValue.email || ""} disabled />
+          <Input value={cValue.email ?? ""} disabled />
         </div>
         <div className="space-y-2">
           <FormLabel>Password</FormLabel>

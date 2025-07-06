@@ -2,8 +2,6 @@
 
 import React from "react";
 import { SidebarTrigger } from "./ui/sidebar";
-import { Button } from "./ui/button";
-import { Flag } from "lucide-react";
 import { useExam } from "@/hooks/use-exam";
 import ExamTimer from "@/features/exam/components/ExamTimer";
 import FinishExamButton from "@/features/exam/components/FinishExamButton";
@@ -19,7 +17,7 @@ const ExamTopBar = () => {
         </h1>
       </div>
       <div className="flex gap-2">
-        <ExamTimer expiredAt={expiredAt} callback={lockAnswer} />
+        <ExamTimer expiredAt={expiredAt ?? new Date()} callback={lockAnswer} />
         <FinishExamButton />
       </div>
     </header>

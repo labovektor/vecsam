@@ -218,14 +218,14 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
   const memoedValue: IExamContext = useMemo(
     () => ({
       error:
-        sessionError?.message ||
-        examError?.message ||
-        answersError?.message ||
+        sessionError?.message ??
+        examError?.message ??
+        answersError?.message ??
         null,
-      participant: session?.participant || null,
-      exam: exam || null,
-      answers: answers || {},
-      expiredAt: session?.expiredAt || null,
+      participant: session?.participant ?? null,
+      exam: exam ?? null,
+      answers: answers ?? {},
+      expiredAt: session?.expiredAt ?? null,
       focusedSection,
       setFocusedSection,
       focusedQuestion: focusedQuestion,

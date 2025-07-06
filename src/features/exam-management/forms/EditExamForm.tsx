@@ -43,12 +43,12 @@ const EditExamForm = ({
   const form = useForm<ExamSchemaType>({
     resolver: zodResolver(examSchema),
     defaultValues: {
-      title: cValue.title || "",
-      description: cValue.description || "",
-      passcode: cValue.passcode || "",
-      startTime: cValue.startTime || new Date(),
-      endTime: cValue.endTime || new Date(),
-      duration: cValue.duration || 0,
+      title: cValue.title ?? "",
+      description: cValue.description ?? "",
+      passcode: cValue.passcode ?? "",
+      startTime: cValue.startTime ?? new Date(),
+      endTime: cValue.endTime ?? new Date(),
+      duration: cValue.duration ?? 0,
     },
   });
 

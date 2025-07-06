@@ -38,7 +38,7 @@ const MultipleChoiceForm = () => {
           <Label htmlFor={option.id} className="flex flex-col">
             <span
               dangerouslySetInnerHTML={{
-                __html: renderKatexFromHtml(option.text || ""),
+                __html: renderKatexFromHtml(option.text ?? ""),
               }}
             />
             {option.image && (

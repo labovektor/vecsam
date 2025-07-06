@@ -9,7 +9,7 @@ import {
 } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/trpc/react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,

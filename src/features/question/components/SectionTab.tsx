@@ -3,22 +3,9 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/trpc/react";
-import {
-  AlertCircle,
-  Loader,
-  LoaderCircle,
-  Pencil,
-  Plus,
-  Trash,
-} from "lucide-react";
+import { AlertCircle, LoaderCircle, Pencil, Plus, Trash } from "lucide-react";
 import React from "react";
 import { formatSectionType } from "../schema";
 import AddSectionForm from "../form/AddSectionForm";

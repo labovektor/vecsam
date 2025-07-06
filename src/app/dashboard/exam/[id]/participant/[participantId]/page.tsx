@@ -15,7 +15,7 @@ import {
 import { renderKatexFromHtml } from "@/lib/katex-utils";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { ArrowRight, Check, Minus, Undo, X } from "lucide-react";
+import { ArrowRight, Check, Undo, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { use, useEffect } from "react";
 import { toast } from "sonner";
@@ -46,7 +46,7 @@ const ParticipantDetailPage = ({
     if (getSectionsSuccess && getParticipantAnswersSuccess) {
       const initialCorrection: CorrectionType = {};
       sections?.forEach((section) => {
-        let passedQuestions: Set<string> = new Set();
+        const passedQuestions: Set<string> = new Set();
         section.questions.forEach((question) => {
           if (!participantAnswers[question.id]) {
             passedQuestions.add(question.id);
@@ -212,8 +212,8 @@ const ParticipantDetailPage = ({
                                     return prev;
                                   }
 
-                                  let prevCorrect = prev[section.id]!.correct;
-                                  let prevWrong = prev[section.id]!.wrong;
+                                  const prevCorrect = prev[section.id]!.correct;
+                                  const prevWrong = prev[section.id]!.wrong;
 
                                   // Make sure there is no question.id in prevWrong
                                   prevWrong.delete(question.id);
@@ -241,8 +241,8 @@ const ParticipantDetailPage = ({
                                   if (!prev[section.id]) {
                                     return prev;
                                   }
-                                  let prevCorrect = prev[section.id]!.correct;
-                                  let prevWrong = prev[section.id]!.wrong;
+                                  const prevCorrect = prev[section.id]!.correct;
+                                  const prevWrong = prev[section.id]!.wrong;
 
                                   // Make sure there is no question.id in prevCorrect
                                   prevCorrect.delete(question.id);

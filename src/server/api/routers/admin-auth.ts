@@ -4,7 +4,7 @@ import {
   registerSchema,
 } from "@/features/admin-auth/schema";
 import { getBaseUrl } from "@/lib/get-base-url";
-import { createClient, supabaseAdminClient } from "@/lib/supabase/server";
+import { supabaseAdminClient } from "@/lib/supabase/server";
 import {
   createTRPCRouter,
   protectedProcedure,

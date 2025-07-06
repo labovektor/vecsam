@@ -19,14 +19,10 @@ const ExamTimer = ({
   expiredAt,
   callback,
 }: {
-  expiredAt: Date | null;
+  expiredAt: Date;
   callback: VoidFunction;
 }) => {
-  if (!expiredAt) {
-    return null;
-  }
-
-  const targetTime = new Date(expiredAt).getTime();
+  const targetTime = expiredAt.getTime();
   const [remaining, setRemaining] = React.useState(targetTime - Date.now());
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import QuestionsTab from "@/features/question/components/QuestionsTab";
 import SectionTab from "@/features/question/components/SectionTab";
 import type { Section } from "@prisma/client";

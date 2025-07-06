@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { formatISO } from "date-fns";
 import z from "zod";
-import { error } from "console";
 
 export const activityLogtype = z.enum([
   "leave_tab",

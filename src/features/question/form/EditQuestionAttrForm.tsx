@@ -1,15 +1,12 @@
 "use client";
 
-import type { SectionType } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
-  addQuestionSchema,
   editQuestionAttrSchema,
-  type AddQuestionSchemaType,
   type EditQuestionAttrSchemaType,
 } from "../schema";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fileToBase64 } from "@/lib/form-utils";
 import {
@@ -20,19 +17,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Edit, Plus, Trash } from "lucide-react";
+import { Edit } from "lucide-react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
-import TiptapInput from "@/components/ui/tiptap";
 import { getQueryKey } from "@trpc/react-query";
 
 const EditQuestionAttrForm = ({

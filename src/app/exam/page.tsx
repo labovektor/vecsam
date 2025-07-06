@@ -42,7 +42,7 @@ const ExamPage = () => {
           <div className="flex-1">
             <span
               dangerouslySetInnerHTML={{
-                __html: renderKatexFromHtml(focusedQuestion?.text || ""),
+                __html: renderKatexFromHtml(focusedQuestion?.text ?? ""),
               }}
             />
             {focusedQuestion?.image && (

@@ -7,13 +7,12 @@ import type {
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
-import { CircleDotDashed, Edit, Plus, Trash } from "lucide-react";
+import { CircleDotDashed, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import { Separator } from "@/components/ui/separator";
 import EditQuestionForm from "../form/EditQuestionForm";
 import AddMutipleChoiceOptionForm from "../form/AddMultipleChoiceOptionForm";
 import EditMutipleChoiceOptionForm from "../form/EditMultipleChoiceOptionForm";

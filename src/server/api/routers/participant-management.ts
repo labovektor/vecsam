@@ -1,7 +1,6 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { parse } from "csv-parse/sync";
-import bcrypt from "bcryptjs";
 import { addParticipantSchema } from "@/features/participant-management/schema";
 import type { AnswerRecordSchemaType } from "@/features/exam/schema";
 

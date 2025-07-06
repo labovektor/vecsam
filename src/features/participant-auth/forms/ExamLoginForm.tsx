@@ -20,9 +20,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { setCookie } from "cookies-next/client";
-import { loginAction } from "../actions";
 
 const ExamLoginForm = () => {
   const router = useRouter();

@@ -1,13 +1,12 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import type { Section } from "@prisma/client";
-import { AlertCircle, LoaderCircle, Plus } from "lucide-react";
+import { AlertCircle, LoaderCircle } from "lucide-react";
 import React from "react";
 import AddQuestionForm from "../form/AddQuestionForm";
 import QuestionCard from "./QuestionCard";
