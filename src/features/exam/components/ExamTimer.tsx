@@ -18,8 +18,10 @@ import { toast } from "sonner";
 const ExamTimer = ({
   expiredAt,
   callback,
+  loading = false,
 }: {
   expiredAt: Date;
+  loading: boolean;
   callback: VoidFunction;
 }) => {
   const targetTime = expiredAt.getTime();
@@ -31,9 +33,11 @@ const ExamTimer = ({
       const timeLeft = targetTime - Date.now();
       if (timeLeft <= 0) {
         setRemaining(0);
-        clearInterval(intervalRef.current!);
-        toast.error("Waktu pengerjaan telah habis");
-        callback();
+        if (!loading) {
+          clearInterval(intervalRef.current!);
+          toast.error("Waktu pengerjaan telah habis");
+          callback();
+        }
       } else {
         setRemaining(timeLeft);
       }

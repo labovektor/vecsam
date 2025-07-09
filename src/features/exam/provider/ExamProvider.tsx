@@ -40,6 +40,7 @@ interface IExamContext {
   undoAnswer: (questionId: string) => void;
   lockAnswer: VoidFunction;
   isSaving: boolean;
+  isFetching: boolean;
 }
 
 /**
@@ -243,6 +244,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       },
       isSaving:
         saveAnswer.isPending || undoAnswer.isPending || lockAnswer.isPending,
+      isFetching: isFetchingSession || isFetchingExam,
     }),
     [
       session,
@@ -253,6 +255,8 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       saveAnswer.isPending,
       undoAnswer.isPending,
       lockAnswer.isPending,
+      isFetchingSession,
+      isFetchingExam,
       answers,
     ],
   );
