@@ -95,7 +95,7 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
               name="passcode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Passcode (6 Karakter)</FormLabel>
+                  <FormLabel>Passcode (8 Karakter)</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useExam } from "@/hooks/use-exam";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
 import debounce from "lodash.debounce";
+import Image from "next/image";
 
 const MultipleChoiceForm = () => {
   const { focusedQuestion, saveAnswer, answers, isSaving } = useExam();
@@ -33,19 +34,26 @@ const MultipleChoiceForm = () => {
       }}
     >
       {focusedQuestion?.MultipleChoiceOption.map((option) => (
-        <div key={option.id} className="flex items-center gap-3">
+        <div key={option.id} className="flex items-start gap-3">
           <RadioGroupItem value={option.id} id={option.id} />
-          <Label htmlFor={option.id} className="flex flex-col">
+          <Label
+            htmlFor={option.id}
+            className="flex flex-col items-start text-start"
+          >
             <span
               dangerouslySetInnerHTML={{
                 __html: renderKatexFromHtml(option.text ?? ""),
               }}
             />
             {option.image && (
-              <img
+              <Image
+                priority
+                width={200}
+                height={144}
+                objectFit="contain"
                 src={option.image}
-                alt="question image"
-                className="max-h-36"
+                alt={option.id}
+                className="max-h-36 object-contain"
               />
             )}
           </Label>

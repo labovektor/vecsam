@@ -40,6 +40,7 @@ const ExamStatCard = ({
         {href && (
           <div className="ml-auto">
             <Link
+              prefetch={true}
               href={href}
               className={buttonVariants({ variant: "default", size: "icon" })}
             >

@@ -90,6 +90,7 @@ export function EventActionColumn({ exam }: { exam: Exam }) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem>
             <Link
+              prefetch={true}
               href={`/dashboard/exam/${exam.id}`}
               className={buttonVariants({
                 variant: "ghost",

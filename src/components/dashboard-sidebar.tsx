@@ -62,7 +62,7 @@ export function DashboardSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton isActive={isActive} asChild>
-                      <Link prefetch href={item.url}>
+                      <Link prefetch={true} href={item.url}>
                         <item.icon />
                         <span className={isActive ? "font-bold" : ""}>
                           {item.title}

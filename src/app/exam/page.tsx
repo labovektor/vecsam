@@ -11,6 +11,7 @@ import ShortAnswerForm from "@/features/exam/forms/ShortAnswerForm";
 import { useExam } from "@/hooks/use-exam";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
 import { Undo } from "lucide-react";
+import Image from "next/image";
 
 import React from "react";
 
@@ -46,10 +47,14 @@ const ExamPage = () => {
               }}
             />
             {focusedQuestion?.image && (
-              <img
+              <Image
+                priority
+                width={200}
+                height={144}
+                objectFit="contain"
                 src={focusedQuestion.image}
-                alt="question image"
-                className="max-h-36"
+                alt={focusedQuestion.id}
+                className="max-h-36 object-contain"
               />
             )}
           </div>
