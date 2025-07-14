@@ -147,7 +147,7 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
 
   try {
     await rateLimiter({
-      points: 5,
+      points: 3,
       duration: 1,
       keyPrefix: "rl:exam",
       consumeKey: payload.sub,

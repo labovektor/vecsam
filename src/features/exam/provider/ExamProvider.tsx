@@ -25,6 +25,9 @@ interface IExamContext {
   participant: Participant | null;
   exam: ExamWithSectionQuestionAttr | null;
   answers: AnswerRecordSchemaType;
+  unsureAnswers: Set<string>;
+  addUnsureAnswer: (questionId: string) => void;
+  removeUnsureAnswer: (questionId: string) => void;
   expiredAt: Date | null;
   focusedSection: SectionWithQuestionAttr | null;
   setFocusedSection: React.Dispatch<
@@ -94,6 +97,8 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     useState<SectionWithQuestionAttr | null>(null);
   const [focusedQuestion, setFocusedQuestion] =
     useState<QuestionWithAttr | null>(null);
+
+  const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
 
   const {
     data: session,
@@ -216,6 +221,18 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     setFocusedQuestion(nextQuestion);
   };
 
+  const addUnsureAnswer = (questionId: string) => {
+    setUnsureAnswers((prev) => new Set([...prev, questionId]));
+  };
+
+  const removeUnsureAnswer = (questionId: string) => {
+    setUnsureAnswers((prev) => {
+      const copy = new Set([...prev]);
+      copy.delete(questionId);
+      return copy;
+    });
+  };
+
   const memoedValue: IExamContext = useMemo(
     () => ({
       error:
@@ -226,6 +243,9 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       participant: session?.participant ?? null,
       exam: exam ?? null,
       answers: answers ?? {},
+      unsureAnswers,
+      addUnsureAnswer,
+      removeUnsureAnswer,
       expiredAt: session?.expiredAt ?? null,
       focusedSection,
       setFocusedSection,
@@ -258,6 +278,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       isFetchingSession,
       isFetchingExam,
       answers,
+      unsureAnswers,
     ],
   );
   return (

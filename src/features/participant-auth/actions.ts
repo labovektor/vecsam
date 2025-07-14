@@ -86,6 +86,14 @@ export async function loginAction(input: { participantId: string }) {
         1000,
     );
 
+    console.log("expiresIn", expiresIn);
+
+    if (expiresIn <= 0) {
+      return {
+        error: "Waktu pengerjaanmu telah habis",
+      };
+    }
+
     const token = createJwt(participant.id, participant.examId, expiresIn);
     await db.participantSession.update({
       where: { participantId: participant.id },

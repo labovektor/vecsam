@@ -24,6 +24,7 @@ export function ExamSidebar() {
     focusedSection,
     setFocusedSection,
     answers,
+    unsureAnswers,
   } = useExam();
   return (
     <Sidebar collapsible="offcanvas">
@@ -48,6 +49,8 @@ export function ExamSidebar() {
                       variant="outline"
                       className={cn(
                         answers[question.id] && "border-green-600 bg-green-100",
+                        unsureAnswers.has(question.id) &&
+                          "border-yellow-500 bg-yellow-100",
                         question.id === focusedQuestion?.id &&
                           "bg-primary text-white",
                       )}

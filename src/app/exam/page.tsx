@@ -3,6 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 import SavingIndicator from "@/features/exam/components/SavingIndicator";
 import FileAnswerForm from "@/features/exam/forms/FileAnswerForm";
@@ -16,8 +18,16 @@ import Image from "next/image";
 import React from "react";
 
 const ExamPage = () => {
-  const { focusedQuestion, focusedSection, isSaving, answers, undoAnswer } =
-    useExam();
+  const {
+    focusedQuestion,
+    focusedSection,
+    isSaving,
+    answers,
+    undoAnswer,
+    unsureAnswers,
+    addUnsureAnswer,
+    removeUnsureAnswer,
+  } = useExam();
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
@@ -104,6 +114,23 @@ const ExamPage = () => {
       )}
       {focusedSection?.type === "FILE_ANSWER" && (
         <FileAnswerForm key={focusedQuestion?.id} />
+      )}
+
+      {focusedQuestion && (
+        <div className="my-2 flex items-center gap-3">
+          <Checkbox
+            id="unsure"
+            checked={unsureAnswers.has(focusedQuestion.id)}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                addUnsureAnswer(focusedQuestion.id);
+              } else {
+                removeUnsureAnswer(focusedQuestion.id);
+              }
+            }}
+          />
+          <Label htmlFor="unsure">Tandai sebagai tidak yakin</Label>
+        </div>
       )}
     </div>
   );
