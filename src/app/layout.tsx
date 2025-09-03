@@ -27,7 +27,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <Suspense>
             {children}
-            <Toaster position="top-center" richColors />
+            <Toaster expand position="top-center" richColors />
           </Suspense>
         </TRPCReactProvider>
       </body>

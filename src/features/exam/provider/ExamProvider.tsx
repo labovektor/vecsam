@@ -11,7 +11,13 @@ import type {
   SectionWithQuestionAttr,
 } from "../../types";
 import { Loader } from "lucide-react";
-import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "@/features/participant-auth/actions";
@@ -105,19 +111,23 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     data: sessionRes,
     error: sessionError,
     isFetching: isFetchingSession,
+    refetch: refetchSession,
   } = api.exam.getSession.useQuery();
   const {
     data: exam,
     error: examError,
     isFetching: isFetchingExam,
+    refetch: refetchExam,
   } = api.exam.getExam.useQuery();
 
-  const { data: answers, error: answersError } = api.exam.getAnswers.useQuery(
-    undefined,
-    {
-      staleTime: 10 * 60 * 1000, // 10 minutes
-    },
-  );
+  const {
+    data: answers,
+    error: answersError,
+    isFetching: isFetchingAnswers,
+    refetch: refetchAnswers,
+  } = api.exam.getAnswers.useQuery(undefined, {
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   const log = api.exam.appendAdditionalLog.useMutation();
   useEffect(() => {
@@ -266,7 +276,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       },
       isSaving:
         saveAnswer.isPending || undoAnswer.isPending || lockAnswer.isPending,
-      isFetching: isFetchingSession || isFetchingExam,
+      isFetching: isFetchingSession || isFetchingExam || isFetchingAnswers,
     }),
     [
       sessionRes,
@@ -279,14 +289,41 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       lockAnswer.isPending,
       isFetchingSession,
       isFetchingExam,
+      isFetchingAnswers,
       answers,
       unsureAnswers,
     ],
   );
+
   return (
     <ExamContext.Provider value={memoedValue}>
       {children}
-      {(isFetchingSession || isFetchingExam) && (
+      {memoedValue.error && !memoedValue.isFetching && (
+        <AlertDialog open>
+          <AlertDialogContent>
+            <AlertDialogTitle className="text-center font-bold">
+              Oops...!
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Terjadi kesalahan saat memuat data, silakan muat ulang. Pastikan
+              jaringan internet Anda stabil!
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogAction
+                className="w-full"
+                onClick={() => {
+                  if (sessionError) refetchSession();
+                  if (examError) refetchExam();
+                  if (answersError) refetchAnswers();
+                }}
+              >
+                Muat Ulang
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+      {memoedValue.isFetching && (
         <AlertDialog open>
           <AlertDialogContent>
             <Loader className="mx-auto animate-spin" />
