@@ -1,7 +1,7 @@
 "use client";
 
 import { AlarmClock } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 /**
@@ -17,20 +17,25 @@ import { toast } from "sonner";
 
 const ExamTimer = ({
   expiredAt,
+  currentTimestamp,
   callback,
   loading = false,
 }: {
+  currentTimestamp: Date;
   expiredAt: Date;
   loading: boolean;
   callback: VoidFunction;
 }) => {
   const targetTime = expiredAt.getTime();
-  const [remaining, setRemaining] = React.useState(targetTime - Date.now());
+  const offsetTime = currentTimestamp.getTime() - Date.now();
+  const [remaining, setRemaining] = React.useState(
+    targetTime - (Date.now() + offsetTime),
+  );
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     intervalRef.current = setInterval(() => {
-      const timeLeft = targetTime - Date.now();
+      const timeLeft = targetTime - (Date.now() + offsetTime);
       if (timeLeft <= 0) {
         setRemaining(0);
         if (!loading) {
