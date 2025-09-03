@@ -25,7 +25,7 @@ const ExamLoginPage = () => {
           />
           <CardTitle>Exam Login</CardTitle>
           <CardDescription>
-            Masukkan kode peserta dan kode ujian Anda
+            Masukkan email peserta dan kode ujian Anda
           </CardDescription>
         </CardHeader>
         <CardContent>

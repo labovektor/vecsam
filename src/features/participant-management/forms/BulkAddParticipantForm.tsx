@@ -68,8 +68,8 @@ export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
     try {
       const textPromise = csvToText(file);
       const text = await textPromise;
-      if (!text.includes("name") || !text.includes("passcode")) {
-        setCsvError("CSV harus mengandung kolom name, passcode");
+      if (!text.includes("name") || !text.includes("email")) {
+        setCsvError("CSV harus mengandung kolom name, email");
         setCsvPreview(null);
         return;
       }

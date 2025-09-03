@@ -29,6 +29,7 @@ interface IExamContext {
   addUnsureAnswer: (questionId: string) => void;
   removeUnsureAnswer: (questionId: string) => void;
   expiredAt: Date | null;
+  currentTimestamp: Date | null;
   focusedSection: SectionWithQuestionAttr | null;
   setFocusedSection: React.Dispatch<
     React.SetStateAction<SectionWithQuestionAttr | null>
@@ -101,7 +102,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
   const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
 
   const {
-    data: session,
+    data: sessionRes,
     error: sessionError,
     isFetching: isFetchingSession,
   } = api.exam.getSession.useQuery();
@@ -240,13 +241,14 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
         examError?.message ??
         answersError?.message ??
         null,
-      participant: session?.participant ?? null,
+      participant: sessionRes?.session.participant ?? null,
       exam: exam ?? null,
       answers: answers ?? {},
       unsureAnswers,
       addUnsureAnswer,
       removeUnsureAnswer,
-      expiredAt: session?.expiredAt ?? null,
+      expiredAt: sessionRes?.session.expiredAt ?? null,
+      currentTimestamp: sessionRes?.current_timestamp ?? null,
       focusedSection,
       setFocusedSection,
       focusedQuestion: focusedQuestion,
@@ -267,7 +269,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       isFetching: isFetchingSession || isFetchingExam,
     }),
     [
-      session,
+      sessionRes,
       exam,
       sessionError,
       examError,

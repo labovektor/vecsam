@@ -38,8 +38,8 @@ export const excelParticipantColumn: IColumn[] = [
     value: "name",
   },
   {
-    label: "Passcode",
-    value: "passcode",
+    label: "Email",
+    value: "email",
   },
   {
     label: "Skor",
@@ -68,11 +68,8 @@ export const participantColumnns: ColumnDef<
     header: "Name",
   },
   {
-    accessorKey: "passcode",
-    header: "Passcode",
-    enableGlobalFilter: false,
-    enableSorting: false,
-    enableHiding: false,
+    accessorKey: "email",
+    header: "Email",
   },
   {
     id: "startedAt",
@@ -169,9 +166,9 @@ export function ParticipantActionColumn({
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(participant.passcode)}
+            onClick={() => navigator.clipboard.writeText(participant.email)}
           >
-            Copy Participant Passcode
+            Copy Participant Email
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

@@ -35,7 +35,7 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
     resolver: zodResolver(addParticipantSchema),
     defaultValues: {
       name: "",
-      passcode: "",
+      email: "",
     },
   });
 
@@ -92,12 +92,12 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
             />
             <FormField
               control={form.control}
-              name="passcode"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Passcode (8 Karakter)</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

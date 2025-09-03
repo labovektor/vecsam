@@ -26,7 +26,7 @@ const ExamLoginForm = () => {
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      participantCode: "",
+      email: "",
       examCode: "",
     },
   });
@@ -48,13 +48,13 @@ const ExamLoginForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="participantCode"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <div className="flex gap-2">
-                <FormLabel className="text-nowrap">Kode Peserta</FormLabel>
+                <FormLabel className="text-nowrap">Email Peserta</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input type="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage />

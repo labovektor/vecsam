@@ -9,7 +9,7 @@ export const participantAuthRouter = createTRPCRouter({
     const { db } = ctx;
     const participant = await db.participant.findFirst({
       where: {
-        passcode: input.participantCode,
+        email: input.email,
       },
       include: {
         exam: true,

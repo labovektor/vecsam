@@ -38,7 +38,7 @@ export const participantManagementRouter = createTRPCRouter({
       return db.participant.create({
         data: {
           name: input.data.name,
-          passcode: input.data.passcode,
+          email: input.data.email,
           examId: input.examId,
         },
       });
@@ -63,7 +63,7 @@ export const participantManagementRouter = createTRPCRouter({
       const invalidRows: number[] = [];
       const participantsToInsert: {
         name: string;
-        passcode: string;
+        email: string;
         examId: string;
       }[] = [];
 
@@ -71,16 +71,16 @@ export const participantManagementRouter = createTRPCRouter({
         const row = records[i];
 
         const name = row.name?.toString().trim();
-        const passcode = row.passcode?.toString();
+        const email = row.email?.toString();
 
-        if (!name || !passcode) {
+        if (!name || !email) {
           invalidRows.push(i + 1);
           continue;
         }
 
         participantsToInsert.push({
           name,
-          passcode,
+          email,
           examId: input.examId,
         });
       }

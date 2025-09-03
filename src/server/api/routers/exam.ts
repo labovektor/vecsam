@@ -14,7 +14,10 @@ export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
 
 export const examRouter = createTRPCRouter({
   getSession: examProcedure.query(({ ctx }) => {
-    return ctx.session;
+    return {
+      session: ctx.session,
+      current_timestamp: new Date(),
+    };
   }),
 
   getExam: examProcedure.query(async ({ ctx }) => {
