@@ -164,14 +164,13 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
     },
   });
 
+  if (session?.participant.lockedAt) {
+    throw new Error("Anda sudah menyelesaikan pengerjaan soal!");
+  }
+
   const now = new Date();
 
-  if (
-    !session ||
-    session.token !== token ||
-    session.expiredAt < now ||
-    session.participant.lockedAt
-  ) {
+  if (!session || session.token !== token || session.expiredAt < now) {
     throw new AuthenticationError();
   }
 
