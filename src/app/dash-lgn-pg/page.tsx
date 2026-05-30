@@ -4,8 +4,8 @@ import React from "react";
 
 const AdminLoginPage = () => {
   return (
-    <div className=" w-full h-svh flex items-center justify-center p-3">
-      <Card className=" w-full max-w-md">
+    <div className="flex h-svh w-full items-center justify-center p-3">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
         </CardHeader>

@@ -4,7 +4,7 @@ import {
   addSectionSchema,
   updateSectionSchema,
 } from "@/features/question/schema";
-import type { SectionType } from "@prisma/client";
+import type { SectionType } from "../../../../prisma/generated/enums";
 
 export const sectionRouter = createTRPCRouter({
   getSections: protectedProcedure

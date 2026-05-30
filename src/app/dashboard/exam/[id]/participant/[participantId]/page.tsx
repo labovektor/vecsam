@@ -269,8 +269,8 @@ const ParticipantDetailPage = ({
                                   if (!prev[section.id]) {
                                     return prev;
                                   }
-                                  let prevCorrect = prev[section.id]!.correct;
-                                  let prevWrong = prev[section.id]!.wrong;
+                                  const prevCorrect = prev[section.id]!.correct;
+                                  const prevWrong = prev[section.id]!.wrong;
 
                                   // Make sure there is no question.id in both prevCorrect and prevWrong
                                   prevCorrect.delete(question.id);

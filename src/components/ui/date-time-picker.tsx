@@ -16,7 +16,7 @@ type TimeFormat = "hours" | "minutes" | "seconds" | "am/pm";
 type DateTimeArray<T extends DateFormat | TimeFormat> = T[];
 type DateTimeFormatDefaults = [
   DateTimeArray<DateFormat>,
-  DateTimeArray<TimeFormat>
+  DateTimeArray<TimeFormat>,
 ];
 
 const DEFAULTS = [
@@ -61,14 +61,14 @@ const DatetimeGrid = forwardRef<
       timescape: Pick<TimescapeReturn, "getRootProps" | "getInputProps">;
       placeholders: InputPlaceholders;
     },
-    ref
+    ref,
   ) => {
     return (
       <div
         className={cn(
-          "flex items-center w-fit p-1 border-2",
+          "flex w-fit items-center border-2 p-1",
           className,
-          "border-input rounded-full gap-1 selection:bg-transparent selection:text-foreground"
+          "border-input selection:text-foreground gap-1 rounded-full selection:bg-transparent",
         )}
         {...timescape.getRootProps()}
         ref={ref}
@@ -104,7 +104,7 @@ const DatetimeGrid = forwardRef<
                   <span
                     className={cn(
                       timePickerSeparatorBase,
-                      "opacity-30 text-xl"
+                      "text-xl opacity-30",
                     )}
                   >
                     |
@@ -115,7 +115,7 @@ const DatetimeGrid = forwardRef<
           : null}
       </div>
     );
-  }
+  },
 );
 
 DatetimeGrid.displayName = "DatetimeGrid";
@@ -143,13 +143,13 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
       onChange,
       className,
     },
-    ref
+    ref,
   ) => {
     const handleDateChange = useCallback(
       (nextDate: Date | undefined) => {
         onChange ? onChange(nextDate) : console.log(nextDate);
       },
-      [onChange]
+      [onChange],
     );
     const timescape = useTimescape({
       ...dtOptions,
@@ -165,7 +165,7 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
         ref={ref}
       />
     );
-  }
+  },
 );
 
 DatetimePicker.displayName = "DatetimePicker";
