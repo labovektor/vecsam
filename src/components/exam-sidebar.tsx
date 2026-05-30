@@ -20,9 +20,8 @@ export function ExamSidebar() {
   const {
     exam,
     focusedQuestion,
-    setFocusedQuestion,
-    focusedSection,
-    setFocusedSection,
+    setFocusedQuestionIndex,
+    setFocusedSectionIndex,
     answers,
     unsureAnswers,
   } = useExam();
@@ -36,13 +35,13 @@ export function ExamSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {exam?.sections.map((section) => {
+        {exam?.sections.map((section, sectionIndex) => {
           return (
             <SidebarGroup key={section.id}>
               <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="grid grid-cols-5 gap-3">
-                  {section.questions.map((question) => (
+                  {section.questions.map((question, questionIndex) => (
                     <Button
                       key={question.id}
                       size="icon"
@@ -55,10 +54,8 @@ export function ExamSidebar() {
                           "bg-primary text-white",
                       )}
                       onClick={() => {
-                        setFocusedQuestion(question);
-                        if (focusedSection?.id !== section.id) {
-                          setFocusedSection(section);
-                        }
+                        setFocusedQuestionIndex(questionIndex);
+                        setFocusedSectionIndex(sectionIndex);
                       }}
                     >
                       {question.number}

@@ -13,20 +13,20 @@ export default function DashboardLayout({
 }) {
   return (
     <ExamProvider>
-      <ContextMenu>
-        <ContextMenuTrigger className="w-full">
-          <SidebarProvider>
-            <ExamSidebar />
-            <SidebarInset>
-              <ExamTopBar />
-              <div className="flex h-full flex-col p-4">
-                <div className="flex-1">{children}</div>
-                <QuestionNavigator />
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-        </ContextMenuTrigger>
-      </ContextMenu>
+      {/* <ContextMenu>
+        <ContextMenuTrigger className="w-full"> */}
+      <SidebarProvider>
+        <ExamSidebar />
+        <SidebarInset>
+          <ExamTopBar />
+          <div className="flex h-full flex-col p-4">
+            <div className="flex-1">{children}</div>
+            <QuestionNavigator />
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+      {/* </ContextMenuTrigger>
+      </ContextMenu> */}
     </ExamProvider>
   );
 }

@@ -24,10 +24,10 @@ export const examRouter = createTRPCRouter({
     const examId = ctx.session.participant.examId;
     const redis = getRedisClient();
 
-    const examRedis = await redis.get(examId);
-    if (examRedis) {
-      return JSON.parse(examRedis);
-    }
+    // const examRedis = await redis.get(examId);
+    // if (examRedis) {
+    //   return JSON.parse(examRedis);
+    // }
 
     const exam = await ctx.db.exam.findFirst({
       where: {

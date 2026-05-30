@@ -2,7 +2,7 @@
 
 import type { Participant } from "@prisma/client";
 import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useRef, useState } from "react";
 import { useTRPC } from "@/trpc/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -38,13 +38,9 @@ interface IExamContext {
   expiredAt: Date | null;
   currentTimestamp: Date | null;
   focusedSection: SectionWithQuestionAttr | null;
-  setFocusedSection: React.Dispatch<
-    React.SetStateAction<SectionWithQuestionAttr | null>
-  >;
+  setFocusedSectionIndex: React.Dispatch<React.SetStateAction<number>>;
   focusedQuestion: QuestionWithAttr | null;
-  setFocusedQuestion: React.Dispatch<
-    React.SetStateAction<QuestionWithAttr | null>
-  >;
+  setFocusedQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   setFocusedBefore: VoidFunction;
   setFocusedAfter: VoidFunction;
   saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void;
@@ -103,13 +99,6 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [focusedSection, setFocusedSectionState] =
-    useState<SectionWithQuestionAttr | null>(null);
-  const [focusedQuestion, setFocusedQuestionState] =
-    useState<QuestionWithAttr | null>(null);
-
-  const setFocusedSection = setFocusedSectionState;
-  const setFocusedQuestion = setFocusedQuestionState;
 
   const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
 
@@ -128,19 +117,6 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     refetch: refetchExam,
   } = useQuery(examOpts);
 
-  // Derive defaults from exam data until user explicitly navigates
-  const resolvedFocusedSection = useMemo(() => {
-    if (focusedSection) return focusedSection;
-    if (!exam) return null;
-    return exam.sections[0] ?? null;
-  }, [focusedSection, exam]);
-
-  const resolvedFocusedQuestion = useMemo(() => {
-    if (focusedQuestion) return focusedQuestion;
-    if (!resolvedFocusedSection) return null;
-    return resolvedFocusedSection.questions[0] ?? null;
-  }, [focusedQuestion, resolvedFocusedSection]);
-
   const answersOpts = trpc.exam.getAnswers.queryOptions(undefined, {
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -150,6 +126,13 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     isFetching: isFetchingAnswers,
     refetch: refetchAnswers,
   } = useQuery(answersOpts);
+
+  const [focusedSectionIndex, setFocusedSectionIndex] = useState<number>(0);
+  const [focusedQuestionIndex, setFocusedQuestionIndex] = useState<number>(0);
+
+  const focusedSection = exam?.sections[focusedSectionIndex] ?? null;
+  const focusedQuestion =
+    focusedSection?.questions[focusedQuestionIndex] ?? null;
 
   const log = useMutation(trpc.exam.appendAdditionalLog.mutationOptions());
   useEffect(() => {
@@ -227,9 +210,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     );
     if (questionIndex <= 0) return;
 
-    const prevQuestion = focusedSection.questions[questionIndex - 1];
-    if (!prevQuestion) return;
-    setFocusedQuestion(prevQuestion);
+    setFocusedQuestionIndex(questionIndex - 1);
   };
 
   const setFocusedAfter = () => {
@@ -240,9 +221,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     );
     if (questionIndex >= focusedSection.questions.length - 1) return;
 
-    const nextQuestion = focusedSection.questions[questionIndex + 1];
-    if (!nextQuestion) return;
-    setFocusedQuestion(nextQuestion);
+    setFocusedQuestionIndex(questionIndex + 1);
   };
 
   const addUnsureAnswer = (questionId: string) => {
@@ -272,10 +251,10 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       removeUnsureAnswer,
       expiredAt: sessionRes?.session.expiredAt ?? null,
       currentTimestamp: sessionRes?.current_timestamp ?? null,
-      focusedSection: resolvedFocusedSection,
-      setFocusedSection,
-      focusedQuestion: resolvedFocusedQuestion,
-      setFocusedQuestion,
+      focusedSection,
+      setFocusedSectionIndex,
+      focusedQuestion: focusedQuestion,
+      setFocusedQuestionIndex,
       setFocusedBefore,
       setFocusedAfter,
       saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => {
@@ -296,8 +275,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       exam,
       sessionError,
       examError,
-      resolvedFocusedQuestion,
-      resolvedFocusedSection,
+      focusedQuestion,
       saveAnswer.isPending,
       undoAnswer.isPending,
       lockAnswer.isPending,

@@ -15,8 +15,6 @@ import { renderKatexFromHtml } from "@/lib/katex-utils";
 import { Undo } from "lucide-react";
 import Image from "next/image";
 
-import React from "react";
-
 const ExamPage = () => {
   const {
     focusedQuestion,
@@ -108,7 +106,9 @@ const ExamPage = () => {
           </Button>
         )}
       </div>
-      {focusedSection?.type === "MULTIPLE_CHOICE" && <MultipleChoiceForm />}
+      {focusedSection?.type === "MULTIPLE_CHOICE" && (
+        <MultipleChoiceForm key={focusedQuestion?.id} />
+      )}
       {focusedSection?.type === "SHORT_ANSWER" && (
         <ShortAnswerForm key={focusedQuestion?.id} />
       )}

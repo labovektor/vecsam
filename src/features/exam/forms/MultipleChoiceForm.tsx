@@ -15,6 +15,12 @@ const MultipleChoiceForm = () => {
     : null;
 
   const [value, setValue] = React.useState(cValue);
+  const [prevCAnswer, setPrevCAnswer] = React.useState(cValue);
+
+  if (cValue !== prevCAnswer) {
+    setValue(cValue);
+    setPrevCAnswer(cValue);
+  }
 
   const handleValueChange = debounce((value) => {
     if (!focusedQuestion) return;

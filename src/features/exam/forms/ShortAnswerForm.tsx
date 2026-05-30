@@ -13,6 +13,13 @@ const ShortAnswerForm = () => {
     : "";
   const [value, setValue] = React.useState(cAnswer);
 
+  const [prevCAnswer, setPrevCAnswer] = React.useState(cAnswer);
+
+  if (cAnswer !== prevCAnswer) {
+    setValue(cAnswer);
+    setPrevCAnswer(cAnswer);
+  }
+
   return (
     <div className="flex gap-2">
       <Input
