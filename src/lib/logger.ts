@@ -1,3 +1,5 @@
+"server-only";
+
 import fs from "fs";
 import path from "path";
 import { formatISO } from "date-fns";

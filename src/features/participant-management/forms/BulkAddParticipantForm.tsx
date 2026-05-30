@@ -6,10 +6,10 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { api } from "@/trpc/react"; // ganti sesuai setup kamu
-import { toast } from "sonner"; // atau pakai shadcn/toaster
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { csvToText } from "@/lib/form-utils";
-import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
   Dialog,
@@ -26,7 +26,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { getQueryKey } from "@trpc/react-query";
 
 export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
   const queryClient = useQueryClient();
@@ -36,20 +35,23 @@ export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
   const [csvError, setCsvError] = useState<string | null>(null);
   const [csvPreview, setCsvPreview] = useState<string | null>(null);
 
-  const bulkAdd = api.participantManagement.bulkAddFromCsv.useMutation({
-    onSuccess(data) {
-      toast.success(`Berhasil tambah ${data.count} peserta.`);
-      setOpen(false);
-      setCsvError(null);
-      setCsvPreview(null);
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.participantManagement.getAllByExamId),
-      });
-    },
-    onError(error) {
-      toast.error(error.message);
-    },
-  });
+  const trpc = useTRPC();
+  const bulkAdd = useMutation(
+    trpc.participantManagement.bulkAddFromCsv.mutationOptions({
+      onSuccess(data) {
+        toast.success(`Berhasil tambah ${data.count} peserta.`);
+        setOpen(false);
+        setCsvError(null);
+        setCsvPreview(null);
+        queryClient.refetchQueries({
+          queryKey: trpc.participantManagement.getAllByExamId.queryKey(),
+        });
+      },
+      onError(error) {
+        toast.error(error.message);
+      },
+    }),
+  );
 
   const onSubmit = async () => {
     const csv = await fileTextPromise;

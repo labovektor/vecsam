@@ -3,7 +3,8 @@
 import type { Participant } from "@prisma/client";
 import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema";
 import { createContext, useEffect, useMemo, useState } from "react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type {
   ExamWithSectionQuestionAttr,
@@ -99,6 +100,8 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [focusedSection, setFocusedSection] =
     useState<SectionWithQuestionAttr | null>(null);
@@ -107,29 +110,34 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
 
   const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
 
+  const sessionOpts = trpc.exam.getSession.queryOptions(undefined);
   const {
     data: sessionRes,
     error: sessionError,
     isFetching: isFetchingSession,
     refetch: refetchSession,
-  } = api.exam.getSession.useQuery();
+  } = useQuery(sessionOpts);
+  const examOpts = trpc.exam.getExam.queryOptions(undefined);
   const {
     data: exam,
     error: examError,
     isFetching: isFetchingExam,
     refetch: refetchExam,
-  } = api.exam.getExam.useQuery();
+  } = useQuery(examOpts);
 
+  console.log(exam);
+
+  const answersOpts = trpc.exam.getAnswers.queryOptions(undefined, {
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
   const {
     data: answers,
     error: answersError,
     isFetching: isFetchingAnswers,
     refetch: refetchAnswers,
-  } = api.exam.getAnswers.useQuery(undefined, {
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
+  } = useQuery(answersOpts);
 
-  const log = api.exam.appendAdditionalLog.useMutation();
+  const log = useMutation(trpc.exam.appendAdditionalLog.mutationOptions());
   useEffect(() => {
     const onBlur = () =>
       log.mutate({
@@ -155,56 +163,60 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     }
   }, [exam, focusedQuestion]);
 
-  const util = api.useUtils();
+  const saveAnswer = useMutation(
+    trpc.exam.saveAnswer.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        queryClient.setQueryData(
+          trpc.exam.getAnswers.queryKey(),
+          (prev: AnswerRecordSchemaType | undefined) => ({
+            ...(prev ?? {}),
+            [data.questionId]: {
+              answerText: data.answerText ?? undefined,
+              answerFile: data.answerFile ?? undefined,
+              optionId: data.optionId ?? undefined,
+            },
+          }),
+        );
+      },
+    }),
+  );
 
-  const saveAnswer = api.exam.saveAnswer.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      util.exam.getAnswers.setData(
-        undefined,
-        (prev: AnswerRecordSchemaType | undefined) => ({
-          ...(prev ?? {}),
-          [data.questionId]: {
-            answerText: data.answerText ?? undefined,
-            answerFile: data.answerFile ?? undefined,
-            optionId: data.optionId ?? undefined,
+  const undoAnswer = useMutation(
+    trpc.exam.removeAnswer.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (_, variables) => {
+        queryClient.setQueryData(
+          trpc.exam.getAnswers.queryKey(),
+          (prev: AnswerRecordSchemaType | undefined) => {
+            const copy = { ...(prev ?? {}) };
+            delete copy[variables.questionId];
+            return copy;
           },
-        }),
-      );
-    },
-  });
+        );
+      },
+    }),
+  );
 
-  const undoAnswer = api.exam.removeAnswer.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (_, variables) => {
-      util.exam.getAnswers.setData(
-        undefined,
-        (prev: AnswerRecordSchemaType | undefined) => {
-          const copy = { ...(prev ?? {}) };
-          delete copy[variables.questionId];
-          return copy;
-        },
-      );
-    },
-  });
-
-  const lockAnswer = api.exam.lockAnswer.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () =>
-      logoutAction()
-        .then(() => {
-          router.replace("/bye-bye");
-        })
-        .catch((err) => {
-          toast.error(err.message);
-        }),
-  });
+  const lockAnswer = useMutation(
+    trpc.exam.lockAnswer.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () =>
+        logoutAction()
+          .then(() => {
+            router.replace("/bye-bye");
+          })
+          .catch((err) => {
+            toast.error(err.message);
+          }),
+    }),
+  );
 
   const setFocusedBefore = () => {
     if (!exam || !focusedQuestion || !focusedSection) return;

@@ -18,7 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 const ExamLoginForm = () => {
@@ -31,14 +32,17 @@ const ExamLoginForm = () => {
     },
   });
 
-  const login = api.participantAuth.login.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      router.replace(`/x-lgn/confirm?xt_id=${data.id}`);
-    },
-  });
+  const trpc = useTRPC();
+  const login = useMutation(
+    trpc.participantAuth.login.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        router.replace(`/x-lgn/confirm?xt_id=${data.id}`);
+      },
+    }),
+  );
 
   async function onSubmit(values: LoginSchemaType) {
     login.mutate(values);

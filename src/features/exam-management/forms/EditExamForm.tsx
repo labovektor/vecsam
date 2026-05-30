@@ -18,7 +18,8 @@ import { DatetimePicker } from "@/components/ui/date-time-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Exam } from "@prisma/client";
 import {
   Dialog,
@@ -27,8 +28,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
 import { Edit } from "lucide-react";
 
 const EditExamForm = ({
@@ -52,18 +51,21 @@ const EditExamForm = ({
     },
   });
 
-  const createNewExam = api.examManagement.update.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.examManagement.getAll),
-      });
-      toast.success("Exam Successfully Updated");
-      setOpen(false);
-    },
-  });
+  const trpc = useTRPC();
+  const createNewExam = useMutation(
+    trpc.examManagement.update.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.examManagement.getAll.queryKey(),
+        });
+        toast.success("Exam Successfully Updated");
+        setOpen(false);
+      },
+    }),
+  );
 
   async function onSubmit(value: ExamSchemaType) {
     createNewExam.mutate({ id, value });

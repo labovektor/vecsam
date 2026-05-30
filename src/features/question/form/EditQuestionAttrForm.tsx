@@ -20,9 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getQueryKey } from "@trpc/react-query";
 
 const EditQuestionAttrForm = ({
   type,
@@ -49,18 +49,21 @@ const EditQuestionAttrForm = ({
     }
   };
 
-  const editAttr = api.question.editQuestionAttr.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      setOpen(false);
-      toast.success("Detail berhasil diubah");
-    },
-  });
+  const trpc = useTRPC();
+  const editAttr = useMutation(
+    trpc.question.editQuestionAttr.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        setOpen(false);
+        toast.success("Detail berhasil diubah");
+      },
+    }),
+  );
 
   const handleSubmit = (data: EditQuestionAttrSchemaType) => {
     console.log("Form submitted", data);

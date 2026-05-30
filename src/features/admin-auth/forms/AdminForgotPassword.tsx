@@ -18,7 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 
 const AdminForgotPasswordForm = () => {
   const form = useForm<ForgotPasswordSchemaType>({
@@ -28,16 +29,19 @@ const AdminForgotPasswordForm = () => {
     },
   });
 
-  const forgotPassword = api.adminAuth.resetPasswordReq.useMutation({
-    onSuccess: () => {
-      toast.success(
-        "Kami telah mengirimkan link reset password ke email Anda.",
-      );
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const trpc = useTRPC();
+  const forgotPassword = useMutation(
+    trpc.adminAuth.resetPasswordReq.mutationOptions({
+      onSuccess: () => {
+        toast.success(
+          "Kami telah mengirimkan link reset password ke email Anda.",
+        );
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    }),
+  );
 
   async function onSubmit(values: ForgotPasswordSchemaType) {
     forgotPassword.mutate(values);

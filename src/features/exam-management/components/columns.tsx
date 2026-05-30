@@ -24,7 +24,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import type { Exam } from "@prisma/client";
 import EditExamForm from "../forms/EditExamForm";
 
@@ -69,14 +70,17 @@ export const examColumns: ColumnDef<Exam>[] = [
 ];
 
 export function EventActionColumn({ exam }: { exam: Exam }) {
-  const deleteExam = api.examManagement.delete.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Exam Deleted");
-    },
-  });
+  const trpc = useTRPC();
+  const deleteExam = useMutation(
+    trpc.examManagement.delete.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        toast.success("Exam Deleted");
+      },
+    }),
+  );
   return (
     <AlertDialog>
       <DropdownMenu>

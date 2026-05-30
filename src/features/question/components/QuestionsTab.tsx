@@ -4,7 +4,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import type { Section } from "@prisma/client";
 import { AlertCircle, LoaderCircle } from "lucide-react";
 import React from "react";
@@ -18,13 +19,16 @@ const QuestionsTab = ({
   section: Section | null;
   className?: string;
 }) => {
+  const trpc = useTRPC();
   const {
     data: questions,
     error,
     isLoading,
-  } = api.question.getQuestions.useQuery({
-    sectionId: section?.id ?? null,
-  });
+  } = useQuery(
+    trpc.question.getQuestions.queryOptions({
+      sectionId: section?.id ?? null,
+    }),
+  );
 
   if (error) {
     return (

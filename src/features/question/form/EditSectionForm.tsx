@@ -8,7 +8,7 @@ import {
   type UpdateSectionSchemaType,
 } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
@@ -27,8 +27,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SectionType, type Section } from "@prisma/client";
+import { SectionType, type Section } from "@prisma/browser";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 
 const EditSectionForm = ({
   currentSection,
@@ -51,9 +52,12 @@ const EditSectionForm = ({
     },
   });
 
-  const updateSection = api.section.updateSection.useMutation({
-    onSuccess: onSuccess,
-  });
+  const trpc = useTRPC();
+  const updateSection = useMutation(
+    trpc.section.updateSection.mutationOptions({
+      onSuccess,
+    }),
+  );
 
   return (
     <Card>

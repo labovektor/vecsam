@@ -4,7 +4,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, LoaderCircle, Pencil, Plus, Trash } from "lucide-react";
 import React from "react";
 import { formatSectionType } from "../schema";
@@ -12,9 +13,7 @@ import AddSectionForm from "../form/AddSectionForm";
 import EditSectionForm from "../form/EditSectionForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import type { Section } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+import type { Section } from "@prisma/browser";
 
 const SectionTab = ({
   examId,
@@ -27,6 +26,7 @@ const SectionTab = ({
   onSelected: (section: Section) => void;
   selectedSectionId: string | null;
 }) => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const [visibleAddSection, setVisibleAddSection] = React.useState(false);
@@ -37,9 +37,11 @@ const SectionTab = ({
     error,
     refetch,
     isLoading,
-  } = api.section.getSections.useQuery({
-    examId,
-  });
+  } = useQuery(
+    trpc.section.getSections.queryOptions({
+      examId,
+    }),
+  );
   if (error) {
     return (
       <Alert variant="destructive">
@@ -50,11 +52,13 @@ const SectionTab = ({
     );
   }
 
-  const removeSection = api.section.deleteSection.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
-  });
+  const removeSection = useMutation(
+    trpc.section.deleteSection.mutationOptions({
+      onSuccess: () => {
+        refetch();
+      },
+    }),
+  );
 
   return (
     <div className={cn("flex h-full flex-col gap-2", className)}>
@@ -77,7 +81,7 @@ const SectionTab = ({
                     setEditingId(null);
                     refetch();
                     queryClient.refetchQueries({
-                      queryKey: getQueryKey(api.question.getQuestions),
+                      queryKey: trpc.question.getQuestions.queryKey(),
                     });
                   }}
                 />

@@ -14,10 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addParticipantSchema, type AddParticipantSchemaType } from "../schema";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
 import {
   Dialog,
   DialogContent,
@@ -39,18 +38,21 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
     },
   });
 
-  const addParticipant = api.participantManagement.add.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      toast.success("New Participant Added");
-      setOpen(false);
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.participantManagement.getAllByExamId),
-      });
-    },
-  });
+  const trpc = useTRPC();
+  const addParticipant = useMutation(
+    trpc.participantManagement.add.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        toast.success("New Participant Added");
+        setOpen(false);
+        queryClient.refetchQueries({
+          queryKey: trpc.participantManagement.getAllByExamId.queryKey(),
+        });
+      },
+    }),
+  );
 
   async function onSubmit(data: AddParticipantSchemaType) {
     addParticipant.mutate({

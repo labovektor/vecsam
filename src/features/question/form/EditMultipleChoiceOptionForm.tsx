@@ -26,10 +26,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import TiptapInput from "@/components/ui/tiptap";
-import { getQueryKey } from "@trpc/react-query";
 import type { MultipleChoiceOption } from "@prisma/client";
 
 const EditMutipleChoiceOptionForm = ({
@@ -57,18 +57,21 @@ const EditMutipleChoiceOptionForm = ({
     }
   };
 
-  const editOption = api.question.editMultipleChoiceOption.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      setOpen(false);
-      toast.success("Opsi jawaban berhasil diubah");
-    },
-  });
+  const trpc = useTRPC();
+  const editOption = useMutation(
+    trpc.question.editMultipleChoiceOption.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        setOpen(false);
+        toast.success("Opsi jawaban berhasil diubah");
+      },
+    }),
+  );
 
   const handleSubmit = (data: EditMultipleChoiceOptionSchemaType) => {
     console.log("Form submitted", data);

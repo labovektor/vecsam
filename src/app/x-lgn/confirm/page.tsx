@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/card";
 import { loginAction } from "@/features/participant-auth/actions";
 import { beautifyDate } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { AlarmClock, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,9 +27,12 @@ const ExamLoginConfirmPage = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("xt_id");
 
-  const { data: exam, error } = api.participantAuth.getExam.useQuery({
-    id: id ?? "",
-  });
+  const trpc = useTRPC();
+  const { data: exam, error } = useQuery(
+    trpc.participantAuth.getExam.queryOptions({
+      id: id ?? "",
+    }),
+  );
 
   const confirmStart = async () => {
     setStarting(true);

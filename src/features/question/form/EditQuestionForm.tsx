@@ -1,7 +1,7 @@
 "use client";
 
 import type { Question } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { editQuestionSchema, type EditQuestionSchemaType } from "../schema";
 import { useForm } from "react-hook-form";
@@ -25,13 +25,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
 import { toast } from "sonner";
 import TiptapInput from "@/components/ui/tiptap";
-import { getQueryKey } from "@trpc/react-query";
 
 const EditQuestionForm = ({ question }: { question: Question }) => {
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   const [open, setOpen] = React.useState(false);
 
   const form = useForm<EditQuestionSchemaType>({
@@ -52,18 +52,20 @@ const EditQuestionForm = ({ question }: { question: Question }) => {
     }
   };
 
-  const editQuestion = api.question.editQuestion.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      setOpen(false);
-      toast.success("Pertanyaan berhasil diubah");
-    },
-  });
+  const editQuestion = useMutation(
+    trpc.question.editQuestion.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        setOpen(false);
+        toast.success("Pertanyaan berhasil diubah");
+      },
+    }),
+  );
 
   const handleSubmit = (data: EditQuestionSchemaType) => {
     console.log("Form submitted", data);

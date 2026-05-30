@@ -8,7 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -31,25 +32,30 @@ const UpdateAdminForm = ({
     },
   });
 
-  const updateAdmin = api.adminAuth.update.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
-      toast.success("Profil berhasil diupdate");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-  const resetPassword = api.adminAuth.resetPasswordReq.useMutation({
-    onSuccess: () => {
-      toast.success(
-        "Kami telah mengirimkan link reset password ke email Anda.",
-      );
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const trpc = useTRPC();
+  const updateAdmin = useMutation(
+    trpc.adminAuth.update.mutationOptions({
+      onSuccess: (data) => {
+        console.log(data);
+        toast.success("Profil berhasil diupdate");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    }),
+  );
+  const resetPassword = useMutation(
+    trpc.adminAuth.resetPasswordReq.mutationOptions({
+      onSuccess: () => {
+        toast.success(
+          "Kami telah mengirimkan link reset password ke email Anda.",
+        );
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    }),
+  );
 
   async function onSubmit(values: z.infer<typeof updateAdminSchema>) {
     updateAdmin.mutate(values);

@@ -18,11 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { beautifyDate } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Participant, ParticipantSession } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { getQueryKey } from "@trpc/react-query";
 import type { IColumn } from "json-as-xlsx";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -128,18 +127,21 @@ export function ParticipantActionColumn({
 }: {
   participant: Participant;
 }) {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const remove = api.participantManagement.remove.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Participant Removed");
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.participantManagement.getAllByExamId),
-      });
-    },
-  });
+  const remove = useMutation(
+    trpc.participantManagement.remove.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        toast.success("Participant Removed");
+        queryClient.refetchQueries({
+          queryKey: trpc.participantManagement.getAllByExamId.queryKey(),
+        });
+      },
+    }),
+  );
   return (
     <AlertDialog>
       <DropdownMenu>

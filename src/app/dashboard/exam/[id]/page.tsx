@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ExamStatCard from "@/features/exam-management/components/stat-card";
 import ToggleExamStatus from "@/features/exam-management/forms/ToggleExamStatus";
 import ParticipantTable from "@/features/participant-management/components/ParticipantTable";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   AlarmClock,
   AlertCircle,
@@ -16,9 +17,12 @@ import {
 import React, { use } from "react";
 
 const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const trpc = useTRPC();
   const { id } = use(params);
-  const { data: exam, error } = api.examManagement.getById.useQuery({ id });
-  const { data: log } = api.examManagement.getLog.useQuery({ id });
+  const { data: exam, error } = useQuery(
+    trpc.examManagement.getById.queryOptions({ id }),
+  );
+  const { data: log } = useQuery(trpc.examManagement.getLog.queryOptions({ id }));
 
   const downloadLog = () => {
     if (!log) return;

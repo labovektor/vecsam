@@ -3,7 +3,8 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import React, { startTransition } from "react";
 import { toast } from "sonner";
 
@@ -20,16 +21,19 @@ const ToggleExamStatus = ({
     (_, newStatus: boolean) => newStatus,
   );
 
-  const toggleExamStatus = api.examManagement.toggleStatus.useMutation({
-    onSuccess: () => {
-      toast.success("Status Updated");
-      setS(!isActive);
-    },
-    onError: (err) => {
-      toast.error(err.message);
-      setS(s);
-    },
-  });
+  const trpc = useTRPC();
+  const toggleExamStatus = useMutation(
+    trpc.examManagement.toggleStatus.mutationOptions({
+      onSuccess: () => {
+        toast.success("Status Updated");
+        setS(!isActive);
+      },
+      onError: (err) => {
+        toast.error(err.message);
+        setS(s);
+      },
+    }),
+  );
 
   return (
     <div

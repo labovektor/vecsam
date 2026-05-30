@@ -2,7 +2,8 @@
 
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import React from "react";
 import AddParticipantForm from "../forms/AddParticipantForm";
@@ -16,8 +17,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 const ParticipantTable = ({ examId }: { examId: string }) => {
-  const { data: participants, isLoading } =
-    api.participantManagement.getAllByExamId.useQuery({ id: examId });
+  const trpc = useTRPC();
+  const { data: participants, isLoading } = useQuery(
+    trpc.participantManagement.getAllByExamId.queryOptions({ id: examId }),
+  );
   return (
     <DataTable
       columns={participantColumnns}

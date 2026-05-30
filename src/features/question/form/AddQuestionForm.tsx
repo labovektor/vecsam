@@ -25,10 +25,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash } from "lucide-react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import TiptapInput from "@/components/ui/tiptap";
-import { getQueryKey } from "@trpc/react-query";
 
 const AddQuestionForm = ({
   sectionId,
@@ -91,18 +91,21 @@ const AddQuestionForm = ({
     }
   };
 
-  const addQuestion = api.question.addQuestion.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      setOpen(false);
-      toast.success("Pertanyaan berhasil ditambahkan");
-    },
-  });
+  const trpc = useTRPC();
+  const addQuestion = useMutation(
+    trpc.question.addQuestion.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        setOpen(false);
+        toast.success("Pertanyaan berhasil ditambahkan");
+      },
+    }),
+  );
 
   const handleSubmit = (data: AddQuestionSchemaType) => {
     console.log("Form submitted", data);

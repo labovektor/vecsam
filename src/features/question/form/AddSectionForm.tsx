@@ -8,7 +8,8 @@ import {
   type AddSectionSchemaType,
 } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
@@ -27,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SectionType } from "@prisma/client";
+import { SectionType } from "@prisma/browser";
 import { Button } from "@/components/ui/button";
 
 const AddSectionForm = ({
@@ -51,9 +52,12 @@ const AddSectionForm = ({
     },
   });
 
-  const addSection = api.section.addSection.useMutation({
-    onSuccess: onSuccess,
-  });
+  const trpc = useTRPC();
+  const addSection = useMutation(
+    trpc.section.addSection.mutationOptions({
+      onSuccess: onSuccess,
+    }),
+  );
 
   return (
     <Card>

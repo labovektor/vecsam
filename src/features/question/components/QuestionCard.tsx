@@ -9,10 +9,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
 import { CircleDotDashed, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
 import EditQuestionForm from "../form/EditQuestionForm";
 import AddMutipleChoiceOptionForm from "../form/AddMultipleChoiceOptionForm";
 import EditMutipleChoiceOptionForm from "../form/EditMultipleChoiceOptionForm";
@@ -28,31 +27,35 @@ const QuestionCard = ({
     QuestionAttr: QuestionAttr | null;
   };
 }) => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const deleteQuestion = api.question.deleteQuestion.useMutation({
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      toast.success("Pertanyaan berhasil dihapus");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  const deleteMultipleChoiceOption =
-    api.question.deleteMultipleChoiceOption.useMutation({
+  const deleteQuestion = useMutation(
+    trpc.question.deleteQuestion.mutationOptions({
       onSuccess: () => {
         queryClient.refetchQueries({
-          queryKey: getQueryKey(api.question.getQuestions),
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        toast.success("Pertanyaan berhasil dihapus");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }),
+  );
+
+  const deleteMultipleChoiceOption = useMutation(
+    trpc.question.deleteMultipleChoiceOption.mutationOptions({
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
         });
         toast.success("Opsi jawaban berhasil dihapus");
       },
       onError: (err) => {
         toast.error(err.message);
       },
-    });
+    }),
+  );
   return (
     <Card>
       <CardHeader className="flex gap-2">

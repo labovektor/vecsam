@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/table";
 import { renderKatexFromHtml } from "@/lib/katex-utils";
 import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { ArrowRight, Check, Undo, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { use, useEffect } from "react";
@@ -33,14 +34,20 @@ const ParticipantDetailPage = ({
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
 
+  const trpc = useTRPC();
   const { id, participantId } = use(params);
   const [score, setScore] = React.useState("0");
   const [correction, setCorrection] = React.useState<CorrectionType>({});
 
-  const { data: sections, isSuccess: getSectionsSuccess } =
-    api.section.getSections.useQuery({ examId: id });
+  const { data: sections, isSuccess: getSectionsSuccess } = useQuery(
+    trpc.section.getSections.queryOptions({ examId: id }),
+  );
   const { data: participantAnswers, isSuccess: getParticipantAnswersSuccess } =
-    api.participantManagement.getAnswers.useQuery({ id: participantId });
+    useQuery(
+      trpc.participantManagement.getAnswers.queryOptions({
+        id: participantId,
+      }),
+    );
 
   useEffect(() => {
     if (getSectionsSuccess && getParticipantAnswersSuccess) {
@@ -77,14 +84,16 @@ const ParticipantDetailPage = ({
     setScore(totalScore.toString());
   };
 
-  const saveScore = api.participantManagement.setScore.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Nilai berhasil disimpan");
-    },
-  });
+  const saveScore = useMutation(
+    trpc.participantManagement.setScore.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        toast.success("Nilai berhasil disimpan");
+      },
+    }),
+  );
 
   return (
     <div className="space-y-2">

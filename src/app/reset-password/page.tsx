@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AdminResetPasswordForm from "@/features/admin-auth/forms/AdminResetPasswordForm";
-import React from "react";
 
 const ResetPasswordPage = () => {
   return (

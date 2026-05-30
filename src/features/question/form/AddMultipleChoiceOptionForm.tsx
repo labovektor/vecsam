@@ -20,10 +20,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import TiptapInput from "@/components/ui/tiptap";
-import { getQueryKey } from "@trpc/react-query";
 
 const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
   const queryClient = useQueryClient();
@@ -46,18 +46,21 @@ const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
     }
   };
 
-  const addOption = api.question.addMulitpleChoiceOption.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: getQueryKey(api.question.getQuestions),
-      });
-      setOpen(false);
-      toast.success("Opsi jawaban berhasil ditambahkan");
-    },
-  });
+  const trpc = useTRPC();
+  const addOption = useMutation(
+    trpc.question.addMulitpleChoiceOption.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: trpc.question.getQuestions.queryKey(),
+        });
+        setOpen(false);
+        toast.success("Opsi jawaban berhasil ditambahkan");
+      },
+    }),
+  );
 
   const handleSubmit = (data: AddMultipleChoiceOptionSchemaType) => {
     console.log("Form submitted", data);
