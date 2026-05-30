@@ -110,7 +110,7 @@ const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="flex-1">
                     <FormControl>
                       <Input

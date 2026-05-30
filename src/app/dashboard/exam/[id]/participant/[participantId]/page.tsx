@@ -18,7 +18,7 @@ import { useTRPC } from "@/trpc/react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ArrowRight, Check, Undo, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React, { use, useEffect } from "react";
+import React, { use, useMemo } from "react";
 import { toast } from "sonner";
 
 type CorrectionType = Record<
@@ -31,43 +31,57 @@ const ParticipantDetailPage = ({
 }: {
   params: Promise<{ id: string; participantId: string }>;
 }) => {
+  const { id, participantId } = use(params);
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
 
-  const trpc = useTRPC();
-  const { id, participantId } = use(params);
   const [score, setScore] = React.useState("0");
-  const [correction, setCorrection] = React.useState<CorrectionType>({});
+  const [userCorrection, setUserCorrection] = React.useState<CorrectionType>(
+    {},
+  );
 
-  const { data: sections, isSuccess: getSectionsSuccess } = useQuery(
+  const trpc = useTRPC();
+
+  const { data: sections } = useQuery(
     trpc.section.getSections.queryOptions({ examId: id }),
   );
-  const { data: participantAnswers, isSuccess: getParticipantAnswersSuccess } =
-    useQuery(
-      trpc.participantManagement.getAnswers.queryOptions({
-        id: participantId,
-      }),
-    );
+  const { data: participantAnswers } = useQuery(
+    trpc.participantManagement.getAnswers.queryOptions({
+      id: participantId,
+    }),
+  );
 
-  useEffect(() => {
-    if (getSectionsSuccess && getParticipantAnswersSuccess) {
-      const initialCorrection: CorrectionType = {};
-      sections?.forEach((section) => {
-        const passedQuestions: Set<string> = new Set();
-        section.questions.forEach((question) => {
-          if (!participantAnswers[question.id]) {
-            passedQuestions.add(question.id);
-          }
-        });
-        initialCorrection[section.id] = {
-          correct: new Set(),
-          wrong: new Set(),
-          pass: passedQuestions,
-        };
+  // Default correction derived from data (questions without answers → pass)
+  const defaultCorrection = useMemo(() => {
+    if (!sections || !participantAnswers) return {};
+    const initial: CorrectionType = {};
+    sections.forEach((section) => {
+      const passed = new Set<string>();
+      section.questions.forEach((q) => {
+        if (!participantAnswers[q.id]) passed.add(q.id);
       });
-      setCorrection(initialCorrection);
+      initial[section.id] = {
+        correct: new Set(),
+        wrong: new Set(),
+        pass: passed,
+      };
+    });
+    return initial;
+  }, [sections, participantAnswers]);
+
+  // Merge defaults with user overrides from button clicks
+  const correction = useMemo(() => {
+    const merged: CorrectionType = {};
+    for (const [sectionId, def] of Object.entries(defaultCorrection)) {
+      const userSec = userCorrection[sectionId];
+      merged[sectionId] = {
+        correct: new Set(userSec?.correct ?? def!.correct),
+        wrong: new Set(userSec?.wrong ?? def!.wrong),
+        pass: new Set(userSec?.pass ?? def!.pass),
+      };
     }
-  }, [getSectionsSuccess, getParticipantAnswersSuccess]);
+    return merged;
+  }, [defaultCorrection, userCorrection]);
 
   const countScore = () => {
     let totalScore = 0;
@@ -216,25 +230,19 @@ const ParticipantDetailPage = ({
                               size="icon"
                               className="bg-green-500 hover:bg-green-400"
                               onClick={() =>
-                                setCorrection((prev) => {
-                                  if (!prev[section.id]) {
-                                    return prev;
-                                  }
+                                setUserCorrection((prev) => {
+                                  const prevSection = prev[section.id] ?? {
+                                    correct: new Set<string>(),
+                                    wrong: new Set<string>(),
+                                    pass: new Set<string>(),
+                                  };
 
-                                  const prevCorrect = prev[section.id]!.correct;
-                                  const prevWrong = prev[section.id]!.wrong;
-
-                                  // Make sure there is no question.id in prevWrong
-                                  prevWrong.delete(question.id);
-                                  prevCorrect.add(question.id);
+                                  prevSection.wrong.delete(question.id);
+                                  prevSection.correct.add(question.id);
 
                                   return {
                                     ...prev,
-                                    [section.id]: {
-                                      ...prev[section.id]!,
-                                      correct: prevCorrect,
-                                      wrong: prevWrong,
-                                    },
+                                    [section.id]: prevSection,
                                   };
                                 })
                               }
@@ -246,23 +254,19 @@ const ParticipantDetailPage = ({
                               size="icon"
                               variant="destructive"
                               onClick={() => {
-                                setCorrection((prev) => {
-                                  if (!prev[section.id]) {
-                                    return prev;
-                                  }
-                                  const prevCorrect = prev[section.id]!.correct;
-                                  const prevWrong = prev[section.id]!.wrong;
+                                setUserCorrection((prev) => {
+                                  const prevSection = prev[section.id] ?? {
+                                    correct: new Set<string>(),
+                                    wrong: new Set<string>(),
+                                    pass: new Set<string>(),
+                                  };
 
-                                  // Make sure there is no question.id in prevCorrect
-                                  prevCorrect.delete(question.id);
-                                  prevWrong.add(question.id);
+                                  prevSection.correct.delete(question.id);
+                                  prevSection.wrong.add(question.id);
+
                                   return {
                                     ...prev,
-                                    [section.id]: {
-                                      ...prev[section.id]!,
-                                      correct: prevCorrect,
-                                      wrong: prevWrong,
-                                    },
+                                    [section.id]: prevSection,
                                   };
                                 });
                               }}
@@ -274,23 +278,19 @@ const ParticipantDetailPage = ({
                               size="icon"
                               variant="secondary"
                               onClick={() => {
-                                setCorrection((prev) => {
-                                  if (!prev[section.id]) {
-                                    return prev;
-                                  }
-                                  const prevCorrect = prev[section.id]!.correct;
-                                  const prevWrong = prev[section.id]!.wrong;
+                                setUserCorrection((prev) => {
+                                  const prevSection = prev[section.id] ?? {
+                                    correct: new Set<string>(),
+                                    wrong: new Set<string>(),
+                                    pass: new Set<string>(),
+                                  };
 
-                                  // Make sure there is no question.id in both prevCorrect and prevWrong
-                                  prevCorrect.delete(question.id);
-                                  prevWrong.delete(question.id);
+                                  prevSection.correct.delete(question.id);
+                                  prevSection.wrong.delete(question.id);
+
                                   return {
                                     ...prev,
-                                    [section.id]: {
-                                      ...prev[section.id]!,
-                                      correct: prevCorrect,
-                                      wrong: prevWrong,
-                                    },
+                                    [section.id]: prevSection,
                                   };
                                 });
                               }}

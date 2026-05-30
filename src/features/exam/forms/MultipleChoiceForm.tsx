@@ -21,9 +21,6 @@ const MultipleChoiceForm = () => {
     saveAnswer(focusedQuestion.id, { optionId: value });
   }, 1000);
 
-  React.useEffect(() => {
-    setValue(cValue);
-  }, [cValue]);
   return (
     <RadioGroup
       disabled={isSaving}

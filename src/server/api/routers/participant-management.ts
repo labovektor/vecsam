@@ -54,7 +54,7 @@ export const participantManagementRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
 
-      const records: any[] = parse(input.csv, {
+      const records: { name: string; email: string }[] = parse(input.csv, {
         columns: true, // using first row as header
         skip_empty_lines: true,
         trim: true,
@@ -70,8 +70,8 @@ export const participantManagementRouter = createTRPCRouter({
       for (let i = 0; i < records.length; i++) {
         const row = records[i];
 
-        const name = row.name?.toString().trim();
-        const email = row.email?.toString();
+        const name = row?.name.toString().trim();
+        const email = row?.email.toString();
 
         if (!name || !email) {
           invalidRows.push(i + 1);

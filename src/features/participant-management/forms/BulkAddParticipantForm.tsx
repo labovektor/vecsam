@@ -79,7 +79,7 @@ export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
       setCsvError(null);
       setCsvPreview(text.slice(0, 300) + (text.length > 300 ? "..." : ""));
       setFileTextPromise(textPromise);
-    } catch (err) {
+    } catch (e) {
       setCsvError("Gagal membaca file CSV");
     }
   };
@@ -111,7 +111,7 @@ export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
             <FormField
               control={form.control}
               name="name"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Nama</FormLabel>
                   <FormControl>

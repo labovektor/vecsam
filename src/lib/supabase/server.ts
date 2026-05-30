@@ -18,7 +18,7 @@ export const createClient = (
         cookiesToSet: {
           name: string;
           value: string;
-          options?: { [key: string]: any };
+          options?: { [key: string]: unknown };
         }[],
       ) {
         try {

@@ -101,7 +101,7 @@ export const examManagementRouter = createTRPCRouter({
         id: z.string(),
       }),
     )
-    .query(({ ctx, input }) => {
+    .query(({ input }) => {
       const { error, data } = getLogActivity(input.id);
       if (error) {
         throw new Error(error);

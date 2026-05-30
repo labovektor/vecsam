@@ -13,7 +13,7 @@ import {
 import z from "zod";
 
 export const adminAuthRouter = createTRPCRouter({
-  login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
+  login: publicProcedure.input(loginSchema).mutation(async ({ input }) => {
     const { email, password } = input;
 
     return supabaseAdminClient.auth.signInWithPassword({
@@ -24,7 +24,7 @@ export const adminAuthRouter = createTRPCRouter({
 
   register: publicProcedure
     .input(registerSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const { name, email, password } = input;
 
       return supabaseAdminClient.auth.signUp({
@@ -52,7 +52,7 @@ export const adminAuthRouter = createTRPCRouter({
         name: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       return supabaseAdminClient.auth.updateUser({
         data: {
           name: input.name,
@@ -62,7 +62,7 @@ export const adminAuthRouter = createTRPCRouter({
 
   resetPasswordReq: publicProcedure
     .input(forgotPasswordSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       return supabaseAdminClient.auth.resetPasswordForEmail(input.email, {
         redirectTo: getBaseUrl() + "/reset-password",
       });

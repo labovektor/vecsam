@@ -7,7 +7,7 @@ import React from "react";
 
 type ExamStatCardProps = {
   title: string;
-  value: any;
+  value: string | number;
   href?: string;
   action?: VoidFunction;
   className?: string;

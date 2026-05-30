@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import {
   type ColumnDef,
@@ -11,6 +12,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import type { Table as TanStackTable } from "@tanstack/react-table";
 
 import {
   Table,
@@ -30,7 +32,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   loading?: boolean;
   message?: string;
-  actions?: (data: TData[], table: any) => React.ReactNode;
+  actions?: (data: TData[], table: TanStackTable<TData>) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({

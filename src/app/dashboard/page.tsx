@@ -9,7 +9,9 @@ import React from "react";
 
 const DashboardPage = () => {
   const trpc = useTRPC();
-  const { data: exams } = useQuery(trpc.examManagement.getAll.queryOptions(undefined));
+  const { data: exams } = useQuery(
+    trpc.examManagement.getAll.queryOptions(undefined),
+  );
 
   const now = new Date();
   const activeExams = exams?.filter((exam) => exam.isActive);
@@ -49,7 +51,7 @@ function EventsStatCard({
   icon,
 }: {
   title: string;
-  value: any;
+  value: string | number;
   className?: string;
   icon: React.ReactNode;
 }) {

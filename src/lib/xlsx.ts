@@ -1,11 +1,12 @@
 import xlsx, {
   type IColumn,
+  type IContent,
   type IJsonSheet,
   type ISettings,
 } from "json-as-xlsx";
 
 export function exportAsExcelFile(
-  data: any[],
+  data: unknown[],
   columns: IColumn[],
   sheetName: string,
   callback?: () => void,
@@ -14,7 +15,7 @@ export function exportAsExcelFile(
     {
       sheet: sheetName,
       columns: columns,
-      content: data,
+      content: data as IContent[],
     },
   ];
 

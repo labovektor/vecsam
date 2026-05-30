@@ -129,7 +129,7 @@ const EditQuestionForm = ({ question }: { question: Question }) => {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="flex-1">
                     <FormLabel>Ubah Gambar Saat Ini (Opsional)</FormLabel>
                     <FormControl>

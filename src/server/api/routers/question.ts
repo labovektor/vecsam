@@ -21,7 +21,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       if (!input.sectionId) {
         return [];
@@ -49,7 +49,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       const tmp = new Date().getTime().toString();
 
@@ -200,7 +200,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       const tmp = new Date().getTime().toString();
 
@@ -247,7 +247,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       const tmp = new Date().getTime().toString();
       const id = crypto.randomUUID();
@@ -291,7 +291,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       const tmp = new Date().getTime().toString();
 
@@ -335,7 +335,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       const filesBuffer = Buffer.from(input.attr.file, "base64");
 
@@ -417,7 +417,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
       return db.multipleChoiceOption.delete({
         where: {
           id: input.id,
@@ -432,7 +432,7 @@ export const questionRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
       return db.question.delete({
         where: {
           id: input.id,

@@ -32,6 +32,14 @@ const SectionTab = ({
   const [visibleAddSection, setVisibleAddSection] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
+  const removeSection = useMutation(
+    trpc.section.deleteSection.mutationOptions({
+      onSuccess: () => {
+        refetch();
+      },
+    }),
+  );
+
   const {
     data: sections,
     error,
@@ -51,14 +59,6 @@ const SectionTab = ({
       </Alert>
     );
   }
-
-  const removeSection = useMutation(
-    trpc.section.deleteSection.mutationOptions({
-      onSuccess: () => {
-        refetch();
-      },
-    }),
-  );
 
   return (
     <div className={cn("flex h-full flex-col gap-2", className)}>

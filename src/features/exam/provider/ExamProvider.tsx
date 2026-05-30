@@ -103,10 +103,13 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [focusedSection, setFocusedSection] =
+  const [focusedSection, setFocusedSectionState] =
     useState<SectionWithQuestionAttr | null>(null);
-  const [focusedQuestion, setFocusedQuestion] =
+  const [focusedQuestion, setFocusedQuestionState] =
     useState<QuestionWithAttr | null>(null);
+
+  const setFocusedSection = setFocusedSectionState;
+  const setFocusedQuestion = setFocusedQuestionState;
 
   const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
 
@@ -125,7 +128,18 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
     refetch: refetchExam,
   } = useQuery(examOpts);
 
-  console.log(exam);
+  // Derive defaults from exam data until user explicitly navigates
+  const resolvedFocusedSection = useMemo(() => {
+    if (focusedSection) return focusedSection;
+    if (!exam) return null;
+    return exam.sections[0] ?? null;
+  }, [focusedSection, exam]);
+
+  const resolvedFocusedQuestion = useMemo(() => {
+    if (focusedQuestion) return focusedQuestion;
+    if (!resolvedFocusedSection) return null;
+    return resolvedFocusedSection.questions[0] ?? null;
+  }, [focusedQuestion, resolvedFocusedSection]);
 
   const answersOpts = trpc.exam.getAnswers.queryOptions(undefined, {
     staleTime: 10 * 60 * 1000, // 10 minutes
@@ -149,19 +163,6 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       window.removeEventListener("blur", onBlur);
     };
   }, [log]);
-
-  useEffect(() => {
-    if (exam && !focusedQuestion) {
-      const firstSection = exam.sections[0];
-      if (firstSection) {
-        setFocusedSection(firstSection);
-        const firstNumber = firstSection.questions[0];
-        if (firstNumber) {
-          setFocusedQuestion(firstNumber);
-        }
-      }
-    }
-  }, [exam, focusedQuestion]);
 
   const saveAnswer = useMutation(
     trpc.exam.saveAnswer.mutationOptions({
@@ -271,9 +272,9 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       removeUnsureAnswer,
       expiredAt: sessionRes?.session.expiredAt ?? null,
       currentTimestamp: sessionRes?.current_timestamp ?? null,
-      focusedSection,
+      focusedSection: resolvedFocusedSection,
       setFocusedSection,
-      focusedQuestion: focusedQuestion,
+      focusedQuestion: resolvedFocusedQuestion,
       setFocusedQuestion,
       setFocusedBefore,
       setFocusedAfter,
@@ -295,7 +296,8 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       exam,
       sessionError,
       examError,
-      focusedQuestion,
+      resolvedFocusedQuestion,
+      resolvedFocusedSection,
       saveAnswer.isPending,
       undoAnswer.isPending,
       lockAnswer.isPending,

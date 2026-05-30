@@ -22,7 +22,9 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { data: exam, error } = useQuery(
     trpc.examManagement.getById.queryOptions({ id }),
   );
-  const { data: log } = useQuery(trpc.examManagement.getLog.queryOptions({ id }));
+  const { data: log } = useQuery(
+    trpc.examManagement.getLog.queryOptions({ id }),
+  );
 
   const downloadLog = () => {
     if (!log) return;

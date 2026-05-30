@@ -14,7 +14,7 @@ export const sectionRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       return db.section.findMany({
         where: {
@@ -35,7 +35,7 @@ export const sectionRouter = createTRPCRouter({
   addSection: protectedProcedure
     .input(addSectionSchema)
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       return db.section.create({
         data: {
@@ -52,7 +52,7 @@ export const sectionRouter = createTRPCRouter({
   updateSection: protectedProcedure
     .input(updateSectionSchema)
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       return db.section.update({
         where: {
@@ -75,7 +75,7 @@ export const sectionRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db, user } = ctx;
+      const { db } = ctx;
 
       return db.section.delete({
         where: {

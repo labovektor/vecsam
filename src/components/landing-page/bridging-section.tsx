@@ -28,8 +28,8 @@ export function BridgeSection() {
             Designed for Students, Built for Educators
           </h2>
           <p className="text-muted-foreground mx-auto max-w-[800px] md:text-lg">
-            Whether you're taking an exam or creating one, VecSys Exam provides
-            the tools and security you need for success.
+            Whether you&apos;re taking an exam or creating one, VecSys Exam
+            provides the tools and security you need for success.
           </p>
         </motion.div>
 

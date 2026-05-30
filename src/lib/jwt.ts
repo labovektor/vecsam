@@ -13,6 +13,9 @@ export function createJwt(
 }
 
 export function verifyJwt(token: string) {
-  const payload = jwt.verify(token, process.env.JWT_SECRET!);
-  return payload as any;
+  const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
+    sub: string;
+    examId: string;
+  };
+  return payload;
 }

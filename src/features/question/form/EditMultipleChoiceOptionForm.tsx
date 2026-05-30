@@ -127,7 +127,7 @@ const EditMutipleChoiceOptionForm = ({
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="flex-1">
                     <FormLabel>Ubah/Tambah gambar yang sekarang</FormLabel>
                     <FormControl>

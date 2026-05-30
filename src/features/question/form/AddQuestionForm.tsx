@@ -76,7 +76,7 @@ const AddQuestionForm = ({
     const file = e.target.files?.[0];
     if (file) {
       const base64 = await fileToBase64(file);
-      form.setValue(`questionAttr.${field}`, base64 as any);
+      form.setValue(`questionAttr.${field}`, base64);
     }
   };
 
@@ -169,7 +169,7 @@ const AddQuestionForm = ({
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="flex-1">
                     <FormLabel>Gambar (Opsional)</FormLabel>
                     <FormControl>
@@ -198,7 +198,7 @@ const AddQuestionForm = ({
                 <FormField
                   control={form.control}
                   name="questionAttr.file"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>File Pertanyaan</FormLabel>
                       <FormControl>
@@ -214,7 +214,7 @@ const AddQuestionForm = ({
                 <FormField
                   control={form.control}
                   name="questionAttr.templateFile"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Template Jawaban</FormLabel>
                       <FormControl>
@@ -255,7 +255,7 @@ const AddQuestionForm = ({
                     <FormField
                       control={form.control}
                       name={`multipleChoiceOptions.${index}.image`}
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem className="flex-1">
                           <FormControl>
                             <Input

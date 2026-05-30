@@ -1,7 +1,7 @@
 "use client";
 
 import { AlarmClock } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 
 /**
@@ -27,15 +27,21 @@ const ExamTimer = ({
   callback: VoidFunction;
 }) => {
   const targetTime = expiredAt.getTime();
-  const offsetTime = currentTimestamp.getTime() - Date.now();
-  const [remaining, setRemaining] = React.useState(
-    targetTime - (Date.now() + offsetTime),
-  );
+
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  const [remaining, setRemaining] = React.useState(() => {
+    const now = Date.now();
+    const offset = currentTimestamp.getTime() - now;
+    return targetTime - (now + offset);
+  });
+
   React.useEffect(() => {
+    const now = Date.now();
+    const offset = currentTimestamp.getTime() - now;
+
     intervalRef.current = setInterval(() => {
-      const timeLeft = targetTime - (Date.now() + offsetTime);
+      const timeLeft = targetTime - (Date.now() + offset);
       if (timeLeft <= 0) {
         setRemaining(0);
         if (!loading) {
@@ -49,7 +55,8 @@ const ExamTimer = ({
     }, 1000);
 
     return () => clearInterval(intervalRef.current!);
-  }, [targetTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetTime, loading, callback]);
 
   const totalSeconds = Math.floor(remaining / 1000);
   const hours = Math.floor(totalSeconds / 3600)

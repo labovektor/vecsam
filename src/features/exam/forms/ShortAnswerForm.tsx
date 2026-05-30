@@ -13,10 +13,6 @@ const ShortAnswerForm = () => {
     : "";
   const [value, setValue] = React.useState(cAnswer);
 
-  React.useEffect(() => {
-    setValue(cAnswer);
-  }, [cAnswer]);
-
   return (
     <div className="flex gap-2">
       <Input

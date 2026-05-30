@@ -101,7 +101,7 @@ const EditQuestionAttrForm = ({
             <FormField
               control={form.control}
               name="file"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormControl>
                     <Input
