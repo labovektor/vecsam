@@ -10,7 +10,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@/server/db";
+import { prisma } from "@/server/db";
 import { createClient } from "@/lib/supabase/server";
 import { AuthenticationError } from "@/use-cases/errors";
 import { cookies } from "next/headers";
@@ -33,10 +33,9 @@ import { rateLimiter } from "@/lib/rate-limiter";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const c = await cookies();
 
-  // 🔍 Coba ambil dari header yang umum dipakai reverse proxy
   const ip = opts.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
   return {
-    db,
+    db: prisma,
     cookies: c,
     ip,
     ...opts,
@@ -109,7 +108,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  const supabaseServerClient = await createClient();
+  const supabaseServerClient = createClient(ctx.cookies);
 
   const { data } = await supabaseServerClient.auth.getUser();
 

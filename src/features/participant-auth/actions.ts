@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/server/db";
+import { prisma as db } from "@/server/db";
 import { addMinutes, isBefore } from "date-fns";
 import { createJwt } from "@/lib/jwt";
 import { cookies } from "next/headers";
