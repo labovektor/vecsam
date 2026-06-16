@@ -31,8 +31,9 @@ model Exam {
 
 model Participant {
     id                 String              @id @default(uuid())
+    team_id            String              @default(uuid())
     name               String
-    email           String              @unique
+    email              String              @unique
     examId             String
     exam               Exam                @relation(fields: [examId], references: [id], onDelete: Cascade)
     participantSession ParticipantSession?

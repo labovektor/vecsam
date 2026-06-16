@@ -1,5 +1,3 @@
-// components/UploadParticipantsForm.tsx
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -70,8 +68,8 @@ export const BulkAddParticipantsForm = ({ examId }: { examId: string }) => {
     try {
       const textPromise = csvToText(file);
       const text = await textPromise;
-      if (!text.includes("name") || !text.includes("email")) {
-        setCsvError("CSV harus mengandung kolom name, email");
+      if (!text.includes("team_id") || !text.includes("name") || !text.includes("email")) {
+        setCsvError("CSV harus mengandung kolom team_id, name, email");
         setCsvPreview(null);
         return;
       }

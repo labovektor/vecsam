@@ -54,7 +54,7 @@ export const participantManagementRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
 
-      const records: { name: string; email: string }[] = parse(input.csv, {
+      const records: { team_id: string, name: string; email: string }[] = parse(input.csv, {
         columns: true, // using first row as header
         skip_empty_lines: true,
         trim: true,
@@ -62,6 +62,7 @@ export const participantManagementRouter = createTRPCRouter({
 
       const invalidRows: number[] = [];
       const participantsToInsert: {
+        team_id: string
         name: string;
         email: string;
         examId: string;
@@ -70,15 +71,17 @@ export const participantManagementRouter = createTRPCRouter({
       for (let i = 0; i < records.length; i++) {
         const row = records[i];
 
+        const team_id = row?.team_id.toString()
         const name = row?.name.toString().trim();
         const email = row?.email.toString();
 
-        if (!name || !email) {
+        if (!team_id || !name || !email) {
           invalidRows.push(i + 1);
           continue;
         }
 
         participantsToInsert.push({
+          team_id,
           name,
           email,
           examId: input.examId,

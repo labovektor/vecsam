@@ -33,6 +33,10 @@ export const excelParticipantColumn: IColumn[] = [
     value: "id",
   },
   {
+    label: "Team ID",
+    value: "team_id",
+  },
+  {
     label: "Name",
     value: "name",
   },
