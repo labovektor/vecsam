@@ -8,6 +8,9 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    SUPABASE_URL: z.string().default(""),
+    SUPABASE_PUBLISHABLE_KEY: z.string().default(""),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().default(""),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -28,6 +31,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY: process.env.SUPABASE_PUBLISHABLE_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

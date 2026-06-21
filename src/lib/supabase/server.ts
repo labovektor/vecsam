@@ -1,10 +1,11 @@
+import { env } from "@/env"
 import { createServerClient } from "@supabase/ssr"
 import { createClient as createDefaultClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
 
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY
-const supabaseRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseUrl = env.SUPABASE_URL
+const supabaseKey = env.SUPABASE_PUBLISHABLE_KEY
+const supabaseRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
 
 export const createClient = (
   cookieStore: Awaited<ReturnType<typeof cookies>>,

@@ -1,8 +1,9 @@
+import { env } from "@/env"
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY
+const supabaseUrl = env.SUPABASE_URL
+const supabaseKey = env.SUPABASE_PUBLISHABLE_KEY
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
