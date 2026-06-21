@@ -8,6 +8,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+COPY --from=deps /app/prisma/generated ./prisma/generated
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
