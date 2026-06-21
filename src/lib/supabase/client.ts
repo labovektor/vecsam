@@ -1,7 +1,14 @@
 import { createBrowserClient } from "@supabase/ssr"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+let cachedPromise: Promise<ReturnType<typeof createBrowserClient>> | null = null
 
-export const createClient = () =>
-  createBrowserClient(supabaseUrl!, supabaseKey!)
+export async function createClient() {
+  if (!cachedPromise) {
+    cachedPromise = (async () => {
+      const res = await fetch("/api/config")
+      const { supabaseUrl, supabaseKey } = await res.json()
+      return createBrowserClient(supabaseUrl, supabaseKey)
+    })()
+  }
+  return cachedPromise
+}

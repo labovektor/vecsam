@@ -21,7 +21,6 @@ import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
 
 const AdminResetPasswordForm = () => {
-  const supabase = createClient()
   const form = useForm<ResetPasswordSchemaType>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -31,6 +30,7 @@ const AdminResetPasswordForm = () => {
   })
 
   async function onSubmit(values: ResetPasswordSchemaType) {
+    const supabase = await createClient()
     const { error } = await supabase.auth.updateUser({
       password: values.password,
     })
@@ -53,6 +53,7 @@ const AdminResetPasswordForm = () => {
         const refreshToken = urlParams.get("refresh_token")
 
         if (accessToken && refreshToken) {
+          const supabase = await createClient()
           const { error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -68,7 +69,7 @@ const AdminResetPasswordForm = () => {
     }
 
     recoverSession()
-  }, [supabase.auth])
+  }, [])
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -3,7 +3,6 @@ import { useState } from "react"
 
 export function useAdminAuthAction() {
   const [loading, setLoading] = useState(false)
-  const supabase = createClient()
 
   const signIn = async ({
     email,
@@ -13,6 +12,7 @@ export function useAdminAuthAction() {
     password: string
   }) => {
     setLoading(true)
+    const supabase = await createClient()
     const res = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -23,6 +23,7 @@ export function useAdminAuthAction() {
 
   const signOut = async () => {
     setLoading(true)
+    const supabase = await createClient()
     const res = await supabase.auth.signOut()
     setLoading(false)
     return res
