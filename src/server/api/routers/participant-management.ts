@@ -1,8 +1,8 @@
-import z from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { parse } from "csv-parse/sync";
-import { addParticipantSchema } from "@/features/participant-management/schema";
-import type { AnswerRecordSchemaType } from "@/features/exam/schema";
+import z from "zod"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { parse } from "csv-parse/sync"
+import { addParticipantSchema } from "@/features/participant-management/schema"
+import type { AnswerRecordSchemaType } from "@/features/exam/schema"
 
 export const participantManagementRouter = createTRPCRouter({
   getAllByExamId: protectedProcedure
@@ -12,7 +12,7 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
       return db.participant.findMany({
         where: {
           examId: input.id,
@@ -23,7 +23,7 @@ export const participantManagementRouter = createTRPCRouter({
         orderBy: {
           name: "asc",
         },
-      });
+      })
     }),
 
   add: protectedProcedure
@@ -34,14 +34,14 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
       return db.participant.create({
         data: {
           name: input.data.name,
           email: input.data.email,
           examId: input.examId,
         },
-      });
+      })
     }),
 
   bulkAddFromCsv: protectedProcedure
@@ -52,32 +52,35 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
 
-      const records: { team_id: string, name: string; email: string }[] = parse(input.csv, {
-        columns: true, // using first row as header
-        skip_empty_lines: true,
-        trim: true,
-      });
+      const records: { team_id: string; name: string; email: string }[] = parse(
+        input.csv,
+        {
+          columns: true, // using first row as header
+          skip_empty_lines: true,
+          trim: true,
+        },
+      )
 
-      const invalidRows: number[] = [];
+      const invalidRows: number[] = []
       const participantsToInsert: {
         team_id: string
-        name: string;
-        email: string;
-        examId: string;
-      }[] = [];
+        name: string
+        email: string
+        examId: string
+      }[] = []
 
       for (let i = 0; i < records.length; i++) {
-        const row = records[i];
+        const row = records[i]
 
         const team_id = row?.team_id.toString()
-        const name = row?.name.toString().trim();
-        const email = row?.email.toString();
+        const name = row?.name.toString().trim()
+        const email = row?.email.toString()
 
         if (!team_id || !name || !email) {
-          invalidRows.push(i + 1);
-          continue;
+          invalidRows.push(i + 1)
+          continue
         }
 
         participantsToInsert.push({
@@ -85,20 +88,20 @@ export const participantManagementRouter = createTRPCRouter({
           name,
           email,
           examId: input.examId,
-        });
+        })
       }
 
       if (participantsToInsert.length === 0) {
-        throw new Error("Semua baris tidak valid.");
+        throw new Error("Semua baris tidak valid.")
       }
 
       if (invalidRows.length > 0) {
-        throw new Error(`Baris ke ${invalidRows.join(", ")} tidak valid.`);
+        throw new Error(`Baris ke ${invalidRows.join(", ")} tidak valid.`)
       }
 
       return db.participant.createMany({
         data: participantsToInsert,
-      });
+      })
     }),
 
   remove: protectedProcedure
@@ -108,12 +111,12 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
       return db.participant.delete({
         where: {
           id: input.id,
         },
-      });
+      })
     }),
 
   getAnswers: protectedProcedure
@@ -123,24 +126,24 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
       const answers = await db.participantAnswer.findMany({
         where: {
           participantId: input.id,
         },
-      });
+      })
 
       // Create records for each question
-      const records: AnswerRecordSchemaType = {};
+      const records: AnswerRecordSchemaType = {}
       answers.forEach((answer) => {
         records[answer.questionId] = {
           answerText: answer.answerText ?? undefined,
           answerFile: answer.answerFile ?? undefined,
           optionId: answer.optionId ?? undefined,
-        };
-      });
+        }
+      })
 
-      return records;
+      return records
     }),
 
   setScore: protectedProcedure
@@ -151,7 +154,7 @@ export const participantManagementRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
       return db.participant.update({
         where: {
           id: input.id,
@@ -159,6 +162,6 @@ export const participantManagementRouter = createTRPCRouter({
         data: {
           score: input.score,
         },
-      });
+      })
     }),
-});
+})

@@ -1,33 +1,33 @@
-"use client";
+"use client"
 
-import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import { useQueryClient } from "@tanstack/react-query"
+import React from "react"
 import {
   addMultipleChoiceOptionSchema,
   type AddMultipleChoiceOptionSchemaType,
-} from "../schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { fileToBase64 } from "@/lib/form-utils";
+} from "../schema"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { fileToBase64 } from "@/lib/form-utils"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import TiptapInput from "@/components/ui/tiptap";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Plus } from "lucide-react"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+import TiptapInput from "@/components/ui/tiptap"
 
 const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
-  const queryClient = useQueryClient();
-  const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient()
+  const [open, setOpen] = React.useState(false)
 
   const form = useForm<AddMultipleChoiceOptionSchemaType>({
     resolver: zodResolver(addMultipleChoiceOptionSchema),
@@ -35,47 +35,47 @@ const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
       text: "",
       image: undefined,
     },
-  });
+  })
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      console.log(base64);
-      form.setValue("image", base64);
+      const base64 = await fileToBase64(file)
+      console.log(base64)
+      form.setValue("image", base64)
     }
-  };
+  }
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const addOption = useMutation(
     trpc.question.addMulitpleChoiceOption.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.question.getQuestions.queryKey(),
-        });
-        setOpen(false);
-        toast.success("Opsi jawaban berhasil ditambahkan");
+        })
+        setOpen(false)
+        toast.success("Opsi jawaban berhasil ditambahkan")
       },
     }),
-  );
+  )
 
   const handleSubmit = (data: AddMultipleChoiceOptionSchemaType) => {
-    console.log("Form submitted", data);
+    console.log("Form submitted", data)
     addOption.mutate({
       questionId,
       option: data,
-    });
-  };
+    })
+  }
 
   return (
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen(open);
-        form.reset();
+        setOpen(open)
+        form.reset()
       }}
     >
       <DialogTrigger asChild>
@@ -135,7 +135,7 @@ const AddMutipleChoiceOptionForm = ({ questionId }: { questionId: string }) => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default AddMutipleChoiceOptionForm;
+export default AddMutipleChoiceOptionForm

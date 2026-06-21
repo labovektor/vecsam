@@ -6,16 +6,16 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-import { ZodError } from "zod";
+import { initTRPC } from "@trpc/server"
+import superjson from "superjson"
+import { ZodError } from "zod"
 
-import { prisma } from "@/server/db";
-import { createClient } from "@/lib/supabase/server";
-import { AuthenticationError } from "@/use-cases/errors";
-import { cookies } from "next/headers";
-import { verifyJwt } from "@/lib/jwt";
-import { rateLimiter } from "@/lib/rate-limiter";
+import { prisma } from "@/server/db"
+import { createClient } from "@/lib/supabase/server"
+import { AuthenticationError } from "@/use-cases/errors"
+import { cookies } from "next/headers"
+import { verifyJwt } from "@/lib/jwt"
+import { rateLimiter } from "@/lib/rate-limiter"
 
 /**
  * 1. CONTEXT
@@ -31,16 +31,16 @@ import { rateLimiter } from "@/lib/rate-limiter";
  */
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const c = await cookies();
+  const c = await cookies()
 
-  const ip = opts.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+  const ip = opts.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown"
   return {
     db: prisma,
     cookies: c,
     ip,
     ...opts,
-  };
-};
+  }
+}
 
 /**
  * 2. INITIALIZATION
@@ -59,16 +59,16 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
-    };
+    }
   },
-});
+})
 
 /**
  * Create a server-side caller.
  *
  * @see https://trpc.io/docs/server/server-side-calls
  */
-export const createCallerFactory = t.createCallerFactory;
+export const createCallerFactory = t.createCallerFactory
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -82,7 +82,7 @@ export const createCallerFactory = t.createCallerFactory;
  *
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const createTRPCRouter = t.router
 
 /**
  * Middleware for timing procedure execution and adding an artificial delay in development.
@@ -91,28 +91,28 @@ export const createTRPCRouter = t.router;
  * network latency that would occur in production but not in local development.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
-  const start = Date.now();
+  const start = Date.now()
 
   if (t._config.isDev) {
     // artificial delay in dev
-    const waitMs = Math.floor(Math.random() * 400) + 100;
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
+    const waitMs = Math.floor(Math.random() * 400) + 100
+    await new Promise((resolve) => setTimeout(resolve, waitMs))
   }
 
-  const result = await next();
+  const result = await next()
 
-  const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  const end = Date.now()
+  console.log(`[TRPC] ${path} took ${end - start}ms to execute`)
 
-  return result;
-});
+  return result
+})
 
 const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  const supabaseServerClient = createClient(ctx.cookies);
+  const supabaseServerClient = createClient(ctx.cookies)
 
-  const { data } = await supabaseServerClient.auth.getUser();
+  const { data } = await supabaseServerClient.auth.getUser()
 
-  if (!data.user) throw new AuthenticationError();
+  if (!data.user) throw new AuthenticationError()
 
   try {
     await rateLimiter({
@@ -120,9 +120,9 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
       duration: 1,
       keyPrefix: "rl:auth",
       consumeKey: data.user.id,
-    });
+    })
   } catch (error) {
-    throw new Error("Terlalu Banyak Request");
+    throw new Error("Terlalu Banyak Request")
   }
 
   return await next({
@@ -130,18 +130,18 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
       ...ctx,
       user: data.user,
     },
-  });
-});
+  })
+})
 
 const examMiddleware = t.middleware(async ({ ctx, next }) => {
-  const token = ctx.cookies.get("xt_val")?.value;
+  const token = ctx.cookies.get("xt_val")?.value
 
-  if (!token) throw new AuthenticationError();
-  let payload: { sub: string; examId: string };
+  if (!token) throw new AuthenticationError()
+  let payload: { sub: string; examId: string }
   try {
-    payload = verifyJwt(token);
+    payload = verifyJwt(token)
   } catch (error) {
-    throw new AuthenticationError();
+    throw new AuthenticationError()
   }
 
   try {
@@ -150,9 +150,9 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
       duration: 1,
       keyPrefix: "rl:exam",
       consumeKey: payload.sub,
-    });
+    })
   } catch (error) {
-    throw new Error("Terlalu Banyak Request");
+    throw new Error("Terlalu Banyak Request")
   }
 
   // Ambil session dari DB
@@ -161,16 +161,16 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
     include: {
       participant: true,
     },
-  });
+  })
 
   if (session?.participant.lockedAt) {
-    throw new Error("Anda sudah menyelesaikan pengerjaan soal!");
+    throw new Error("Anda sudah menyelesaikan pengerjaan soal!")
   }
 
-  const now = new Date();
+  const now = new Date()
 
   if (!session || session.token !== token || session.expiredAt < now) {
-    throw new AuthenticationError();
+    throw new AuthenticationError()
   }
 
   return await next({
@@ -178,8 +178,8 @@ const examMiddleware = t.middleware(async ({ ctx, next }) => {
       ...ctx,
       session,
     },
-  });
-});
+  })
+})
 
 const defaultRateLimiter = t.middleware(async ({ ctx, next }) => {
   try {
@@ -188,12 +188,12 @@ const defaultRateLimiter = t.middleware(async ({ ctx, next }) => {
       duration: 1,
       keyPrefix: "rl:default",
       consumeKey: ctx.ip,
-    });
+    })
   } catch (error) {
-    throw new Error("Terlalu Banyak Request");
+    throw new Error("Terlalu Banyak Request")
   }
-  return await next();
-});
+  return await next()
+})
 
 /**
  * Public (unauthenticated) procedure
@@ -202,7 +202,7 @@ const defaultRateLimiter = t.middleware(async ({ ctx, next }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(defaultRateLimiter);
-export const protectedProcedure = t.procedure.use(authMiddleware);
+export const publicProcedure = t.procedure.use(defaultRateLimiter)
+export const protectedProcedure = t.procedure.use(authMiddleware)
 
-export const examProcedure = t.procedure.use(examMiddleware);
+export const examProcedure = t.procedure.use(examMiddleware)

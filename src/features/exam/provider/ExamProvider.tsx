@@ -1,53 +1,53 @@
-"use client";
+"use client"
 
-import type { Participant } from "@prisma/client";
-import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema";
-import { createContext, useEffect, useMemo, useRef, useState } from "react";
-import { useTRPC } from "@/trpc/react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import type { Participant } from "@prisma/client"
+import type { AnswerRecordSchemaType, SaveAnswerSchemaType } from "../schema"
+import { createContext, useEffect, useMemo, useState } from "react"
+import { useTRPC } from "@/trpc/react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 import type {
   ExamWithSectionQuestionAttr,
   QuestionWithAttr,
   SectionWithQuestionAttr,
-} from "../../types";
-import { Loader } from "lucide-react";
+} from "../../types"
+import { Loader } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
-import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
-import { useRouter } from "next/navigation";
-import { logoutAction } from "@/features/participant-auth/actions";
+} from "@/components/ui/alert-dialog"
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog"
+import { useRouter } from "next/navigation"
+import { logoutAction } from "@/features/participant-auth/actions"
 
 type ExamContextProviderProps = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 interface IExamContext {
-  error: string | null;
-  participant: Participant | null;
-  exam: ExamWithSectionQuestionAttr | null;
-  answers: AnswerRecordSchemaType;
-  unsureAnswers: Set<string>;
-  addUnsureAnswer: (questionId: string) => void;
-  removeUnsureAnswer: (questionId: string) => void;
-  expiredAt: Date | null;
-  currentTimestamp: Date | null;
-  focusedSection: SectionWithQuestionAttr | null;
-  setFocusedSectionIndex: React.Dispatch<React.SetStateAction<number>>;
-  focusedQuestion: QuestionWithAttr | null;
-  setFocusedQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
-  setFocusedBefore: VoidFunction;
-  setFocusedAfter: VoidFunction;
-  saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void;
-  undoAnswer: (questionId: string) => void;
-  lockAnswer: VoidFunction;
-  isSaving: boolean;
-  isFetching: boolean;
+  error: string | null
+  participant: Participant | null
+  exam: ExamWithSectionQuestionAttr | null
+  answers: AnswerRecordSchemaType
+  unsureAnswers: Set<string>
+  addUnsureAnswer: (questionId: string) => void
+  removeUnsureAnswer: (questionId: string) => void
+  expiredAt: Date | null
+  currentTimestamp: Date | null
+  focusedSection: SectionWithQuestionAttr | null
+  setFocusedSectionIndex: React.Dispatch<React.SetStateAction<number>>
+  focusedQuestion: QuestionWithAttr | null
+  setFocusedQuestionIndex: React.Dispatch<React.SetStateAction<number>>
+  setFocusedBefore: VoidFunction
+  setFocusedAfter: VoidFunction
+  saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => void
+  undoAnswer: (questionId: string) => void
+  lockAnswer: VoidFunction
+  isSaving: boolean
+  isFetching: boolean
 }
 
 /**
@@ -58,7 +58,7 @@ interface IExamContext {
  * The ExamContext is used to access the exam state from any component inside
  * the exam page.
  */
-export const ExamContext = createContext<IExamContext>({} as IExamContext);
+export const ExamContext = createContext<IExamContext>({} as IExamContext)
 
 /**
  * The ExamProvider is a React Context Provider that provides access to the
@@ -96,61 +96,61 @@ export const ExamContext = createContext<IExamContext>({} as IExamContext);
  * }
  */
 export default function ExamProvider({ children }: ExamContextProviderProps) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
-  const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set());
+  const [unsureAnswers, setUnsureAnswers] = useState<Set<string>>(new Set())
 
-  const sessionOpts = trpc.exam.getSession.queryOptions(undefined);
+  const sessionOpts = trpc.exam.getSession.queryOptions(undefined)
   const {
     data: sessionRes,
     error: sessionError,
     isFetching: isFetchingSession,
     refetch: refetchSession,
-  } = useQuery(sessionOpts);
-  const examOpts = trpc.exam.getExam.queryOptions(undefined);
+  } = useQuery(sessionOpts)
+  const examOpts = trpc.exam.getExam.queryOptions(undefined)
   const {
     data: exam,
     error: examError,
     isFetching: isFetchingExam,
     refetch: refetchExam,
-  } = useQuery(examOpts);
+  } = useQuery(examOpts)
 
   const answersOpts = trpc.exam.getAnswers.queryOptions(undefined, {
     staleTime: 10 * 60 * 1000, // 10 minutes
-  });
+  })
   const {
     data: answers,
     error: answersError,
     isFetching: isFetchingAnswers,
     refetch: refetchAnswers,
-  } = useQuery(answersOpts);
+  } = useQuery(answersOpts)
 
-  const [focusedSectionIndex, setFocusedSectionIndex] = useState<number>(0);
-  const [focusedQuestionIndex, setFocusedQuestionIndex] = useState<number>(0);
+  const [focusedSectionIndex, setFocusedSectionIndex] = useState<number>(0)
+  const [focusedQuestionIndex, setFocusedQuestionIndex] = useState<number>(0)
 
-  const focusedSection = exam?.sections[focusedSectionIndex] ?? null;
+  const focusedSection = exam?.sections[focusedSectionIndex] ?? null
   const focusedQuestion =
-    focusedSection?.questions[focusedQuestionIndex] ?? null;
+    focusedSection?.questions[focusedQuestionIndex] ?? null
 
-  const log = useMutation(trpc.exam.appendAdditionalLog.mutationOptions());
+  const log = useMutation(trpc.exam.appendAdditionalLog.mutationOptions())
   useEffect(() => {
     const onBlur = () =>
       log.mutate({
         type: "leave_tab",
-      });
-    window.addEventListener("blur", onBlur);
+      })
+    window.addEventListener("blur", onBlur)
 
     return () => {
-      window.removeEventListener("blur", onBlur);
-    };
-  }, [log]);
+      window.removeEventListener("blur", onBlur)
+    }
+  }, [log])
 
   const saveAnswer = useMutation(
     trpc.exam.saveAnswer.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: (data) => {
         queryClient.setQueryData(
@@ -163,78 +163,78 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
               optionId: data.optionId ?? undefined,
             },
           }),
-        );
+        )
       },
     }),
-  );
+  )
 
   const undoAnswer = useMutation(
     trpc.exam.removeAnswer.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: (_, variables) => {
         queryClient.setQueryData(
           trpc.exam.getAnswers.queryKey(),
           (prev: AnswerRecordSchemaType | undefined) => {
-            const copy = { ...(prev ?? {}) };
-            delete copy[variables.questionId];
-            return copy;
+            const copy = { ...(prev ?? {}) }
+            delete copy[variables.questionId]
+            return copy
           },
-        );
+        )
       },
     }),
-  );
+  )
 
   const lockAnswer = useMutation(
     trpc.exam.lockAnswer.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () =>
         logoutAction()
           .then(() => {
-            router.replace("/bye-bye");
+            router.replace("/bye-bye")
           })
           .catch((err) => {
-            toast.error(err.message);
+            toast.error(err.message)
           }),
     }),
-  );
+  )
 
   const setFocusedBefore = () => {
-    if (!exam || !focusedQuestion || !focusedSection) return;
+    if (!exam || !focusedQuestion || !focusedSection) return
 
     const questionIndex = focusedSection.questions.findIndex(
       (q) => q.id === focusedQuestion.id,
-    );
-    if (questionIndex <= 0) return;
+    )
+    if (questionIndex <= 0) return
 
-    setFocusedQuestionIndex(questionIndex - 1);
-  };
+    setFocusedQuestionIndex(questionIndex - 1)
+  }
 
   const setFocusedAfter = () => {
-    if (!exam || !focusedQuestion || !focusedSection) return;
+    if (!exam || !focusedQuestion || !focusedSection) return
 
     const questionIndex = focusedSection.questions.findIndex(
       (q) => q.id === focusedQuestion.id,
-    );
-    if (questionIndex >= focusedSection.questions.length - 1) return;
+    )
+    if (questionIndex >= focusedSection.questions.length - 1) return
 
-    setFocusedQuestionIndex(questionIndex + 1);
-  };
+    setFocusedQuestionIndex(questionIndex + 1)
+  }
 
   const addUnsureAnswer = (questionId: string) => {
-    setUnsureAnswers((prev) => new Set([...prev, questionId]));
-  };
+    setUnsureAnswers((prev) => new Set([...prev, questionId]))
+  }
 
   const removeUnsureAnswer = (questionId: string) => {
     setUnsureAnswers((prev) => {
-      const copy = new Set([...prev]);
-      copy.delete(questionId);
-      return copy;
-    });
-  };
+      const copy = new Set([...prev])
+      copy.delete(questionId)
+      return copy
+    })
+  }
 
   const memoedValue: IExamContext = useMemo(
     () => ({
@@ -258,13 +258,13 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       setFocusedBefore,
       setFocusedAfter,
       saveAnswer: (questionId: string, answer: SaveAnswerSchemaType) => {
-        saveAnswer.mutate({ questionId, answer });
+        saveAnswer.mutate({ questionId, answer })
       },
       undoAnswer: (questionId: string) => {
-        undoAnswer.mutate({ questionId });
+        undoAnswer.mutate({ questionId })
       },
       lockAnswer: () => {
-        lockAnswer.mutate();
+        lockAnswer.mutate()
       },
       isSaving:
         saveAnswer.isPending || undoAnswer.isPending || lockAnswer.isPending,
@@ -285,7 +285,7 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
       answers,
       unsureAnswers,
     ],
-  );
+  )
 
   return (
     <ExamContext.Provider value={memoedValue}>
@@ -304,9 +304,9 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
               <AlertDialogAction
                 className="w-full"
                 onClick={() => {
-                  if (sessionError) refetchSession();
-                  if (examError) refetchExam();
-                  if (answersError) refetchAnswers();
+                  if (sessionError) refetchSession()
+                  if (examError) refetchExam()
+                  if (answersError) refetchAnswers()
                 }}
               >
                 Muat Ulang
@@ -326,5 +326,5 @@ export default function ExamProvider({ children }: ExamContextProviderProps) {
         </AlertDialog>
       )}
     </ExamContext.Provider>
-  );
+  )
 }

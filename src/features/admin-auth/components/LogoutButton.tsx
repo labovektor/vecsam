@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlertDialog,
@@ -9,28 +9,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
-import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React from "react";
-import { toast } from "sonner";
+} from "@/components/ui/alert-dialog"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { useAdminAuthAction } from "@/hooks/use-admin-auth-action"
+import { LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
+import React from "react"
+import { toast } from "sonner"
 
 const LogoutButton = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const router = useRouter();
-  const { signOut, loading } = useAdminAuthAction();
+  const [isOpen, setIsOpen] = React.useState(false)
+  const router = useRouter()
+  const { signOut, loading } = useAdminAuthAction()
 
   const handleLogout = async () => {
-    const res = await signOut();
+    const res = await signOut()
     if (res.error) {
-      toast.error(res.error.message);
-      return;
+      toast.error(res.error.message)
+      return
     }
-    setIsOpen(false);
-    router.replace("/");
-  };
+    setIsOpen(false)
+    router.replace("/")
+  }
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
@@ -54,7 +54,7 @@ const LogoutButton = () => {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
+  )
+}
 
-export default LogoutButton;
+export default LogoutButton

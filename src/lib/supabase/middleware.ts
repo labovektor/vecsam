@@ -1,38 +1,38 @@
-import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr"
+import { NextResponse, type NextRequest } from "next/server"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
-  });
+  })
 
   const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
     cookies: {
       getAll() {
-        return request.cookies.getAll();
+        return request.cookies.getAll()
       },
       setAll(
         cookiesToSet: {
-          name: string;
-          value: string;
-          options?: { [key: string]: unknown };
+          name: string
+          value: string
+          options?: { [key: string]: unknown }
         }[],
       ) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
-        );
+        )
         supabaseResponse = NextResponse.next({
           request,
-        });
+        })
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options),
-        );
+        )
       },
     },
-  });
+  })
 
   // Do not run code between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -42,7 +42,7 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   const excludedPaths = [
     "/api/trpc",
@@ -53,7 +53,7 @@ export async function updateSession(request: NextRequest) {
     "/exam",
     "/forgot-password",
     "/reset-password",
-  ];
+  ]
 
   if (
     !user &&
@@ -61,9 +61,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/dash-lgn-pg";
-    return NextResponse.redirect(url);
+    const url = request.nextUrl.clone()
+    url.pathname = "/dash-lgn-pg"
+    return NextResponse.redirect(url)
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
@@ -79,5 +79,5 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  return supabaseResponse;
+  return supabaseResponse
 }

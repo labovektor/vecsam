@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import type { SectionType } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { addQuestionSchema, type AddQuestionSchemaType } from "../schema";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { fileToBase64 } from "@/lib/form-utils";
+import type { SectionType } from "@prisma/client"
+import { useQueryClient } from "@tanstack/react-query"
+import React from "react"
+import { addQuestionSchema, type AddQuestionSchemaType } from "../schema"
+import { useFieldArray, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { fileToBase64 } from "@/lib/form-utils"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -22,23 +22,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Plus, Trash } from "lucide-react";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import TiptapInput from "@/components/ui/tiptap";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Plus, Trash } from "lucide-react"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+import TiptapInput from "@/components/ui/tiptap"
 
 const AddQuestionForm = ({
   sectionId,
   sectionType,
 }: {
-  sectionId: string;
-  sectionType: SectionType;
+  sectionId: string
+  sectionType: SectionType
 }) => {
-  const queryClient = useQueryClient();
-  const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient()
+  const [open, setOpen] = React.useState(false)
 
   const form = useForm<AddQuestionSchemaType>({
     resolver: zodResolver(addQuestionSchema),
@@ -49,7 +49,7 @@ const AddQuestionForm = ({
       questionAttr: undefined,
       multipleChoiceOptions: [],
     },
-  });
+  })
 
   const {
     fields: multipleChoiceFields,
@@ -58,69 +58,69 @@ const AddQuestionForm = ({
   } = useFieldArray({
     control: form.control,
     name: "multipleChoiceOptions",
-  });
+  })
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      console.log(base64);
-      form.setValue("image", base64);
+      const base64 = await fileToBase64(file)
+      console.log(base64)
+      form.setValue("image", base64)
     }
-  };
+  }
 
   const handleAttrFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "file" | "templateFile",
   ) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      form.setValue(`questionAttr.${field}`, base64);
+      const base64 = await fileToBase64(file)
+      form.setValue(`questionAttr.${field}`, base64)
     }
-  };
+  }
 
   const handleOptionImageChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
   ) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      form.setValue(`multipleChoiceOptions.${index}.image`, base64);
+      const base64 = await fileToBase64(file)
+      form.setValue(`multipleChoiceOptions.${index}.image`, base64)
     }
-  };
+  }
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const addQuestion = useMutation(
     trpc.question.addQuestion.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.question.getQuestions.queryKey(),
-        });
-        setOpen(false);
-        toast.success("Pertanyaan berhasil ditambahkan");
+        })
+        setOpen(false)
+        toast.success("Pertanyaan berhasil ditambahkan")
       },
     }),
-  );
+  )
 
   const handleSubmit = (data: AddQuestionSchemaType) => {
-    console.log("Form submitted", data);
+    console.log("Form submitted", data)
     addQuestion.mutate({
       sectionId,
       question: data,
-    });
-  };
+    })
+  }
 
   return (
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen(open);
-        form.reset();
+        setOpen(open)
+        form.reset()
       }}
     >
       <DialogTrigger asChild>
@@ -300,7 +300,7 @@ const AddQuestionForm = ({
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default AddQuestionForm;
+export default AddQuestionForm

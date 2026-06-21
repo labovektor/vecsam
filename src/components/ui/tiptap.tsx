@@ -1,18 +1,18 @@
-import "katex/dist/katex.min.css";
-import React from "react";
-import { Mathematics } from "@tiptap/extension-mathematics";
-import { StarterKit } from "@tiptap/starter-kit";
-import { EditorContent, useEditor } from "@tiptap/react";
-import Placeholder from "@tiptap/extension-placeholder";
+import "katex/dist/katex.min.css"
+import React from "react"
+import { Mathematics } from "@tiptap/extension-mathematics"
+import { StarterKit } from "@tiptap/starter-kit"
+import { EditorContent, useEditor } from "@tiptap/react"
+import Placeholder from "@tiptap/extension-placeholder"
 
 const TiptapInput = ({
   value,
   placeholder,
   onChange,
 }: {
-  value?: string;
-  placeholder?: string;
-  onChange: (richText: string) => void;
+  value?: string
+  placeholder?: string
+  onChange: (richText: string) => void
 }) => {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -30,10 +30,10 @@ const TiptapInput = ({
       },
     },
     onUpdate({ editor }) {
-      onChange(editor.getHTML());
+      onChange(editor.getHTML())
     },
-  });
-  return <EditorContent editor={editor} />;
-};
+  })
+  return <EditorContent editor={editor} />
+}
 
-export default TiptapInput;
+export default TiptapInput

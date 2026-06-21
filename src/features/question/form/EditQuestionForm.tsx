@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import type { Question } from "@prisma/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { editQuestionSchema, type EditQuestionSchemaType } from "../schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { fileToBase64 } from "@/lib/form-utils";
+import type { Question } from "@prisma/client"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import React from "react"
+import { editQuestionSchema, type EditQuestionSchemaType } from "../schema"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { fileToBase64 } from "@/lib/form-utils"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -22,17 +22,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Edit } from "lucide-react";
-import { useTRPC } from "@/trpc/react";
-import { toast } from "sonner";
-import TiptapInput from "@/components/ui/tiptap";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Edit } from "lucide-react"
+import { useTRPC } from "@/trpc/react"
+import { toast } from "sonner"
+import TiptapInput from "@/components/ui/tiptap"
 
 const EditQuestionForm = ({ question }: { question: Question }) => {
-  const queryClient = useQueryClient();
-  const trpc = useTRPC();
-  const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const [open, setOpen] = React.useState(false)
 
   const form = useForm<EditQuestionSchemaType>({
     resolver: zodResolver(editQuestionSchema),
@@ -41,46 +41,46 @@ const EditQuestionForm = ({ question }: { question: Question }) => {
       text: question.text ?? "",
       image: undefined,
     },
-  });
+  })
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      console.log(base64);
-      form.setValue("image", base64);
+      const base64 = await fileToBase64(file)
+      console.log(base64)
+      form.setValue("image", base64)
     }
-  };
+  }
 
   const editQuestion = useMutation(
     trpc.question.editQuestion.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.question.getQuestions.queryKey(),
-        });
-        setOpen(false);
-        toast.success("Pertanyaan berhasil diubah");
+        })
+        setOpen(false)
+        toast.success("Pertanyaan berhasil diubah")
       },
     }),
-  );
+  )
 
   const handleSubmit = (data: EditQuestionSchemaType) => {
-    console.log("Form submitted", data);
+    console.log("Form submitted", data)
     editQuestion.mutate({
       id: question.id,
       question: data,
-    });
-  };
+    })
+  }
 
   return (
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen(open);
-        form.reset();
+        setOpen(open)
+        form.reset()
       }}
     >
       <DialogTrigger asChild>
@@ -155,7 +155,7 @@ const EditQuestionForm = ({ question }: { question: Question }) => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default EditQuestionForm;
+export default EditQuestionForm

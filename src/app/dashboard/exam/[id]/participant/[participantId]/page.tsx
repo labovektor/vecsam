@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -11,103 +11,101 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { renderKatexFromHtml } from "@/lib/katex-utils";
-import { cn } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowRight, Check, Undo, X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import React, { use, useMemo } from "react";
-import { toast } from "sonner";
+} from "@/components/ui/table"
+import { renderKatexFromHtml } from "@/lib/katex-utils"
+import { cn } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useQuery, useMutation } from "@tanstack/react-query"
+import { ArrowRight, Check, Undo, X } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import React, { use, useMemo } from "react"
+import { toast } from "sonner"
 
 type CorrectionType = Record<
   string,
   { correct: Set<string>; wrong: Set<string>; pass: Set<string> }
->;
+>
 
 const ParticipantDetailPage = ({
   params,
 }: {
-  params: Promise<{ id: string; participantId: string }>;
+  params: Promise<{ id: string; participantId: string }>
 }) => {
-  const { id, participantId } = use(params);
-  const searchParams = useSearchParams();
-  const name = searchParams.get("name");
+  const { id, participantId } = use(params)
+  const searchParams = useSearchParams()
+  const name = searchParams.get("name")
 
-  const [score, setScore] = React.useState("0");
-  const [userCorrection, setUserCorrection] = React.useState<CorrectionType>(
-    {},
-  );
+  const [score, setScore] = React.useState("0")
+  const [userCorrection, setUserCorrection] = React.useState<CorrectionType>({})
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
 
   const { data: sections } = useQuery(
     trpc.section.getSections.queryOptions({ examId: id }),
-  );
+  )
   const { data: participantAnswers } = useQuery(
     trpc.participantManagement.getAnswers.queryOptions({
       id: participantId,
     }),
-  );
+  )
 
   // Default correction derived from data (questions without answers → pass)
   const defaultCorrection = useMemo(() => {
-    if (!sections || !participantAnswers) return {};
-    const initial: CorrectionType = {};
+    if (!sections || !participantAnswers) return {}
+    const initial: CorrectionType = {}
     sections.forEach((section) => {
-      const passed = new Set<string>();
+      const passed = new Set<string>()
       section.questions.forEach((q) => {
-        if (!participantAnswers[q.id]) passed.add(q.id);
-      });
+        if (!participantAnswers[q.id]) passed.add(q.id)
+      })
       initial[section.id] = {
         correct: new Set(),
         wrong: new Set(),
         pass: passed,
-      };
-    });
-    return initial;
-  }, [sections, participantAnswers]);
+      }
+    })
+    return initial
+  }, [sections, participantAnswers])
 
   // Merge defaults with user overrides from button clicks
   const correction = useMemo(() => {
-    const merged: CorrectionType = {};
+    const merged: CorrectionType = {}
     for (const [sectionId, def] of Object.entries(defaultCorrection)) {
-      const userSec = userCorrection[sectionId];
+      const userSec = userCorrection[sectionId]
       merged[sectionId] = {
         correct: new Set(userSec?.correct ?? def!.correct),
         wrong: new Set(userSec?.wrong ?? def!.wrong),
         pass: new Set(userSec?.pass ?? def!.pass),
-      };
+      }
     }
-    return merged;
-  }, [defaultCorrection, userCorrection]);
+    return merged
+  }, [defaultCorrection, userCorrection])
 
   const countScore = () => {
-    let totalScore = 0;
+    let totalScore = 0
     sections?.forEach((section) => {
       if (correction[section.id]) {
         totalScore +=
-          (correction[section.id]?.correct.size ?? 0) * section.correctPoint;
+          (correction[section.id]?.correct.size ?? 0) * section.correctPoint
         totalScore +=
-          (correction[section.id]?.wrong.size ?? 0) * section.wrongPoint;
+          (correction[section.id]?.wrong.size ?? 0) * section.wrongPoint
         totalScore +=
-          (correction[section.id]?.pass.size ?? 0) * section.passPoint;
+          (correction[section.id]?.pass.size ?? 0) * section.passPoint
       }
-    });
-    setScore(totalScore.toString());
-  };
+    })
+    setScore(totalScore.toString())
+  }
 
   const saveScore = useMutation(
     trpc.participantManagement.setScore.mutationOptions({
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(error.message)
       },
       onSuccess: () => {
-        toast.success("Nilai berhasil disimpan");
+        toast.success("Nilai berhasil disimpan")
       },
     }),
-  );
+  )
 
   return (
     <div className="space-y-2">
@@ -235,15 +233,15 @@ const ParticipantDetailPage = ({
                                     correct: new Set<string>(),
                                     wrong: new Set<string>(),
                                     pass: new Set<string>(),
-                                  };
+                                  }
 
-                                  prevSection.wrong.delete(question.id);
-                                  prevSection.correct.add(question.id);
+                                  prevSection.wrong.delete(question.id)
+                                  prevSection.correct.add(question.id)
 
                                   return {
                                     ...prev,
                                     [section.id]: prevSection,
-                                  };
+                                  }
                                 })
                               }
                             >
@@ -259,16 +257,16 @@ const ParticipantDetailPage = ({
                                     correct: new Set<string>(),
                                     wrong: new Set<string>(),
                                     pass: new Set<string>(),
-                                  };
+                                  }
 
-                                  prevSection.correct.delete(question.id);
-                                  prevSection.wrong.add(question.id);
+                                  prevSection.correct.delete(question.id)
+                                  prevSection.wrong.add(question.id)
 
                                   return {
                                     ...prev,
                                     [section.id]: prevSection,
-                                  };
-                                });
+                                  }
+                                })
                               }}
                             >
                               <X />
@@ -283,16 +281,16 @@ const ParticipantDetailPage = ({
                                     correct: new Set<string>(),
                                     wrong: new Set<string>(),
                                     pass: new Set<string>(),
-                                  };
+                                  }
 
-                                  prevSection.correct.delete(question.id);
-                                  prevSection.wrong.delete(question.id);
+                                  prevSection.correct.delete(question.id)
+                                  prevSection.wrong.delete(question.id)
 
                                   return {
                                     ...prev,
                                     [section.id]: prevSection,
-                                  };
-                                });
+                                  }
+                                })
                               }}
                             >
                               <Undo />
@@ -329,7 +327,7 @@ const ParticipantDetailPage = ({
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ParticipantDetailPage;
+export default ParticipantDetailPage

@@ -1,5 +1,5 @@
-import { ExamContext } from "@/features/exam/provider/ExamProvider";
-import { useContext } from "react";
+import { ExamContext } from "@/features/exam/provider/ExamProvider"
+import { useContext } from "react"
 
 /**
  * React hook to access the ExamContext.
@@ -9,11 +9,11 @@ import { useContext } from "react";
  * @throws If the hook is called outside of an ExamProvider.
  */
 export function useExam() {
-  const context = useContext(ExamContext);
+  const context = useContext(ExamContext)
 
   if (!context) {
-    throw new Error("The App Context must be used within an ExamProvider");
+    throw new Error("The App Context must be used within an ExamProvider")
   }
 
-  return context;
+  return context
 }

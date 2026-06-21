@@ -1,51 +1,51 @@
-"use client";
+"use client"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { loginAction } from "@/features/participant-auth/actions";
-import { beautifyDate } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
-import { AlarmClock, AlertCircle } from "lucide-react";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+} from "@/components/ui/card"
+import { loginAction } from "@/features/participant-auth/actions"
+import { beautifyDate } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
+import { AlarmClock, AlertCircle } from "lucide-react"
+import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 
-import React from "react";
-import { toast } from "sonner";
+import React from "react"
+import { toast } from "sonner"
 
 const ExamLoginConfirmPage = () => {
-  const [starting, setStarting] = React.useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("xt_id");
+  const [starting, setStarting] = React.useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const id = searchParams.get("xt_id")
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const { data: exam, error } = useQuery(
     trpc.participantAuth.getExam.queryOptions({
       id: id ?? "",
     }),
-  );
+  )
 
   const confirmStart = async () => {
-    setStarting(true);
-    const res = await loginAction({ participantId: id! });
-    setStarting(false);
+    setStarting(true)
+    const res = await loginAction({ participantId: id! })
+    setStarting(false)
 
     if (res.error) {
-      toast.error(res.error);
-      return;
+      toast.error(res.error)
+      return
     }
 
-    router.replace("/exam");
-  };
+    router.replace("/exam")
+  }
 
   return (
     <div className="flex h-svh w-full items-center justify-center p-3">
@@ -96,7 +96,7 @@ const ExamLoginConfirmPage = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ExamLoginConfirmPage;
+export default ExamLoginConfirmPage

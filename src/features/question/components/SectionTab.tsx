@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTRPC } from "@/trpc/react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, LoaderCircle, Pencil, Plus, Trash } from "lucide-react";
-import React from "react";
-import { formatSectionType } from "../schema";
-import AddSectionForm from "../form/AddSectionForm";
-import EditSectionForm from "../form/EditSectionForm";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import type { Section } from "@prisma/browser";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useTRPC } from "@/trpc/react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { AlertCircle, LoaderCircle, Pencil, Plus, Trash } from "lucide-react"
+import React from "react"
+import { formatSectionType } from "../schema"
+import AddSectionForm from "../form/AddSectionForm"
+import EditSectionForm from "../form/EditSectionForm"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import type { Section } from "@prisma/browser"
 
 const SectionTab = ({
   examId,
@@ -21,24 +21,24 @@ const SectionTab = ({
   onSelected,
   selectedSectionId,
 }: {
-  examId: string;
-  className?: string;
-  onSelected: (section: Section) => void;
-  selectedSectionId: string | null;
+  examId: string
+  className?: string
+  onSelected: (section: Section) => void
+  selectedSectionId: string | null
 }) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-  const [visibleAddSection, setVisibleAddSection] = React.useState(false);
-  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [visibleAddSection, setVisibleAddSection] = React.useState(false)
+  const [editingId, setEditingId] = React.useState<string | null>(null)
 
   const removeSection = useMutation(
     trpc.section.deleteSection.mutationOptions({
       onSuccess: () => {
-        refetch();
+        refetch()
       },
     }),
-  );
+  )
 
   const {
     data: sections,
@@ -49,7 +49,7 @@ const SectionTab = ({
     trpc.section.getSections.queryOptions({
       examId,
     }),
-  );
+  )
   if (error) {
     return (
       <Alert variant="destructive">
@@ -57,7 +57,7 @@ const SectionTab = ({
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
       </Alert>
-    );
+    )
   }
 
   return (
@@ -78,11 +78,11 @@ const SectionTab = ({
                   currentSection={section}
                   onCancel={() => setEditingId(null)}
                   onSuccess={() => {
-                    setEditingId(null);
-                    refetch();
+                    setEditingId(null)
+                    refetch()
                     queryClient.refetchQueries({
                       queryKey: trpc.question.getQuestions.queryKey(),
-                    });
+                    })
                   }}
                 />
               ) : (
@@ -145,11 +145,11 @@ const SectionTab = ({
           <AddSectionForm
             examId={examId}
             onSuccess={() => {
-              refetch();
-              setVisibleAddSection(false);
+              refetch()
+              setVisibleAddSection(false)
             }}
             onCancel={() => {
-              setVisibleAddSection(false);
+              setVisibleAddSection(false)
             }}
           />
         </div>
@@ -162,7 +162,7 @@ const SectionTab = ({
         </Button>
       </ScrollArea>
     </div>
-  );
-};
+  )
+}
 
-export default SectionTab;
+export default SectionTab

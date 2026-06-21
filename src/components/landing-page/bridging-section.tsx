@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { GraduationCap, Building } from "lucide-react";
+import { motion } from "framer-motion"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { GraduationCap, Building } from "lucide-react"
 
 export function BridgeSection() {
   return (
@@ -137,5 +137,5 @@ export function BridgeSection() {
         </motion.div>
       </div>
     </section>
-  );
+  )
 }

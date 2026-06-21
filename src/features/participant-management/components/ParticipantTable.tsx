@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-import { useTRPC } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
-import { Upload } from "lucide-react";
-import React from "react";
-import AddParticipantForm from "../forms/AddParticipantForm";
+import { DataTable } from "@/components/table/data-table"
+import { Button } from "@/components/ui/button"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
+import { Upload } from "lucide-react"
+import React from "react"
+import AddParticipantForm from "../forms/AddParticipantForm"
 import {
   excelParticipantColumn,
   participantColumnns,
-} from "./participantColumn";
-import { exportAsExcelFile } from "@/lib/xlsx";
-import { BulkAddParticipantsForm } from "../forms/BulkAddParticipantForm";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+} from "./participantColumn"
+import { exportAsExcelFile } from "@/lib/xlsx"
+import { BulkAddParticipantsForm } from "../forms/BulkAddParticipantForm"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
 
 const ParticipantTable = ({ examId }: { examId: string }) => {
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const { data: participants, isLoading } = useQuery(
     trpc.participantManagement.getAllByExamId.queryOptions({ id: examId }),
-  );
+  )
   return (
     <DataTable
       columns={participantColumnns}
@@ -31,7 +31,7 @@ const ParticipantTable = ({ examId }: { examId: string }) => {
           <div className="flex items-center gap-2">
             <Checkbox
               onCheckedChange={(val) => {
-                table.getColumn("startedAt")?.setFilterValue(val);
+                table.getColumn("startedAt")?.setFilterValue(val)
               }}
               id="filter-take-session"
             />
@@ -53,7 +53,7 @@ const ParticipantTable = ({ examId }: { examId: string }) => {
         </div>
       )}
     />
-  );
-};
+  )
+}
 
-export default ParticipantTable;
+export default ParticipantTable

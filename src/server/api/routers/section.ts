@@ -1,10 +1,10 @@
-import z from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import z from "zod"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
 import {
   addSectionSchema,
   updateSectionSchema,
-} from "@/features/question/schema";
-import type { SectionType } from "../../../../prisma/generated/enums";
+} from "@/features/question/schema"
+import type { SectionType } from "../../../../prisma/generated/enums"
 
 export const sectionRouter = createTRPCRouter({
   getSections: protectedProcedure
@@ -14,7 +14,7 @@ export const sectionRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
 
       return db.section.findMany({
         where: {
@@ -30,12 +30,12 @@ export const sectionRouter = createTRPCRouter({
         orderBy: {
           createdAt: "asc",
         },
-      });
+      })
     }),
   addSection: protectedProcedure
     .input(addSectionSchema)
     .mutation(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
 
       return db.section.create({
         data: {
@@ -46,13 +46,13 @@ export const sectionRouter = createTRPCRouter({
           passPoint: input.passPoint,
           examId: input.examId,
         },
-      });
+      })
     }),
 
   updateSection: protectedProcedure
     .input(updateSectionSchema)
     .mutation(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
 
       return db.section.update({
         where: {
@@ -65,7 +65,7 @@ export const sectionRouter = createTRPCRouter({
           wrongPoint: input.wrongPoint,
           passPoint: input.passPoint,
         },
-      });
+      })
     }),
 
   deleteSection: protectedProcedure
@@ -75,12 +75,12 @@ export const sectionRouter = createTRPCRouter({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const { db } = ctx;
+      const { db } = ctx
 
       return db.section.delete({
         where: {
           id: input.id,
         },
-      });
+      })
     }),
-});
+})

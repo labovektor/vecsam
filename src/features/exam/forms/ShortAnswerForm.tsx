@@ -1,23 +1,23 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useExam } from "@/hooks/use-exam";
-import { Check } from "lucide-react";
-import React from "react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useExam } from "@/hooks/use-exam"
+import { Check } from "lucide-react"
+import React from "react"
 
 const ShortAnswerForm = () => {
-  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam();
+  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam()
   const cAnswer = focusedQuestion
     ? (answers[focusedQuestion?.id]?.answerText ?? "")
-    : "";
-  const [value, setValue] = React.useState(cAnswer);
+    : ""
+  const [value, setValue] = React.useState(cAnswer)
 
-  const [prevCAnswer, setPrevCAnswer] = React.useState(cAnswer);
+  const [prevCAnswer, setPrevCAnswer] = React.useState(cAnswer)
 
   if (cAnswer !== prevCAnswer) {
-    setValue(cAnswer);
-    setPrevCAnswer(cAnswer);
+    setValue(cAnswer)
+    setPrevCAnswer(cAnswer)
   }
 
   return (
@@ -31,14 +31,14 @@ const ShortAnswerForm = () => {
         disabled={isSaving || value === cAnswer}
         size="icon"
         onClick={() => {
-          if (!focusedQuestion) return;
-          saveAnswer(focusedQuestion.id, { answerText: value });
+          if (!focusedQuestion) return
+          saveAnswer(focusedQuestion.id, { answerText: value })
         }}
       >
         <Check />
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default ShortAnswerForm;
+export default ShortAnswerForm

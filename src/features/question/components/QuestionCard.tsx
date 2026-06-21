@@ -3,59 +3,59 @@ import type {
   Question,
   QuestionAttr,
   SectionType,
-} from "@prisma/client";
-import React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { renderKatexFromHtml } from "@/lib/katex-utils";
-import { CircleDotDashed, Edit, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useTRPC } from "@/trpc/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import EditQuestionForm from "../form/EditQuestionForm";
-import AddMutipleChoiceOptionForm from "../form/AddMultipleChoiceOptionForm";
-import EditMutipleChoiceOptionForm from "../form/EditMultipleChoiceOptionForm";
-import EditQuestionAttrForm from "../form/EditQuestionAttrForm";
+} from "@prisma/client"
+import React from "react"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { renderKatexFromHtml } from "@/lib/katex-utils"
+import { CircleDotDashed, Edit, Trash } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useTRPC } from "@/trpc/react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import EditQuestionForm from "../form/EditQuestionForm"
+import AddMutipleChoiceOptionForm from "../form/AddMultipleChoiceOptionForm"
+import EditMutipleChoiceOptionForm from "../form/EditMultipleChoiceOptionForm"
+import EditQuestionAttrForm from "../form/EditQuestionAttrForm"
 
 const QuestionCard = ({
   sectionType,
   question,
 }: {
-  sectionType: SectionType;
+  sectionType: SectionType
   question: Question & {
-    MultipleChoiceOption: MultipleChoiceOption[];
-    QuestionAttr: QuestionAttr | null;
-  };
+    MultipleChoiceOption: MultipleChoiceOption[]
+    QuestionAttr: QuestionAttr | null
+  }
 }) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const deleteQuestion = useMutation(
     trpc.question.deleteQuestion.mutationOptions({
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.question.getQuestions.queryKey(),
-        });
-        toast.success("Pertanyaan berhasil dihapus");
+        })
+        toast.success("Pertanyaan berhasil dihapus")
       },
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
     }),
-  );
+  )
 
   const deleteMultipleChoiceOption = useMutation(
     trpc.question.deleteMultipleChoiceOption.mutationOptions({
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.question.getQuestions.queryKey(),
-        });
-        toast.success("Opsi jawaban berhasil dihapus");
+        })
+        toast.success("Opsi jawaban berhasil dihapus")
       },
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
     }),
-  );
+  )
   return (
     <Card>
       <CardHeader className="flex gap-2">
@@ -172,7 +172,7 @@ const QuestionCard = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default QuestionCard;
+export default QuestionCard

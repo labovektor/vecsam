@@ -1,39 +1,39 @@
-"use client";
+"use client"
 
-import React from "react";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useExam } from "@/hooks/use-exam";
-import { renderKatexFromHtml } from "@/lib/katex-utils";
-import debounce from "lodash.debounce";
-import Image from "next/image";
+import React from "react"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useExam } from "@/hooks/use-exam"
+import { renderKatexFromHtml } from "@/lib/katex-utils"
+import debounce from "lodash.debounce"
+import Image from "next/image"
 
 const MultipleChoiceForm = () => {
-  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam();
+  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam()
   const cValue = focusedQuestion
     ? (answers[focusedQuestion.id]?.optionId ?? null)
-    : null;
+    : null
 
-  const [value, setValue] = React.useState(cValue);
-  const [prevCAnswer, setPrevCAnswer] = React.useState(cValue);
+  const [value, setValue] = React.useState(cValue)
+  const [prevCAnswer, setPrevCAnswer] = React.useState(cValue)
 
   if (cValue !== prevCAnswer) {
-    setValue(cValue);
-    setPrevCAnswer(cValue);
+    setValue(cValue)
+    setPrevCAnswer(cValue)
   }
 
   const handleValueChange = debounce((value) => {
-    if (!focusedQuestion) return;
-    saveAnswer(focusedQuestion.id, { optionId: value });
-  }, 1000);
+    if (!focusedQuestion) return
+    saveAnswer(focusedQuestion.id, { optionId: value })
+  }, 1000)
 
   return (
     <RadioGroup
       disabled={isSaving}
       value={value}
       onValueChange={(value) => {
-        setValue(value);
-        handleValueChange(value);
+        setValue(value)
+        handleValueChange(value)
       }}
     >
       {focusedQuestion?.MultipleChoiceOption.map((option) => (
@@ -63,7 +63,7 @@ const MultipleChoiceForm = () => {
         </div>
       ))}
     </RadioGroup>
-  );
-};
+  )
+}
 
-export default MultipleChoiceForm;
+export default MultipleChoiceForm

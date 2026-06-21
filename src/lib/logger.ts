@@ -1,9 +1,9 @@
-"server-only";
+"server-only"
 
-import fs from "fs";
-import path from "path";
-import { formatISO } from "date-fns";
-import z from "zod";
+import fs from "fs"
+import path from "path"
+import { formatISO } from "date-fns"
+import z from "zod"
 
 export const activityLogtype = z.enum([
   "leave_tab",
@@ -15,7 +15,7 @@ export const activityLogtype = z.enum([
   "finish_exam",
   "start_exam",
   "rejoin_exam",
-]);
+])
 
 export async function appendActivityLog({
   examId,
@@ -23,39 +23,39 @@ export async function appendActivityLog({
   type,
   info,
 }: {
-  examId: string;
-  participantId: string;
-  type: z.infer<typeof activityLogtype>;
-  info?: string;
+  examId: string
+  participantId: string
+  type: z.infer<typeof activityLogtype>
+  info?: string
 }) {
-  const timestamp = formatISO(new Date());
-  const line = `${participantId},${type},${timestamp},"${info ?? ""}"\n`;
+  const timestamp = formatISO(new Date())
+  const line = `${participantId},${type},${timestamp},"${info ?? ""}"\n`
 
-  const logsDir = path.resolve("logs");
-  const filePath = path.resolve(logsDir, `${examId}.csv`);
+  const logsDir = path.resolve("logs")
+  const filePath = path.resolve(logsDir, `${examId}.csv`)
 
   try {
-    await fs.promises.mkdir(logsDir, { recursive: true });
+    await fs.promises.mkdir(logsDir, { recursive: true })
 
-    const fileExists = fs.existsSync(filePath);
+    const fileExists = fs.existsSync(filePath)
 
     if (!fileExists) {
-      const header = "participant_id,type,timestamp,info\n";
-      await fs.promises.writeFile(filePath, header + line, { flag: "w" });
+      const header = "participant_id,type,timestamp,info\n"
+      await fs.promises.writeFile(filePath, header + line, { flag: "w" })
     } else {
-      await fs.promises.appendFile(filePath, line);
+      await fs.promises.appendFile(filePath, line)
     }
   } catch (err) {
-    console.error("Failed to log activity:", err);
+    console.error("Failed to log activity:", err)
   }
 }
 
 export function getLogActivity(examId: string) {
-  const filePath = path.resolve("logs", `${examId}.csv`);
+  const filePath = path.resolve("logs", `${examId}.csv`)
 
   if (!fs.existsSync(filePath)) {
-    return { error: "File log tidak ditemukan" };
+    return { error: "File log tidak ditemukan" }
   }
-  const data = fs.readFileSync(filePath, "utf-8");
-  return { data };
+  const data = fs.readFileSync(filePath, "utf-8")
+  return { data }
 }

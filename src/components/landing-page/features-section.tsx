@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 
-import { motion } from "framer-motion";
-import { Star, Zap, Shield, Users, BarChart, Layers } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion"
+import { Star, Zap, Shield, Users, BarChart, Layers } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 
 const features = [
   {
@@ -44,7 +44,7 @@ const features = [
       "Get help whenever you need it with our dedicated education support team.",
     icon: <Star className="size-5" />,
   },
-];
+]
 
 const FeaturesSection = () => {
   const container = {
@@ -55,12 +55,12 @@ const FeaturesSection = () => {
         staggerChildren: 0.1,
       },
     },
-  };
+  }
 
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 },
-  };
+  }
   return (
     <section id="features" className="w-full py-20 md:py-32">
       <div className="container mx-auto px-4 md:px-6">
@@ -110,7 +110,7 @@ const FeaturesSection = () => {
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FeaturesSection;
+export default FeaturesSection

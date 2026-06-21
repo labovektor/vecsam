@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Sidebar,
@@ -10,11 +10,11 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
-import Image from "next/image";
-import { useExam } from "@/hooks/use-exam";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
+import Image from "next/image"
+import { useExam } from "@/hooks/use-exam"
+import { cn } from "@/lib/utils"
 
 export function ExamSidebar() {
   const {
@@ -24,7 +24,7 @@ export function ExamSidebar() {
     setFocusedSectionIndex,
     answers,
     unsureAnswers,
-  } = useExam();
+  } = useExam()
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader>
@@ -54,8 +54,8 @@ export function ExamSidebar() {
                           "bg-primary text-white",
                       )}
                       onClick={() => {
-                        setFocusedQuestionIndex(questionIndex);
-                        setFocusedSectionIndex(sectionIndex);
+                        setFocusedQuestionIndex(questionIndex)
+                        setFocusedSectionIndex(sectionIndex)
                       }}
                     >
                       {question.number}
@@ -64,10 +64,10 @@ export function ExamSidebar() {
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>
-          );
+          )
         })}
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
-  );
+  )
 }

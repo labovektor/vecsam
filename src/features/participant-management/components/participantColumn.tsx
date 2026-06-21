@@ -7,8 +7,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+} from "@/components/ui/alert-dialog"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,16 +16,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { beautifyDate } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Participant, ParticipantSession } from "@prisma/client";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { IColumn } from "json-as-xlsx";
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
+} from "@/components/ui/dropdown-menu"
+import { beautifyDate } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { Participant, ParticipantSession } from "@prisma/client"
+import type { ColumnDef } from "@tanstack/react-table"
+import type { IColumn } from "json-as-xlsx"
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { toast } from "sonner"
 
 export const excelParticipantColumn: IColumn[] = [
   {
@@ -57,7 +57,7 @@ export const excelParticipantColumn: IColumn[] = [
     value: (row) =>
       row.lockedAt ? beautifyDate(row.lockedAt as Date, "FULL") : "-",
   },
-];
+]
 
 export const participantColumnns: ColumnDef<
   Participant & { participantSession: ParticipantSession | null }
@@ -81,12 +81,12 @@ export const participantColumnns: ColumnDef<
     enableSorting: false,
     enableHiding: false,
     cell: ({ row }) => {
-      const startedAt = row.original.participantSession?.createdAt;
-      return startedAt ? beautifyDate(startedAt, "FULL") : "-";
+      const startedAt = row.original.participantSession?.createdAt
+      return startedAt ? beautifyDate(startedAt, "FULL") : "-"
     },
     filterFn: (row, id, value) => {
-      if (value === true) return row.original.participantSession !== null;
-      return true;
+      if (value === true) return row.original.participantSession !== null
+      return true
     },
   },
   {
@@ -96,8 +96,8 @@ export const participantColumnns: ColumnDef<
     enableSorting: false,
     enableHiding: false,
     cell: ({ row }) => {
-      const lockedAt = row.original.lockedAt;
-      return lockedAt ? beautifyDate(lockedAt, "FULL") : "-";
+      const lockedAt = row.original.lockedAt
+      return lockedAt ? beautifyDate(lockedAt, "FULL") : "-"
     },
   },
   {
@@ -111,7 +111,7 @@ export const participantColumnns: ColumnDef<
           Skor
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      );
+      )
     },
     enableGlobalFilter: false,
     enableHiding: false,
@@ -124,28 +124,28 @@ export const participantColumnns: ColumnDef<
     enableHiding: false,
     cell: ({ row }) => <ParticipantActionColumn participant={row.original} />,
   },
-];
+]
 
 export function ParticipantActionColumn({
   participant,
 }: {
-  participant: Participant;
+  participant: Participant
 }) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const remove = useMutation(
     trpc.participantManagement.remove.mutationOptions({
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(error.message)
       },
       onSuccess: () => {
-        toast.success("Participant Removed");
+        toast.success("Participant Removed")
         queryClient.refetchQueries({
           queryKey: trpc.participantManagement.getAllByExamId.queryKey(),
-        });
+        })
       },
     }),
-  );
+  )
   return (
     <AlertDialog>
       <DropdownMenu>
@@ -201,5 +201,5 @@ export function ParticipantActionColumn({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

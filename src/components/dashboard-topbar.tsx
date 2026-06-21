@@ -1,6 +1,6 @@
-import React from "react";
-import { SidebarTrigger } from "./ui/sidebar";
-import LogoutButton from "@/features/admin-auth/components/LogoutButton";
+import React from "react"
+import { SidebarTrigger } from "./ui/sidebar"
+import LogoutButton from "@/features/admin-auth/components/LogoutButton"
 
 const DashboardTopBar = async () => {
   return (
@@ -8,7 +8,7 @@ const DashboardTopBar = async () => {
       <SidebarTrigger />
       <LogoutButton />
     </header>
-  );
-};
+  )
+}
 
-export default DashboardTopBar;
+export default DashboardTopBar

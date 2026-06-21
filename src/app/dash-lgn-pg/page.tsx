@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AdminLoginForm from "@/features/admin-auth/forms/AdminLoginForm";
-import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import AdminLoginForm from "@/features/admin-auth/forms/AdminLoginForm"
+import React from "react"
 
 const AdminLoginPage = () => {
   return (
@@ -14,7 +14,7 @@ const AdminLoginPage = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default AdminLoginPage;
+export default AdminLoginPage

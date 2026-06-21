@@ -1,18 +1,18 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
+import React from "react"
 
 type ExamStatCardProps = {
-  title: string;
-  value: string | number;
-  href?: string;
-  action?: VoidFunction;
-  className?: string;
-  icon: React.ReactNode;
-};
+  title: string
+  value: string | number
+  href?: string
+  action?: VoidFunction
+  className?: string
+  icon: React.ReactNode
+}
 
 const ExamStatCard = ({
   title,
@@ -57,7 +57,7 @@ const ExamStatCard = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default ExamStatCard;
+export default ExamStatCard

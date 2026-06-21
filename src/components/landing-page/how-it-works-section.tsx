@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion"
+import { Badge } from "@/components/ui/badge"
 
 const HowItWorksSection = () => {
   return (
@@ -72,7 +72,7 @@ const HowItWorksSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default HowItWorksSection;
+export default HowItWorksSection

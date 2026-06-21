@@ -1,23 +1,23 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useExam } from "@/hooks/use-exam";
-import { fileToBase64 } from "@/lib/form-utils";
-import { Check } from "lucide-react";
-import React from "react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useExam } from "@/hooks/use-exam"
+import { fileToBase64 } from "@/lib/form-utils"
+import { Check } from "lucide-react"
+import React from "react"
 
 const FileAnswerForm = () => {
-  const [value, setValue] = React.useState<string>();
-  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam();
+  const [value, setValue] = React.useState<string>()
+  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam()
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const base64 = await fileToBase64(file);
-      setValue(base64);
+      const base64 = await fileToBase64(file)
+      setValue(base64)
     }
-  };
+  }
   return (
     <>
       <div className="flex gap-2">
@@ -31,9 +31,9 @@ const FileAnswerForm = () => {
           size="icon"
           disabled={isSaving || !value}
           onClick={() => {
-            if (!focusedQuestion) return;
-            saveAnswer(focusedQuestion.id, { answerFile: value });
-            setValue(undefined);
+            if (!focusedQuestion) return
+            saveAnswer(focusedQuestion.id, { answerFile: value })
+            setValue(undefined)
           }}
         >
           <Check />
@@ -53,7 +53,7 @@ const FileAnswerForm = () => {
         "-"
       )}
     </>
-  );
-};
+  )
+}
 
-export default FileAnswerForm;
+export default FileAnswerForm

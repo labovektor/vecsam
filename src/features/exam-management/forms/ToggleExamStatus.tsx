@@ -1,39 +1,39 @@
-"use client";
+"use client"
 
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import React, { startTransition } from "react";
-import { toast } from "sonner";
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { cn } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import React, { startTransition } from "react"
+import { toast } from "sonner"
 
 const ToggleExamStatus = ({
   currentActive,
   id,
 }: {
-  currentActive: boolean;
-  id: string;
+  currentActive: boolean
+  id: string
 }) => {
-  const [s, setS] = React.useState(currentActive);
+  const [s, setS] = React.useState(currentActive)
   const [isActive, setOptimisticStatus] = React.useOptimistic(
     s,
     (_, newStatus: boolean) => newStatus,
-  );
+  )
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const toggleExamStatus = useMutation(
     trpc.examManagement.toggleStatus.mutationOptions({
       onSuccess: () => {
-        toast.success("Status Updated");
-        setS(!isActive);
+        toast.success("Status Updated")
+        setS(!isActive)
       },
       onError: (err) => {
-        toast.error(err.message);
-        setS(s);
+        toast.error(err.message)
+        setS(s)
       },
     }),
-  );
+  )
 
   return (
     <div
@@ -48,14 +48,14 @@ const ToggleExamStatus = ({
         disabled={toggleExamStatus.isPending}
         onCheckedChange={() => {
           startTransition(() => {
-            setOptimisticStatus(!s);
-            toggleExamStatus.mutateAsync({ id });
-          });
+            setOptimisticStatus(!s)
+            toggleExamStatus.mutateAsync({ id })
+          })
         }}
       />
       <Label htmlFor="exam-status">{isActive ? "Active" : "Inactive"}</Label>
     </div>
-  );
-};
+  )
+}
 
-export default ToggleExamStatus;
+export default ToggleExamStatus

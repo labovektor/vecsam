@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Sidebar,
@@ -11,10 +11,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { LayoutGrid, Newspaper, SquareRadical, User2 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from "@/components/ui/sidebar"
+import { LayoutGrid, Newspaper, SquareRadical, User2 } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const items = [
   {
@@ -32,10 +32,10 @@ const items = [
     url: "/dashboard/profile",
     icon: User2,
   },
-];
+]
 
 export function DashboardSidebar() {
-  const pathName = usePathname();
+  const pathName = usePathname()
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -58,7 +58,7 @@ export function DashboardSidebar() {
                   pathName === "/dashboard"
                     ? pathName === item.url
                     : pathName?.startsWith(item.url) &&
-                      item.url !== "/dashboard";
+                      item.url !== "/dashboard"
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton isActive={isActive} asChild>
@@ -70,7 +70,7 @@ export function DashboardSidebar() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
+                )
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -78,5 +78,5 @@ export function DashboardSidebar() {
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
-  );
+  )
 }

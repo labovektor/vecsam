@@ -1,5 +1,5 @@
-import Image from "next/image";
-import React from "react";
+import Image from "next/image"
+import React from "react"
 
 const partners = [
   {
@@ -7,7 +7,7 @@ const partners = [
     name: "HIMATIKA Vektor",
     logo: "/partners/vektor.png",
   },
-];
+]
 
 const LogosSection = () => {
   return (
@@ -32,7 +32,7 @@ const LogosSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default LogosSection;
+export default LogosSection

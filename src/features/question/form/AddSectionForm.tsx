@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import React from "react";
-import { useForm } from "react-hook-form";
+import React from "react"
+import { useForm } from "react-hook-form"
 import {
   addSectionSchema,
   formatSectionType,
   type AddSectionSchemaType,
-} from "../schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+} from "../schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -18,27 +18,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Check, LoaderCircle, X } from "lucide-react";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Check, LoaderCircle, X } from "lucide-react"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SectionType } from "@prisma/browser";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/select"
+import { SectionType } from "@prisma/browser"
+import { Button } from "@/components/ui/button"
 
 const AddSectionForm = ({
   examId,
   onSuccess,
   onCancel,
 }: {
-  examId: string;
-  onSuccess: VoidFunction;
-  onCancel: VoidFunction;
+  examId: string
+  onSuccess: VoidFunction
+  onCancel: VoidFunction
 }) => {
   const form = useForm<AddSectionSchemaType>({
     resolver: zodResolver(addSectionSchema),
@@ -50,14 +50,14 @@ const AddSectionForm = ({
       wrongPoint: 0,
       passPoint: 0,
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const addSection = useMutation(
     trpc.section.addSection.mutationOptions({
       onSuccess: onSuccess,
     }),
-  );
+  )
 
   return (
     <Card>
@@ -70,8 +70,8 @@ const AddSectionForm = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => {
-              console.log(data);
-              addSection.mutate({ ...data });
+              console.log(data)
+              addSection.mutate({ ...data })
             })}
             className="space-y-3"
           >
@@ -171,7 +171,7 @@ const AddSectionForm = ({
         </Form>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default AddSectionForm;
+export default AddSectionForm

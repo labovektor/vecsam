@@ -1,5 +1,4 @@
-"use client";
-"use no memo";
+"use client"
 
 import {
   type ColumnDef,
@@ -11,8 +10,8 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
-} from "@tanstack/react-table";
-import type { Table as TanStackTable } from "@tanstack/react-table";
+} from "@tanstack/react-table"
+import type { Table as TanStackTable } from "@tanstack/react-table"
 
 import {
   Table,
@@ -21,18 +20,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { DataTablePagination } from "./data-table-pagination";
+} from "@/components/ui/table"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { Search } from "lucide-react"
+import { DataTablePagination } from "./data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  loading?: boolean;
-  message?: string;
-  actions?: (data: TData[], table: TanStackTable<TData>) => React.ReactNode;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  loading?: boolean
+  message?: string
+  actions?: (data: TData[], table: TanStackTable<TData>) => React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -42,8 +41,8 @@ export function DataTable<TData, TValue>({
   loading,
   message,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
     data,
@@ -58,7 +57,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
       sorting,
     },
-  });
+  })
 
   return (
     <>
@@ -96,7 +95,7 @@ export function DataTable<TData, TValue>({
                             header.getContext(),
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -135,5 +134,5 @@ export function DataTable<TData, TValue>({
         <DataTablePagination table={table} />
       </div>
     </>
-  );
+  )
 }

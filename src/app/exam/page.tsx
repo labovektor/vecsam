@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
-import SavingIndicator from "@/features/exam/components/SavingIndicator";
-import FileAnswerForm from "@/features/exam/forms/FileAnswerForm";
-import MultipleChoiceForm from "@/features/exam/forms/MultipleChoiceForm";
-import ShortAnswerForm from "@/features/exam/forms/ShortAnswerForm";
-import { useExam } from "@/hooks/use-exam";
-import { renderKatexFromHtml } from "@/lib/katex-utils";
-import { Undo } from "lucide-react";
-import Image from "next/image";
+import SavingIndicator from "@/features/exam/components/SavingIndicator"
+import FileAnswerForm from "@/features/exam/forms/FileAnswerForm"
+import MultipleChoiceForm from "@/features/exam/forms/MultipleChoiceForm"
+import ShortAnswerForm from "@/features/exam/forms/ShortAnswerForm"
+import { useExam } from "@/hooks/use-exam"
+import { renderKatexFromHtml } from "@/lib/katex-utils"
+import { Undo } from "lucide-react"
+import Image from "next/image"
 
 const ExamPage = () => {
   const {
@@ -25,7 +25,7 @@ const ExamPage = () => {
     unsureAnswers,
     addUnsureAnswer,
     removeUnsureAnswer,
-  } = useExam();
+  } = useExam()
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
@@ -123,9 +123,9 @@ const ExamPage = () => {
             checked={unsureAnswers.has(focusedQuestion.id)}
             onCheckedChange={(checked) => {
               if (checked) {
-                addUnsureAnswer(focusedQuestion.id);
+                addUnsureAnswer(focusedQuestion.id)
               } else {
-                removeUnsureAnswer(focusedQuestion.id);
+                removeUnsureAnswer(focusedQuestion.id)
               }
             }}
           />
@@ -133,7 +133,7 @@ const ExamPage = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ExamPage;
+export default ExamPage

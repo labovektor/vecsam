@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlertDialog,
@@ -10,14 +10,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useExam } from "@/hooks/use-exam";
-import { Flag } from "lucide-react";
-import React from "react";
+} from "@/components/ui/alert-dialog"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { useExam } from "@/hooks/use-exam"
+import { Flag } from "lucide-react"
+import React from "react"
 
 const FinishExamButton = () => {
-  const { lockAnswer, isSaving } = useExam();
+  const { lockAnswer, isSaving } = useExam()
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -47,7 +47,7 @@ const FinishExamButton = () => {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
+  )
+}
 
-export default FinishExamButton;
+export default FinishExamButton

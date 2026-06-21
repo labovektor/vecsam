@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -6,59 +6,59 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import { zodResolver } from "@hookform/resolvers/zod"
+import React from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import z from "zod"
 
 const updateAdminSchema = z.object({
   name: z.string().min(3, "Harus diisi!"),
-});
+})
 
 const UpdateAdminForm = ({
   cValue,
 }: {
-  cValue: Partial<{ name: string; email: string }>;
+  cValue: Partial<{ name: string; email: string }>
 }) => {
   const form = useForm<z.infer<typeof updateAdminSchema>>({
     resolver: zodResolver(updateAdminSchema),
     defaultValues: {
       name: cValue.name ?? "",
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const updateAdmin = useMutation(
     trpc.adminAuth.update.mutationOptions({
       onSuccess: (data) => {
-        console.log(data);
-        toast.success("Profil berhasil diupdate");
+        console.log(data)
+        toast.success("Profil berhasil diupdate")
       },
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(error.message)
       },
     }),
-  );
+  )
   const resetPassword = useMutation(
     trpc.adminAuth.resetPasswordReq.mutationOptions({
       onSuccess: () => {
         toast.success(
           "Kami telah mengirimkan link reset password ke email Anda.",
-        );
+        )
       },
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(error.message)
       },
     }),
-  );
+  )
 
   async function onSubmit(values: z.infer<typeof updateAdminSchema>) {
-    updateAdmin.mutate(values);
+    updateAdmin.mutate(values)
   }
   return (
     <Form {...form}>
@@ -87,8 +87,8 @@ const UpdateAdminForm = ({
             variant="outline"
             disabled={resetPassword.isPending}
             onClick={() => {
-              if (!cValue.email) return;
-              resetPassword.mutate({ email: cValue.email });
+              if (!cValue.email) return
+              resetPassword.mutate({ email: cValue.email })
             }}
           >
             Reset Password
@@ -102,7 +102,7 @@ const UpdateAdminForm = ({
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default UpdateAdminForm;
+export default UpdateAdminForm

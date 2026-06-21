@@ -1,6 +1,6 @@
-"server-only";
+"server-only"
 
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 
 export function createJwt(
   participantId: string,
@@ -9,13 +9,13 @@ export function createJwt(
 ) {
   return jwt.sign({ sub: participantId, examId }, process.env.JWT_SECRET!, {
     expiresIn,
-  });
+  })
 }
 
 export function verifyJwt(token: string) {
   const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
-    sub: string;
-    examId: string;
-  };
-  return payload;
+    sub: string
+    examId: string
+  }
+  return payload
 }

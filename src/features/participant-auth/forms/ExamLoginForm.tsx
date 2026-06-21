@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   loginSchema,
   type LoginSchemaType,
-} from "@/features/participant-auth/schema";
-import React from "react";
-import { useForm } from "react-hook-form";
+} from "@/features/participant-auth/schema"
+import React from "react"
+import { useForm } from "react-hook-form"
 import {
   Form,
   FormControl,
@@ -14,38 +14,38 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+} from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 const ExamLoginForm = () => {
-  const router = useRouter();
+  const router = useRouter()
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       examCode: "",
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const login = useMutation(
     trpc.participantAuth.login.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: (data) => {
-        router.replace(`/x-lgn/confirm?xt_id=${data.id}`);
+        router.replace(`/x-lgn/confirm?xt_id=${data.id}`)
       },
     }),
-  );
+  )
 
   async function onSubmit(values: LoginSchemaType) {
-    login.mutate(values);
+    login.mutate(values)
   }
   return (
     <Form {...form}>
@@ -85,7 +85,7 @@ const ExamLoginForm = () => {
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default ExamLoginForm;
+export default ExamLoginForm

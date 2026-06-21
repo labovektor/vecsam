@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AdminResetPasswordForm from "@/features/admin-auth/forms/AdminResetPasswordForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import AdminResetPasswordForm from "@/features/admin-auth/forms/AdminResetPasswordForm"
 
 const ResetPasswordPage = () => {
   return (
@@ -13,7 +13,7 @@ const ResetPasswordPage = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ResetPasswordPage;
+export default ResetPasswordPage

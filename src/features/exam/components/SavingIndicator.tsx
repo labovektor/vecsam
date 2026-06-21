@@ -1,5 +1,5 @@
-import { CircleCheckBig } from "lucide-react";
-import React from "react";
+import { CircleCheckBig } from "lucide-react"
+import React from "react"
 
 const SavingIndicator = ({ isSaving }: { isSaving: boolean }) => {
   return (
@@ -14,7 +14,7 @@ const SavingIndicator = ({ isSaving }: { isSaving: boolean }) => {
         </span>
       )}
     </>
-  );
-};
+  )
+}
 
-export default SavingIndicator;
+export default SavingIndicator

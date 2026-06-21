@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const examSchema = z
   .object({
@@ -28,6 +28,6 @@ export const examSchema = z
         "Duration must fit within the time range between start and end time",
       path: ["duration"],
     },
-  );
+  )
 
-export type ExamSchemaType = z.infer<typeof examSchema>;
+export type ExamSchemaType = z.infer<typeof examSchema>

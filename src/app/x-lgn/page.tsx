@@ -5,11 +5,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import ExamLoginForm from "@/features/participant-auth/forms/ExamLoginForm";
-import Image from "next/image";
+} from "@/components/ui/card"
+import ExamLoginForm from "@/features/participant-auth/forms/ExamLoginForm"
+import Image from "next/image"
 
-import React from "react";
+import React from "react"
 
 const ExamLoginPage = () => {
   return (
@@ -38,7 +38,7 @@ const ExamLoginPage = () => {
         </CardFooter>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ExamLoginPage;
+export default ExamLoginPage

@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { Check, ArrowRight } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
+import { Check, ArrowRight } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
+import Link from "next/link"
 
 const HeroSection = () => {
   return (
@@ -42,7 +42,7 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default HeroSection;
+export default HeroSection

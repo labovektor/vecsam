@@ -1,28 +1,28 @@
-import z from "zod";
-import { createTRPCRouter, examProcedure } from "../trpc";
-import { TRPCError } from "@trpc/server";
-import { supabaseAdminClient } from "@/lib/supabase/server";
-import { Bucket } from "@/lib/supabase/bucket";
+import z from "zod"
+import { createTRPCRouter, examProcedure } from "../trpc"
+import { TRPCError } from "@trpc/server"
+import { supabaseAdminClient } from "@/lib/supabase/server"
+import { Bucket } from "@/lib/supabase/bucket"
 import {
   saveAnswerSchema,
   type AnswerRecordSchemaType,
-} from "@/features/exam/schema";
-import { getRedisClient } from "@/lib/redis";
-import { activityLogtype, appendActivityLog } from "@/lib/logger";
+} from "@/features/exam/schema"
+import { getRedisClient } from "@/lib/redis"
+import { activityLogtype, appendActivityLog } from "@/lib/logger"
 
-export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024;
+export const MAX_FILE_SIZE_FILE = 10 * 1024 * 1024
 
 export const examRouter = createTRPCRouter({
   getSession: examProcedure.query(({ ctx }) => {
     return {
       session: ctx.session,
       current_timestamp: new Date(),
-    };
+    }
   }),
 
   getExam: examProcedure.query(async ({ ctx }) => {
-    const examId = ctx.session.participant.examId;
-    const redis = getRedisClient();
+    const examId = ctx.session.participant.examId
+    const redis = getRedisClient()
 
     // const examRedis = await redis.get(examId);
     // if (examRedis) {
@@ -51,24 +51,24 @@ export const examRouter = createTRPCRouter({
           },
         },
       },
-    });
+    })
 
     if (!exam) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Ujian tidak ditemukan",
-      });
+      })
     }
 
     await appendActivityLog({
       examId,
       participantId: ctx.session.participant.id,
       type: "access_exam",
-    });
+    })
 
-    await redis.setex(examId, exam.duration * 60, JSON.stringify(exam));
+    await redis.setex(examId, exam.duration * 60, JSON.stringify(exam))
 
-    return exam;
+    return exam
   }),
 
   saveAnswer: examProcedure
@@ -79,18 +79,18 @@ export const examRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db, session } = ctx;
+      const { db, session } = ctx
 
-      const tmp = new Date().getTime().toString();
+      const tmp = new Date().getTime().toString()
 
       // Upload answer file  if provided
-      let answerFileUrl: string | undefined = undefined;
+      let answerFileUrl: string | undefined = undefined
       if (input.answer.answerFile) {
-        const fileName = `answer-${session.participantId}-${input.questionId}.pdf`;
-        const buffer = Buffer.from(input.answer.answerFile, "base64");
+        const fileName = `answer-${session.participantId}-${input.questionId}.pdf`
+        const buffer = Buffer.from(input.answer.answerFile, "base64")
 
         if (buffer.byteLength > MAX_FILE_SIZE_FILE) {
-          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
+          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB")
         }
 
         const { data, error } = await supabaseAdminClient.storage
@@ -99,11 +99,11 @@ export const examRouter = createTRPCRouter({
             contentType: "application/pdf",
             cacheControl: "3600",
             upsert: true,
-          });
-        if (error) throw new Error(error.message);
+          })
+        if (error) throw new Error(error.message)
         answerFileUrl = supabaseAdminClient.storage
           .from(Bucket.ANSWER)
-          .getPublicUrl(data.path).data.publicUrl;
+          .getPublicUrl(data.path).data.publicUrl
       }
 
       await appendActivityLog({
@@ -111,7 +111,7 @@ export const examRouter = createTRPCRouter({
         participantId: session.participant.id,
         type: "add_answer",
         info: input.questionId,
-      });
+      })
 
       return db.participantAnswer.upsert({
         where: {
@@ -132,42 +132,42 @@ export const examRouter = createTRPCRouter({
           answerFile: answerFileUrl ? `${answerFileUrl}?t=${tmp}` : undefined,
           optionId: input.answer.optionId,
         },
-      });
+      })
     }),
 
   getAnswers: examProcedure.query(async ({ ctx }) => {
-    const { db, session } = ctx;
+    const { db, session } = ctx
 
     const answers = await db.participantAnswer.findMany({
       where: {
         participantId: session.participantId,
       },
-    });
+    })
 
     // Create records for each question
-    const records: AnswerRecordSchemaType = {};
+    const records: AnswerRecordSchemaType = {}
     answers.forEach((answer) => {
       records[answer.questionId] = {
         answerText: answer.answerText ?? undefined,
         answerFile: answer.answerFile ?? undefined,
         optionId: answer.optionId ?? undefined,
-      };
-    });
+      }
+    })
 
-    return records;
+    return records
   }),
 
   removeAnswer: examProcedure
     .input(z.object({ questionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { db, session } = ctx;
+      const { db, session } = ctx
 
       await appendActivityLog({
         examId: session.participant.examId,
         participantId: session.participant.id,
         type: "undo_answer",
         info: input.questionId,
-      });
+      })
 
       return db.participantAnswer.delete({
         where: {
@@ -176,17 +176,17 @@ export const examRouter = createTRPCRouter({
             questionId: input.questionId,
           },
         },
-      });
+      })
     }),
 
   lockAnswer: examProcedure.mutation(async ({ ctx }) => {
-    const { db, session } = ctx;
+    const { db, session } = ctx
 
     await appendActivityLog({
       examId: session.participant.examId,
       participantId: session.participant.id,
       type: "lock_answer",
-    });
+    })
     return db.participant.update({
       where: {
         id: session.participantId,
@@ -194,7 +194,7 @@ export const examRouter = createTRPCRouter({
       data: {
         lockedAt: new Date(),
       },
-    });
+    })
   }),
 
   appendAdditionalLog: examProcedure
@@ -210,6 +210,6 @@ export const examRouter = createTRPCRouter({
         participantId: ctx.session.participant.id,
         type: input.type,
         info: input.info,
-      });
+      })
     }),
-});
+})

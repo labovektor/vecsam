@@ -1,12 +1,9 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  loginSchema,
-  type LoginSchemaType,
-} from "@/features/admin-auth/schema";
-import React from "react";
-import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, type LoginSchemaType } from "@/features/admin-auth/schema"
+import React from "react"
+import { useForm } from "react-hook-form"
 import {
   Form,
   FormControl,
@@ -14,17 +11,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
-import Link from "next/link";
+} from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { useAdminAuthAction } from "@/hooks/use-admin-auth-action"
+import Link from "next/link"
 
 const DashboardLoginForm = () => {
-  const router = useRouter();
-  const { signIn, loading } = useAdminAuthAction();
+  const router = useRouter()
+  const { signIn, loading } = useAdminAuthAction()
 
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
@@ -32,16 +29,16 @@ const DashboardLoginForm = () => {
       email: "",
       password: "",
     },
-  });
+  })
 
   async function onSubmit(values: LoginSchemaType) {
-    const res = await signIn(values);
+    const res = await signIn(values)
 
     if (res.error) {
-      toast.error(res.error.message);
+      toast.error(res.error.message)
     }
 
-    router.replace("/dashboard");
+    router.replace("/dashboard")
   }
   return (
     <Form {...form}>
@@ -80,7 +77,7 @@ const DashboardLoginForm = () => {
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
 
-export default DashboardLoginForm;
+export default DashboardLoginForm

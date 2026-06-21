@@ -1,11 +1,11 @@
-import { RateLimiterRedis } from "rate-limiter-flexible";
-import { getRedisClient } from "./redis";
+import { RateLimiterRedis } from "rate-limiter-flexible"
+import { getRedisClient } from "./redis"
 
 interface RateLimiterProps {
-  points: number;
-  duration: number;
-  keyPrefix: string;
-  consumeKey: string;
+  points: number
+  duration: number
+  keyPrefix: string
+  consumeKey: string
 }
 
 export const rateLimiter = ({
@@ -19,7 +19,7 @@ export const rateLimiter = ({
     keyPrefix,
     points,
     duration,
-  });
+  })
 
-  return limiter.consume(consumeKey);
-};
+  return limiter.consume(consumeKey)
+}

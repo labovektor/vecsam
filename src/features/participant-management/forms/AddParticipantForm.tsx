@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -10,25 +10,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useTRPC } from "@/trpc/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addParticipantSchema, type AddParticipantSchemaType } from "../schema";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { useTRPC } from "@/trpc/react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { addParticipantSchema, type AddParticipantSchemaType } from "../schema"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+} from "@/components/ui/dialog"
+import { Plus } from "lucide-react"
 
 const AddParticipantForm = ({ examId }: { examId: string }) => {
-  const queryClient = useQueryClient();
-  const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient()
+  const [open, setOpen] = React.useState(false)
 
   const form = useForm<AddParticipantSchemaType>({
     resolver: zodResolver(addParticipantSchema),
@@ -36,36 +36,36 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
       name: "",
       email: "",
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const addParticipant = useMutation(
     trpc.participantManagement.add.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () => {
-        toast.success("New Participant Added");
-        setOpen(false);
+        toast.success("New Participant Added")
+        setOpen(false)
         queryClient.refetchQueries({
           queryKey: trpc.participantManagement.getAllByExamId.queryKey(),
-        });
+        })
       },
     }),
-  );
+  )
 
   async function onSubmit(data: AddParticipantSchemaType) {
     addParticipant.mutate({
       examId,
       data,
-    });
+    })
   }
   return (
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen(open);
-        form.reset();
+        setOpen(open)
+        form.reset()
       }}
     >
       <DialogTrigger asChild>
@@ -117,7 +117,7 @@ const AddParticipantForm = ({ examId }: { examId: string }) => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default AddParticipantForm;
+export default AddParticipantForm

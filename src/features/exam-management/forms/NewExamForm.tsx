@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import { examSchema, type ExamSchemaType } from "../schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react"
+import { useForm } from "react-hook-form"
+import { examSchema, type ExamSchemaType } from "../schema"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -12,26 +12,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { DatetimePicker } from "@/components/ui/date-time-picker";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
-import { useTRPC } from "@/trpc/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { DatetimePicker } from "@/components/ui/date-time-picker"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { toast } from "sonner"
+import { Textarea } from "@/components/ui/textarea"
+import { useTRPC } from "@/trpc/react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+} from "@/components/ui/dialog"
+import { Plus } from "lucide-react"
 
 const NewExamForm = () => {
-  const queryClient = useQueryClient();
-  const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient()
+  const [open, setOpen] = React.useState(false)
   const form = useForm<ExamSchemaType>({
     resolver: zodResolver(examSchema),
     defaultValues: {
@@ -42,26 +42,26 @@ const NewExamForm = () => {
       endTime: new Date(),
       duration: 0,
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const createNewExam = useMutation(
     trpc.examManagement.create.mutationOptions({
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message)
       },
       onSuccess: () => {
         queryClient.refetchQueries({
           queryKey: trpc.examManagement.getAll.queryKey(),
-        });
-        toast.success("New Exam Created");
-        setOpen(false);
+        })
+        toast.success("New Exam Created")
+        setOpen(false)
       },
     }),
-  );
+  )
 
   async function onSubmit(values: ExamSchemaType) {
-    createNewExam.mutate(values);
+    createNewExam.mutate(values)
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -184,7 +184,7 @@ const NewExamForm = () => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default NewExamForm;
+export default NewExamForm

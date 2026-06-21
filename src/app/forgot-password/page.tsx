@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AdminForgotPasswordForm from "@/features/admin-auth/forms/AdminForgotPassword";
-import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import AdminForgotPasswordForm from "@/features/admin-auth/forms/AdminForgotPassword"
+import React from "react"
 
 const ForgotPasswordPage = () => {
   return (
@@ -14,7 +14,7 @@ const ForgotPasswordPage = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ForgotPasswordPage;
+export default ForgotPasswordPage

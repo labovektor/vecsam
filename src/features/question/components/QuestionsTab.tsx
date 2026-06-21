@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CardDescription, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
-import type { Section } from "@prisma/client";
-import { AlertCircle, LoaderCircle } from "lucide-react";
-import React from "react";
-import AddQuestionForm from "../form/AddQuestionForm";
-import QuestionCard from "./QuestionCard";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { CardDescription, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
+import type { Section } from "@prisma/client"
+import { AlertCircle, LoaderCircle } from "lucide-react"
+import React from "react"
+import AddQuestionForm from "../form/AddQuestionForm"
+import QuestionCard from "./QuestionCard"
 
 const QuestionsTab = ({
   section,
   className,
 }: {
-  section: Section | null;
-  className?: string;
+  section: Section | null
+  className?: string
 }) => {
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const {
     data: questions,
     error,
@@ -28,7 +28,7 @@ const QuestionsTab = ({
     trpc.question.getQuestions.queryOptions({
       sectionId: section?.id ?? null,
     }),
-  );
+  )
 
   if (error) {
     return (
@@ -37,7 +37,7 @@ const QuestionsTab = ({
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
       </Alert>
-    );
+    )
   }
 
   return (
@@ -83,7 +83,7 @@ const QuestionsTab = ({
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default QuestionsTab;
+export default QuestionsTab

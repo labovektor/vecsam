@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import React from "react";
-import { useForm } from "react-hook-form";
+import React from "react"
+import { useForm } from "react-hook-form"
 import {
   formatSectionType,
   updateSectionSchema,
   type UpdateSectionSchemaType,
-} from "../schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTRPC } from "@/trpc/react";
-import { Card, CardContent } from "@/components/ui/card";
+} from "../schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useTRPC } from "@/trpc/react"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -17,28 +17,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Check, LoaderCircle, X } from "lucide-react";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Check, LoaderCircle, X } from "lucide-react"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SectionType, type Section } from "@prisma/browser";
-import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
+} from "@/components/ui/select"
+import { SectionType, type Section } from "@prisma/browser"
+import { Button } from "@/components/ui/button"
+import { useMutation } from "@tanstack/react-query"
 
 const EditSectionForm = ({
   currentSection,
   onSuccess,
   onCancel,
 }: {
-  currentSection: Section;
-  onSuccess: VoidFunction;
-  onCancel: VoidFunction;
+  currentSection: Section
+  onSuccess: VoidFunction
+  onCancel: VoidFunction
 }) => {
   const form = useForm<UpdateSectionSchemaType>({
     resolver: zodResolver(updateSectionSchema),
@@ -50,14 +50,14 @@ const EditSectionForm = ({
       wrongPoint: currentSection.wrongPoint,
       passPoint: currentSection.passPoint,
     },
-  });
+  })
 
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const updateSection = useMutation(
     trpc.section.updateSection.mutationOptions({
       onSuccess,
     }),
-  );
+  )
 
   return (
     <Card>
@@ -70,8 +70,8 @@ const EditSectionForm = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => {
-              console.log(data);
-              updateSection.mutate({ ...data });
+              console.log(data)
+              updateSection.mutate({ ...data })
             })}
             className="space-y-3"
           >
@@ -171,7 +171,7 @@ const EditSectionForm = ({
         </Form>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default EditSectionForm;
+export default EditSectionForm

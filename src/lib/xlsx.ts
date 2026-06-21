@@ -3,7 +3,7 @@ import xlsx, {
   type IContent,
   type IJsonSheet,
   type ISettings,
-} from "json-as-xlsx";
+} from "json-as-xlsx"
 
 export function exportAsExcelFile(
   data: unknown[],
@@ -17,12 +17,12 @@ export function exportAsExcelFile(
       columns: columns,
       content: data as IContent[],
     },
-  ];
+  ]
 
-  const time = Date.now().toString();
+  const time = Date.now().toString()
   const setting: ISettings = {
     fileName: `${sheetName} - ${time}`,
-  };
+  }
 
-  xlsx(column, setting, callback);
+  xlsx(column, setting, callback)
 }

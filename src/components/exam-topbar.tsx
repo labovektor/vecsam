@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import React from "react";
-import { SidebarTrigger } from "./ui/sidebar";
-import { useExam } from "@/hooks/use-exam";
-import ExamTimer from "@/features/exam/components/ExamTimer";
-import FinishExamButton from "@/features/exam/components/FinishExamButton";
+import React from "react"
+import { SidebarTrigger } from "./ui/sidebar"
+import { useExam } from "@/hooks/use-exam"
+import ExamTimer from "@/features/exam/components/ExamTimer"
+import FinishExamButton from "@/features/exam/components/FinishExamButton"
 
 const ExamTopBar = () => {
   const { exam, expiredAt, currentTimestamp, lockAnswer, isFetching } =
-    useExam();
+    useExam()
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-slate-50 px-4">
       <div className="flex items-center gap-2">
@@ -27,7 +27,7 @@ const ExamTopBar = () => {
         <FinishExamButton />
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default ExamTopBar;
+export default ExamTopBar

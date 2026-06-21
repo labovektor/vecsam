@@ -2,48 +2,48 @@ import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
-} from "@/features/admin-auth/schema";
-import { getBaseUrl } from "@/lib/get-base-url";
-import { supabaseAdminClient } from "@/lib/supabase/server";
+} from "@/features/admin-auth/schema"
+import { getBaseUrl } from "@/lib/get-base-url"
+import { supabaseAdminClient } from "@/lib/supabase/server"
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "@/server/api/trpc";
-import z from "zod";
+} from "@/server/api/trpc"
+import z from "zod"
 
 export const adminAuthRouter = createTRPCRouter({
   login: publicProcedure.input(loginSchema).mutation(async ({ input }) => {
-    const { email, password } = input;
+    const { email, password } = input
 
     return supabaseAdminClient.auth.signInWithPassword({
       email,
       password,
-    });
+    })
   }),
 
   register: publicProcedure
     .input(registerSchema)
     .mutation(async ({ input }) => {
-      const { name, email, password } = input;
+      const { name, email, password } = input
 
       return supabaseAdminClient.auth.signUp({
         email,
         password,
         options: { data: { name } },
-      });
+      })
     }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
-    const { user } = ctx;
+    const { user } = ctx
 
-    console.log(user.identities);
+    console.log(user.identities)
 
     return {
       id: user.id,
       email: user.email,
       name: user.user_metadata.name,
-    };
+    }
   }),
 
   update: protectedProcedure
@@ -57,7 +57,7 @@ export const adminAuthRouter = createTRPCRouter({
         data: {
           name: input.name,
         },
-      });
+      })
     }),
 
   resetPasswordReq: publicProcedure
@@ -65,6 +65,6 @@ export const adminAuthRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       return supabaseAdminClient.auth.resetPasswordForEmail(input.email, {
         redirectTo: getBaseUrl() + "/reset-password",
-      });
+      })
     }),
-});
+})

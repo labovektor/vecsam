@@ -1,15 +1,14 @@
-import { ExamSidebar } from "@/components/exam-sidebar";
-import ExamTopBar from "@/components/exam-topbar";
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import QuestionNavigator from "@/features/exam/components/QuestionNavigator";
-import ExamProvider from "@/features/exam/provider/ExamProvider";
-import React from "react";
+import { ExamSidebar } from "@/components/exam-sidebar"
+import ExamTopBar from "@/components/exam-topbar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import QuestionNavigator from "@/features/exam/components/QuestionNavigator"
+import ExamProvider from "@/features/exam/provider/ExamProvider"
+import React from "react"
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <ExamProvider>
@@ -28,5 +27,5 @@ export default function DashboardLayout({
       {/* </ContextMenuTrigger>
       </ContextMenu> */}
     </ExamProvider>
-  );
+  )
 }

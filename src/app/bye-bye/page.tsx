@@ -1,17 +1,17 @@
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+} from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
-import React from "react";
+import React from "react"
 
 const ByByePage = () => {
   return (
@@ -41,7 +41,7 @@ const ByByePage = () => {
         </CardFooter>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ByByePage;
+export default ByByePage

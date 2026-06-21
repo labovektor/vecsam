@@ -1,27 +1,27 @@
-"use client";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { ChevronRight, Menu, X } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+"use client"
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { ChevronRight, Menu, X } from "lucide-react"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 const Headers = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
-        setIsScrolled(true);
+        setIsScrolled(true)
       } else {
-        setIsScrolled(false);
+        setIsScrolled(false)
       }
-    };
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
   return (
     <header
       className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all duration-300 ${isScrolled ? "bg-background/80 shadow-sm" : "bg-transparent"} px-4`}
@@ -101,7 +101,7 @@ const Headers = () => {
         </motion.div>
       )}
     </header>
-  );
-};
+  )
+}
 
-export default Headers;
+export default Headers

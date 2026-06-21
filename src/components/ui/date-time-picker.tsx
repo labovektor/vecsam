@@ -1,31 +1,31 @@
-"use client";
-import React, { forwardRef, useCallback } from "react";
-import { useTimescape, type Options } from "timescape/react";
+"use client"
+import React, { forwardRef, useCallback } from "react"
+import { useTimescape, type Options } from "timescape/react"
 
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 // @source: https://github.com/dan-lee/timescape?tab=readme-ov-file
 
 const timePickerInputBase =
-  "p-1 inline tabular-nums h-fit border-none outline-none select-none content-box caret-transparent rounded-full min-w-8 text-center focus:bg-foreground/20 focus-visible:ring-0 focus-visible:outline-none";
-const timePickerSeparatorBase = "text-xs text-gray-400";
+  "p-1 inline tabular-nums h-fit border-none outline-none select-none content-box caret-transparent rounded-full min-w-8 text-center focus:bg-foreground/20 focus-visible:ring-0 focus-visible:outline-none"
+const timePickerSeparatorBase = "text-xs text-gray-400"
 
-type DateFormat = "days" | "months" | "years";
-type TimeFormat = "hours" | "minutes" | "seconds" | "am/pm";
+type DateFormat = "days" | "months" | "years"
+type TimeFormat = "hours" | "minutes" | "seconds" | "am/pm"
 
-type DateTimeArray<T extends DateFormat | TimeFormat> = T[];
+type DateTimeArray<T extends DateFormat | TimeFormat> = T[]
 type DateTimeFormatDefaults = [
   DateTimeArray<DateFormat>,
   DateTimeArray<TimeFormat>,
-];
+]
 
 const DEFAULTS = [
   ["months", "days", "years"],
   ["hours", "minutes", "am/pm"],
-] as DateTimeFormatDefaults;
+] as DateTimeFormatDefaults
 
-type TimescapeReturn = ReturnType<typeof useTimescape>;
-type InputPlaceholders = Record<DateFormat | TimeFormat, string>;
+type TimescapeReturn = ReturnType<typeof useTimescape>
+type InputPlaceholders = Record<DateFormat | TimeFormat, string>
 const INPUT_PLACEHOLDERS: InputPlaceholders = {
   months: "MM",
   days: "DD",
@@ -34,7 +34,7 @@ const INPUT_PLACEHOLDERS: InputPlaceholders = {
   minutes: "MM",
   seconds: "SS",
   "am/pm": "AM/PM",
-};
+}
 
 /**
  * Date time picker Docs: {@link: https://shadcn-extension.vercel.app/docs/otp-input}
@@ -43,10 +43,10 @@ const INPUT_PLACEHOLDERS: InputPlaceholders = {
 const DatetimeGrid = forwardRef<
   HTMLDivElement,
   {
-    format: DateTimeFormatDefaults;
-    className?: string;
-    timescape: Pick<TimescapeReturn, "getRootProps" | "getInputProps">;
-    placeholders: InputPlaceholders;
+    format: DateTimeFormatDefaults
+    className?: string
+    timescape: Pick<TimescapeReturn, "getRootProps" | "getInputProps">
+    placeholders: InputPlaceholders
   }
 >(
   (
@@ -56,10 +56,10 @@ const DatetimeGrid = forwardRef<
       timescape,
       placeholders,
     }: {
-      format: DateTimeFormatDefaults;
-      className?: string;
-      timescape: Pick<TimescapeReturn, "getRootProps" | "getInputProps">;
-      placeholders: InputPlaceholders;
+      format: DateTimeFormatDefaults
+      className?: string
+      timescape: Pick<TimescapeReturn, "getRootProps" | "getInputProps">
+      placeholders: InputPlaceholders
     },
     ref,
   ) => {
@@ -114,25 +114,25 @@ const DatetimeGrid = forwardRef<
             ))
           : null}
       </div>
-    );
+    )
   },
-);
+)
 
-DatetimeGrid.displayName = "DatetimeGrid";
+DatetimeGrid.displayName = "DatetimeGrid"
 
 interface DateTimeInput {
-  value?: Date;
-  format: DateTimeFormatDefaults;
-  placeholders?: InputPlaceholders;
-  onChange?: Options["onChangeDate"];
-  dtOptions?: Options;
-  className?: string;
+  value?: Date
+  format: DateTimeFormatDefaults
+  placeholders?: InputPlaceholders
+  onChange?: Options["onChangeDate"]
+  dtOptions?: Options
+  className?: string
 }
 
 const DEFAULT_TS_OPTIONS = {
   date: new Date(),
   hour12: true,
-};
+}
 export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
   (
     {
@@ -147,15 +147,15 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
   ) => {
     const handleDateChange = useCallback(
       (nextDate: Date | undefined) => {
-        onChange ? onChange(nextDate) : console.log(nextDate);
+        onChange ? onChange(nextDate) : console.log(nextDate)
       },
       [onChange],
-    );
+    )
     const timescape = useTimescape({
       ...dtOptions,
       ...(value && { date: value }),
       onChangeDate: handleDateChange,
-    });
+    })
     return (
       <DatetimeGrid
         format={format}
@@ -164,8 +164,8 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
         placeholders={placeholders ?? INPUT_PLACEHOLDERS}
         ref={ref}
       />
-    );
+    )
   },
-);
+)
 
-DatetimePicker.displayName = "DatetimePicker";
+DatetimePicker.displayName = "DatetimePicker"

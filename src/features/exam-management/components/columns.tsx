@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import type { ColumnDef } from "@tanstack/react-table";
-import { beautifyDate } from "@/lib/utils";
+import type { ColumnDef } from "@tanstack/react-table"
+import { beautifyDate } from "@/lib/utils"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,15 +19,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import Link from "next/link";
-import { useTRPC } from "@/trpc/react";
-import { useMutation } from "@tanstack/react-query";
-import type { Exam } from "@prisma/client";
-import EditExamForm from "../forms/EditExamForm";
+} from "@/components/ui/dropdown-menu"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Eye, MoreHorizontal, Trash2 } from "lucide-react"
+import { toast } from "sonner"
+import Link from "next/link"
+import { useTRPC } from "@/trpc/react"
+import { useMutation } from "@tanstack/react-query"
+import type { Exam } from "@prisma/client"
+import EditExamForm from "../forms/EditExamForm"
 
 export const examColumns: ColumnDef<Exam>[] = [
   { accessorKey: "id", header: "ID" },
@@ -67,20 +67,20 @@ export const examColumns: ColumnDef<Exam>[] = [
     cell: ({ row }) => <EventActionColumn exam={row.original} />,
     header: "Action",
   },
-];
+]
 
 export function EventActionColumn({ exam }: { exam: Exam }) {
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const deleteExam = useMutation(
     trpc.examManagement.delete.mutationOptions({
       onError: (error) => {
-        toast.error(error.message);
+        toast.error(error.message)
       },
       onSuccess: () => {
-        toast.success("Exam Deleted");
+        toast.success("Exam Deleted")
       },
     }),
-  );
+  )
   return (
     <AlertDialog>
       <DropdownMenu>
@@ -145,5 +145,5 @@ export function EventActionColumn({ exam }: { exam: Exam }) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

@@ -1,41 +1,41 @@
-"use client";
+"use client"
 
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import ExamStatCard from "@/features/exam-management/components/stat-card";
-import ToggleExamStatus from "@/features/exam-management/forms/ToggleExamStatus";
-import ParticipantTable from "@/features/participant-management/components/ParticipantTable";
-import { useTRPC } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import ExamStatCard from "@/features/exam-management/components/stat-card"
+import ToggleExamStatus from "@/features/exam-management/forms/ToggleExamStatus"
+import ParticipantTable from "@/features/participant-management/components/ParticipantTable"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
 import {
   AlarmClock,
   AlertCircle,
   FileQuestion,
   Logs,
   Users,
-} from "lucide-react";
-import React, { use } from "react";
+} from "lucide-react"
+import React, { use } from "react"
 
 const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
-  const trpc = useTRPC();
-  const { id } = use(params);
+  const trpc = useTRPC()
+  const { id } = use(params)
   const { data: exam, error } = useQuery(
     trpc.examManagement.getById.queryOptions({ id }),
-  );
+  )
   const { data: log } = useQuery(
     trpc.examManagement.getLog.queryOptions({ id }),
-  );
+  )
 
   const downloadLog = () => {
-    if (!log) return;
+    if (!log) return
 
-    const file = new Blob([log.content], { type: log.mimeType });
-    const fileURL = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = fileURL;
-    link.download = log.filename;
-    link.click();
-  };
+    const file = new Blob([log.content], { type: log.mimeType })
+    const fileURL = URL.createObjectURL(file)
+    const link = document.createElement("a")
+    link.href = fileURL
+    link.download = log.filename
+    link.click()
+  }
 
   return (
     <div>
@@ -98,7 +98,7 @@ const ExamDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ExamDetailPage;
+export default ExamDetailPage

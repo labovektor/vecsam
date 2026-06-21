@@ -1,23 +1,23 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { useTRPC } from "@/trpc/react";
-import { useQuery } from "@tanstack/react-query";
-import { Activity, FormInput, MonitorPlay } from "lucide-react";
-import React from "react";
+import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
+import { Activity, FormInput, MonitorPlay } from "lucide-react"
+import React from "react"
 
 const DashboardPage = () => {
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const { data: exams } = useQuery(
     trpc.examManagement.getAll.queryOptions(undefined),
-  );
+  )
 
-  const now = new Date();
-  const activeExams = exams?.filter((exam) => exam.isActive);
+  const now = new Date()
+  const activeExams = exams?.filter((exam) => exam.isActive)
   const runningExams = exams?.filter(
     (exam) => new Date(exam.startTime) <= now && new Date(exam.endTime) >= now,
-  );
+  )
   return (
     <div>
       <div className="flex flex-col gap-3 md:flex-row">
@@ -41,8 +41,8 @@ const DashboardPage = () => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
 function EventsStatCard({
   title,
@@ -50,10 +50,10 @@ function EventsStatCard({
   className,
   icon,
 }: {
-  title: string;
-  value: string | number;
-  className?: string;
-  icon: React.ReactNode;
+  title: string
+  value: string | number
+  className?: string
+  icon: React.ReactNode
 }) {
   return (
     <Card className="min-h-40 flex-1">
@@ -72,7 +72,7 @@ function EventsStatCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-export default DashboardPage;
+export default DashboardPage
