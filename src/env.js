@@ -7,10 +7,10 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().url(),
-    SUPABASE_URL: z.string().default(""),
-    SUPABASE_PUBLISHABLE_KEY: z.string().default(""),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().default(""),
+    DATABASE_URL: z.string().url().default("postgresql://my.com"),
+    SUPABASE_URL: z.string().url().default("https://my.com"),
+    SUPABASE_PUBLISHABLE_KEY: z.string().default("mykey"),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().default("mykey"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
