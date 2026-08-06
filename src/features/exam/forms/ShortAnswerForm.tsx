@@ -1,13 +1,12 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useExam } from "@/hooks/use-exam"
-import { Check } from "lucide-react"
+import debounce from "lodash.debounce"
 import React from "react"
 
 const ShortAnswerForm = () => {
-  const { focusedQuestion, saveAnswer, answers, isSaving } = useExam()
+  const { focusedQuestion, saveAnswer, answers } = useExam()
   const cAnswer = focusedQuestion
     ? (answers[focusedQuestion?.id]?.answerText ?? "")
     : ""
@@ -20,24 +19,41 @@ const ShortAnswerForm = () => {
     setPrevCAnswer(cAnswer)
   }
 
+  const debouncedSaveRef = React.useRef<ReturnType<
+    typeof debounce<(questionId: string, answerText: string) => void>
+  > | null>(null)
+  if (debouncedSaveRef.current === null) {
+    debouncedSaveRef.current = debounce(
+      (questionId: string, answerText: string) => {
+        saveAnswer(questionId, { answerText })
+      },
+      800,
+    )
+  }
+
+  React.useEffect(() => {
+    const debouncedSave = debouncedSaveRef.current
+    return () => {
+      debouncedSave?.flush()
+    }
+  }, [])
+
+  React.useEffect(() => {
+    debouncedSaveRef.current?.flush()
+  }, [focusedQuestion?.id])
+
   return (
-    <div className="flex gap-2">
-      <Input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        className="max-w-md"
-      />
-      <Button
-        disabled={isSaving || value === cAnswer}
-        size="icon"
-        onClick={() => {
-          if (!focusedQuestion) return
-          saveAnswer(focusedQuestion.id, { answerText: value })
-        }}
-      >
-        <Check />
-      </Button>
-    </div>
+    <Input
+      value={value}
+      onChange={(e) => {
+        const newValue = e.target.value
+        setValue(newValue)
+        if (focusedQuestion) {
+          debouncedSaveRef.current?.(focusedQuestion.id, newValue)
+        }
+      }}
+      className="max-w-md"
+    />
   )
 }
 
