@@ -1,0 +1,51 @@
+services:
+  app:
+    image: ghcr.io/labovector/vecsys-exam:stable
+    pull_policy: always
+    ports:
+      - "4000:3000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./migrations:/app/prisma/migrations
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-root}
+      POSTGRES_PASSWORD: letme1n
+      POSTGRES_DB: ${DB_NAME:-vecsys-exam}
+    volumes:
+      - pgdata-exam:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-root} -d ${DB_NAME:-vecsys-exam}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redisdata-exam:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata-exam:
+  redisdata-exam:

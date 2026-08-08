@@ -22,10 +22,28 @@ const MultipleChoiceForm = () => {
     setPrevCAnswer(cValue)
   }
 
-  const handleValueChange = debounce((value) => {
-    if (!focusedQuestion) return
-    saveAnswer(focusedQuestion.id, { optionId: value })
-  }, 1000)
+  const debouncedSaveRef = React.useRef<ReturnType<
+    typeof debounce<(questionId: string, optionId: string) => void>
+  > | null>(null)
+  if (debouncedSaveRef.current === null) {
+    debouncedSaveRef.current = debounce(
+      (questionId: string, optionId: string) => {
+        saveAnswer(questionId, { optionId })
+      },
+      800,
+    )
+  }
+
+  React.useEffect(() => {
+    const debouncedSave = debouncedSaveRef.current
+    return () => {
+      debouncedSave?.flush()
+    }
+  }, [])
+
+  React.useEffect(() => {
+    debouncedSaveRef.current?.flush()
+  }, [focusedQuestion?.id])
 
   return (
     <RadioGroup
@@ -33,7 +51,9 @@ const MultipleChoiceForm = () => {
       value={value}
       onValueChange={(value) => {
         setValue(value)
-        handleValueChange(value)
+        if (focusedQuestion) {
+          debouncedSaveRef.current?.(focusedQuestion.id, value)
+        }
       }}
     >
       {focusedQuestion?.MultipleChoiceOption.map((option) => (

@@ -30,6 +30,14 @@ const ExamTimer = ({
 
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null)
 
+  const callbackRef = React.useRef(callback)
+  const loadingRef = React.useRef(loading)
+
+  React.useEffect(() => {
+    callbackRef.current = callback
+    loadingRef.current = loading
+  })
+
   const [remaining, setRemaining] = React.useState(() => {
     const now = Date.now()
     const offset = currentTimestamp.getTime() - now
@@ -44,10 +52,10 @@ const ExamTimer = ({
       const timeLeft = targetTime - (Date.now() + offset)
       if (timeLeft <= 0) {
         setRemaining(0)
-        if (!loading) {
+        if (!loadingRef.current) {
           clearInterval(intervalRef.current!)
           toast.error("Waktu pengerjaan telah habis")
-          callback()
+          callbackRef.current()
         }
       } else {
         setRemaining(timeLeft)
@@ -55,8 +63,7 @@ const ExamTimer = ({
     }, 1000)
 
     return () => clearInterval(intervalRef.current!)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetTime, loading, callback])
+  }, [targetTime, currentTimestamp])
 
   const totalSeconds = Math.floor(remaining / 1000)
   const hours = Math.floor(totalSeconds / 3600)
