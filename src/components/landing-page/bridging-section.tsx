@@ -122,9 +122,9 @@ export function BridgeSection() {
           className="grid grid-cols-2 gap-8 text-center md:grid-cols-4"
         >
           {[
-            { number: "200+", label: "Active Students" },
+            { number: "300+", label: "Active Students" },
             { number: "1", label: "Educators" },
-            { number: "0", label: "Exams Completed" },
+            { number: "2", label: "Exams Completed" },
             { number: "99.9%", label: "Uptime" },
           ].map((stat, i) => (
             <div key={i} className="space-y-2">
