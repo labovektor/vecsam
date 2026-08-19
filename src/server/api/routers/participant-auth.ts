@@ -7,7 +7,7 @@ import { appendActivityLog } from "@/lib/logger"
 export const participantAuthRouter = createTRPCRouter({
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
     const { db } = ctx
-    const participant = await db.participant.findFirst({
+    const participants = await db.participant.findMany({
       where: {
         email: input.email,
       },
@@ -17,8 +17,15 @@ export const participantAuthRouter = createTRPCRouter({
       },
     })
 
-    if (!participant || participant.exam.passcode !== input.examCode) {
-      throw new Error("Kode tidak valid")
+    if (!participants) {
+      throw new Error("Email atau kode tidak valid")
+    }
+
+    const participant = participants.find(
+      (p) => p.exam.passcode === input.examCode,
+    )
+    if (!participant) {
+      throw new Error("Email atau kode tidak valid")
     }
 
     // Validate if participant is locked

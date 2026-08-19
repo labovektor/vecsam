@@ -108,6 +108,7 @@ export async function loginAction(input: { participantId: string }) {
 
     c.set("xt_val", token, {
       httpOnly: true,
+      secure: true,
       sameSite: "lax",
     })
 

@@ -9,8 +9,6 @@ import {
 import ExamLoginForm from "@/features/participant-auth/forms/ExamLoginForm"
 import Image from "next/image"
 
-import React from "react"
-
 const ExamLoginPage = () => {
   return (
     <div className="flex h-svh w-full items-center justify-center p-3">
